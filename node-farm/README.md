@@ -13,7 +13,31 @@ Notes during this project
   - In asynchronous code, the heavy work of that single line will be done in the background while the rest of the code will still be running. Once it is done, the call back function that was registered before will be executed. This way, that line will not block anything
   - `fs.readFile` and `fs.writeFile` reads/writes files asynchronously
 
-- Simple Web Server
+- <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/9b1deb280d4cbdb71fdd55441c7304a7d3672fec">Simple Web Server</a>
+
   - `const http = require('http');` - module that gives networking capability such as building a http server by calling `http.createServer(....)`
-  - `createServer` takes a callback function that run everytime the server receive a request
+  - `createServer` takes a callback function that run everytime the server receive a request. Ex: `(req, res) => {...}`
+    - `req` is the request from the browser
+    - `res` is the response that the server will send back to the browser. We can write a header by `res.writeHead(...)` and include the content of the response in `res.end(...)`
   - For the server to receive request, the server has to listen and wait for requests, i.e. `server.listen(...)`
+
+- <a href="#">Routing</a>
+
+  - `const url = require('url');` - url module is used to process url like parsing parameters etc
+  - We create routes inside the callback function `(req, res) => {}` of `createServer`. Based on the value of `req.url`, we can use if statement to create different rounting. Ex:
+
+    ```
+    const pathName = req.url;
+
+    if (pathName === "/" || pathName === "/overview") {
+      res.end("This is the overview");
+    } else if (pathName == "/product") {
+      res.end("This is the product");
+    } else {
+      res.writeHead(404, {
+        "Content-type": "text/html",
+        "my-own-header": "hello-word",
+      });
+      res.end("<h1>Page not found</h1>");
+    }
+    ```
