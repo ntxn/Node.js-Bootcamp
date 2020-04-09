@@ -12,6 +12,8 @@ Notes during this project
 
   - In asynchronous code, the heavy work of that single line will be done in the background while the rest of the code will still be running. Once it is done, the call back function that was registered before will be executed. This way, that line will not block anything
   - `fs.readFile` and `fs.writeFile` reads/writes files asynchronously
+  - `fs.readFile("./dev-data/data.json");` - in here, `.` refers to the directory where we run the node command. For example, if we run `node index.js` on desktop, then `.` is desktop, if we run it inside some folders, then `.` would be that folder => not ideal, it's better to use `dirname`
+  - All node.js scripts have access to a variable called `dirname`, the directory of the current file being executed `fs.readFile(`\${\_\_dirname}/dev-data/data.json`);`
 
 - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/9b1deb280d4cbdb71fdd55441c7304a7d3672fec">Simple Web Server</a>
 
@@ -21,7 +23,7 @@ Notes during this project
     - `res` is the response that the server will send back to the browser. We can write a header by `res.writeHead(...)` and include the content of the response in `res.end(...)`
   - For the server to receive request, the server has to listen and wait for requests, i.e. `server.listen(...)`
 
-- <a href="#">Routing</a>
+- <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/68254efa6deb44ba362e70aab6670635b10139e4">Routing</a>
 
   - `const url = require('url');` - url module is used to process url like parsing parameters etc
   - We create routes inside the callback function `(req, res) => {}` of `createServer`. Based on the value of `req.url`, we can use if statement to create different rounting. Ex:
