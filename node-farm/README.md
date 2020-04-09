@@ -13,7 +13,7 @@ Notes during this project
   - In asynchronous code, the heavy work of that single line will be done in the background while the rest of the code will still be running. Once it is done, the call back function that was registered before will be executed. This way, that line will not block anything
   - `fs.readFile` and `fs.writeFile` reads/writes files asynchronously
   - `fs.readFile("./dev-data/data.json");` - in here, `.` refers to the directory where we run the node command. For example, if we run `node index.js` on desktop, then `.` is desktop, if we run it inside some folders, then `.` would be that folder => not ideal, it's better to use `dirname`
-  - All node.js scripts have access to a variable called `dirname`, the directory of the current file being executed `fs.readFile(`\${\_\_dirname}/dev-data/data.json`);`
+  - All node.js scripts have access to a variable called `dirname`, the directory of the current file being executed `` fs.readFile(`\${__dirname}/dev-data/data.json`); ``
 
 - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/9b1deb280d4cbdb71fdd55441c7304a7d3672fec">Simple Web Server</a>
 
@@ -28,7 +28,7 @@ Notes during this project
   - `const url = require('url');` - url module is used to process url like parsing parameters etc
   - We create routes inside the callback function `(req, res) => {}` of `createServer`. Based on the value of `req.url`, we can use if statement to create different rounting. Ex:
 
-    ```
+    ```js
     const pathName = req.url;
 
     if (pathName === "/" || pathName === "/overview") {
@@ -43,3 +43,7 @@ Notes during this project
       res.end("<h1>Page not found</h1>");
     }
     ```
+
+- <a href="#">HTML Templating</a>
+  - Puting a placeholder in the html file so that we can later replace that placeholder with the data from the file we read. Ex: `<h2 class="product__name">{%PRODUCTNAME%}</h2>`
+  - `{%PRODUCTNAME%}` is a placeholder. It can be anything as long as nothing like that appear in the html so we don't replace the wrong data
