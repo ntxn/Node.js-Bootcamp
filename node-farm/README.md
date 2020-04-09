@@ -44,6 +44,7 @@ Notes during this project
     }
     ```
 
-- <a href="#">HTML Templating</a>
+- <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/433b2c2215b3da5d6e606592fda88378426431ab">Build</a> and <a>Fill</a> <a href="#">HTML Templates</a>
   - Puting a placeholder in the html file so that we can later replace that placeholder with the data from the file we read. Ex: `<h2 class="product__name">{%PRODUCTNAME%}</h2>`
   - `{%PRODUCTNAME%}` is a placeholder. It can be anything as long as nothing like that appear in the html so we don't replace the wrong data
+  - `let output = temp.replace(/{%PRODUCTNAME%}/g, product.productName)` - using regular expression `/.../g` makes sure all of the placeholders will be replaced, not just the first one if we were only using a string
