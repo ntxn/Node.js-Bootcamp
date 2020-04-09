@@ -25,7 +25,6 @@ Notes during this project
 
 - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/68254efa6deb44ba362e70aab6670635b10139e4">Routing</a>
 
-  - `const url = require('url');` - url module is used to process url like parsing parameters etc
   - We create routes inside the callback function `(req, res) => {}` of `createServer`. Based on the value of `req.url`, we can use if statement to create different rounting. Ex:
 
     ```js
@@ -44,7 +43,27 @@ Notes during this project
     }
     ```
 
-- <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/433b2c2215b3da5d6e606592fda88378426431ab">Build</a> and <a>Fill</a> <a href="#">HTML Templates</a>
+  - `const url = require('url');` - url module is used to process url like parsing parameters etc
+  - `url.parse(req.url, true)` is used to split the url into pathname and query object to make it easier to process the request
+    ```js
+    const { query, pathname } = url.parse(req.url, true);
+    ...
+    } else if (pathname == "/product") {
+    res.writeHead(200, { "Content-type": "text/html" });
+    const product = dataObj[query.id];
+    const output = replaceTemplate(tempProduct, product);
+    res.end(output);
+    }
+    ...
+    ```
+
+- <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/433b2c2215b3da5d6e606592fda88378426431ab">Build</a> and <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/78a6c9bce6cbf394544080d970e8550cd87b4ca1">Fill</a> <a href="#">HTML Templates</a>
+
   - Puting a placeholder in the html file so that we can later replace that placeholder with the data from the file we read. Ex: `<h2 class="product__name">{%PRODUCTNAME%}</h2>`
   - `{%PRODUCTNAME%}` is a placeholder. It can be anything as long as nothing like that appear in the html so we don't replace the wrong data
   - `let output = temp.replace(/{%PRODUCTNAME%}/g, product.productName)` - using regular expression `/.../g` makes sure all of the placeholders will be replaced, not just the first one if we were only using a string
+
+- Screenshots (HTML & CSS was provided)
+
+  <img src="screenshots/overview.png" width="650">
+  <img src="screenshots/product.png" width="650">
