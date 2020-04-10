@@ -14,6 +14,7 @@ Notes during this project
   - `fs.readFile` and `fs.writeFile` reads/writes files asynchronously
   - `fs.readFile("./dev-data/data.json");` - in here, `.` refers to the directory where we run the node command. For example, if we run `node index.js` on desktop, then `.` is desktop, if we run it inside some folders, then `.` would be that folder => not ideal, it's better to use `dirname`
   - All node.js scripts have access to a variable called `dirname`, the directory of the current file being executed `` fs.readFile(`\${__dirname}/dev-data/data.json`); ``
+  - the `.` in `require('./modules/replaceTemplate')` means the current directory of the module we're at
 
 - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/9b1deb280d4cbdb71fdd55441c7304a7d3672fec">Simple Web Server</a>
 
@@ -62,6 +63,13 @@ Notes during this project
   - Puting a placeholder in the html file so that we can later replace that placeholder with the data from the file we read. Ex: `<h2 class="product__name">{%PRODUCTNAME%}</h2>`
   - `{%PRODUCTNAME%}` is a placeholder. It can be anything as long as nothing like that appear in the html so we don't replace the wrong data
   - `let output = temp.replace(/{%PRODUCTNAME%}/g, product.productName)` - using regular expression `/.../g` makes sure all of the placeholders will be replaced, not just the first one if we were only using a string
+
+- <a href="#">Modules</a>
+
+  - In node.js, every file is treated as a module
+  - To use a module in another module, we need to export it. There are multiple ways to export a module
+  - One of them is to assign whatever we what to export to `module.exports` (In each module, we have access to object called `module`). Ex: `module.exports = (input) => {... return output;}`
+  - To use it in another module, we have to require it. In the case above, we can call it any names. Ex: `const replaceTemplate = require("./modules/replaceTemplate");`
 
 - Screenshots (HTML & CSS was provided)
 
