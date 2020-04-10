@@ -64,14 +64,40 @@ Notes during this project
   - `{%PRODUCTNAME%}` is a placeholder. It can be anything as long as nothing like that appear in the html so we don't replace the wrong data
   - `let output = temp.replace(/{%PRODUCTNAME%}/g, product.productName)` - using regular expression `/.../g` makes sure all of the placeholders will be replaced, not just the first one if we were only using a string
 
-- <a href="#">Modules</a>
+- <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/83e77c79b58e956257e293e41677228730e6fcaf">Modules</a>
 
   - In node.js, every file is treated as a module
   - To use a module in another module, we need to export it. There are multiple ways to export a module
   - One of them is to assign whatever we what to export to `module.exports` (In each module, we have access to object called `module`). Ex: `module.exports = (input) => {... return output;}`
   - To use it in another module, we have to require it. In the case above, we can call it any names. Ex: `const replaceTemplate = require("./modules/replaceTemplate");`
 
-- Screenshots (HTML & CSS was provided)
+- <a href="#">npm</a>
+
+  - `npm` is a software that we use to manage third party open source packages used in the project
+  - When we first start a project, we write `npm init` in command line in the current project folder to initialize npm as the project manager for the project. It will create a file named `package.json`, a configuration file including many infomation about the project is stored.
+  - The open source packages that we include and use in our project are called dependencies because we depend on these packages for our project to work. `package.json` keeps track of these dependencies. There are two kinds of dependencies
+    - Regular dependencies - packages needed for development & production for project to run
+      - Ex: `npm install slugify`
+    - Development dependencies - packages used while developing the project but not needed in production
+      - Ex: `npm install nodemon --save-dev`
+    ```
+    "dependencies": {
+      "slugify": "^1.4.0"
+    },
+    "devDependencies": {
+      "nodemon": "^2.0.3"
+    }
+    ```
+  - There are 2 types of installs:
+    - Local - The packages we install only work in the current project. For example, if we want to use `slugify` or `nodemon` in another project, we need to do npm install again. If we only install `nodemon` locally, we cannot use the `nodemon` command line. We need to write a npm script in `package.json`. Then type `npm run start` to run the script `start`
+      ```
+      "scripts": {
+        "start": "nodemon index.js"
+      }
+      ```
+    - Global - The packages will be available in all projects to use. We should install a package globally when we want to use it in command line (usually used during development). For example, we can use `nodemon` in multiple projects, so we should install it globally by `npm i nodemon --global`. After installing `nodemon` globally, we can type `nodemon index.js` to start the server from the command line. `nodemon` will keep watching for changes and restart the server whenever we hit save.
+
+* Screenshots (HTML & CSS was provided)
 
   <img src="screenshots/overview.png" width="650">
   <img src="screenshots/product.png" width="650">

@@ -1,7 +1,12 @@
+// CORE MODULES
 const fs = require("fs");
 const http = require("http");
 const url = require("url");
 
+// 3rd PARTY MODULES
+const slugify = require("slugify");
+
+// USER-DEFINED MODULES
 const replaceTemplate = require("./modules/replaceTemplate");
 
 /** -------------------------------------- FILES ----------------------------------------------- */
