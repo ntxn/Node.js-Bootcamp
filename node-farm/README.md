@@ -98,6 +98,16 @@ Notes during this project
     - Global - The packages will be available in all projects to use. We should install a package globally when we want to use it in command line (usually used during development). For example, we can use `nodemon` in multiple projects, so we should install it globally by `npm i nodemon --global`. After installing `nodemon` globally, we can type `nodemon index.js` to start the server from the command line. `nodemon` will keep watching for changes and restart the server whenever we hit save.
   - How to require a 3rd party module from npm:
     `const slugify = require('slugify');`
+  - Package Versioning and Updating
+    - "^2.0.3": major version (2) - minor version (0) - patch version (3)
+    - Path versions: fix bugs
+    - Minor versions: introduce some new features but does not include breaking changes. These new features are backward compatible i.e. it will not break our code
+    - Major versions: Huge new release with breaking changes - it might break code because it might not be compatible with what we have before.
+    - `^`: this first character of the version specify which versions of the update we accept for our project. `^`: accept patch and minor releases. `~`: accept patch versions only. `*`: All versions. Best to use `^`
+    - Check if we need to update by `npm outdated`. If there's new releases, it will display a table with all outdated packages. To update: `npm update slugify`
+    - We can also install a package at a specific version. Ex: `npm install slugify@1.0.0`
+    - To delete: `npm uninstall slugify`
+    - `npm install`: install all dependencies in `package.json` when we open this project from another laptop
 
 * Screenshots (HTML & CSS was provided)
 
