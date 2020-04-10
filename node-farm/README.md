@@ -71,7 +71,7 @@ Notes during this project
   - One of them is to assign whatever we what to export to `module.exports` (In each module, we have access to object called `module`). Ex: `module.exports = (input) => {... return output;}`
   - To use it in another module, we have to require it. In the case above, we can call it any names. Ex: `const replaceTemplate = require("./modules/replaceTemplate");`
 
-- <a href="#">npm</a>
+- <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/cb1743355499673160401d554270ad2ed2ff415d">npm</a>
 
   - `npm` is a software that we use to manage third party open source packages used in the project
   - When we first start a project, we write `npm init` in command line in the current project folder to initialize npm as the project manager for the project. It will create a file named `package.json`, a configuration file including many infomation about the project is stored.
@@ -96,6 +96,8 @@ Notes during this project
       }
       ```
     - Global - The packages will be available in all projects to use. We should install a package globally when we want to use it in command line (usually used during development). For example, we can use `nodemon` in multiple projects, so we should install it globally by `npm i nodemon --global`. After installing `nodemon` globally, we can type `nodemon index.js` to start the server from the command line. `nodemon` will keep watching for changes and restart the server whenever we hit save.
+  - How to require a 3rd party module from npm:
+    `const slugify = require('slugify');`
 
 * Screenshots (HTML & CSS was provided)
 
