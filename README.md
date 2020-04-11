@@ -1,14 +1,14 @@
 This depository contains projects and notes from my node.js bootcamp
 
-- Node Farm - Project
+- ## Node Farm - Project
 
   - Read/write files synchronously and asynchronously with module `fs`
   - Create a web server, routing, API, handle requests using module `http`
   - Create query object from url parameters using module `url`
   - Use `npm` as project manager and install other 3rd party modules
 
-- Back-End Web Development - Notes
-  - How the Web Works:
+- ## Back-End Web Development - Notes
+  - ### How the Web Works:
     - <img src="screenshots/client-server-model.png" width="400">
     - When we enter a web address to the browser, the browser send a request to the DNS (Domain Name System). This DNS server then lookup the website address to find its real IP address. This happens through ISP (Internet Service Provider)
     - <img src="screenshots/dns-lookup.png" width="250"> <img src="screenshots/dns-lookup-result.png" width="245">
@@ -27,3 +27,24 @@ This depository contains projects and notes from my node.js bootcamp
       - <img src="screenshots/http-response.png" width="600">
     - When a client requests a website, there are actually a lot of requests
       - <img src="screenshots/initial-web-requests.png" width="300">
+  - ### Front-End vs Back-End Web Development
+    - Front-End: Everything happens in the web browser. It's about designing and building the final website that's gonna be visible to users. Front-End Stack: HTML, CSS, JS, React, Angular, etc
+    - Back-End: what happens on the web server that's not visible to the end users. Back-End Stack: Node.js, mongoDB or PostgreSQL, Django
+      - Static Web SERVER: A computer that's connected to the internet. It stores website files like HTML, CSS, images etc, and run a HTTP Server that understands http requests and responses. HTTP Server software is the part that communicate with a browser using requests and responses.
+      - <img src="screenshots/static-server.png" width="300">
+      - Dynamic SERVER: has an app running that talks to the database, http server, files etc
+      - <img src="screenshots/dynamic-server.png" width="400">
+  - ### Static vs Dynamic WEBSITES vs API
+    - Static websites
+      - This website contains files like HTML, CSS, JS that the developer uploaded to the server. And when there's a request from a browser for the site, the server will send these exact files to the client. The looks and content will not change based on when you look browse the website. No communication to database at all.
+      - <img src="screenshots/static-web.png" width="450">
+    - Dynamic websites
+      - Dynamic websites are built on the server each time a request comes in. The application (like a node.js app) get data from the database (based on the request data) and then build the website based on the template. Then return the complete website to the browser. The website can change its content based on the data in the database or the action on the site. For example, the content on facebook/twitter is different when you're logged in or out.
+      - Functionality in a web app: log in/out, searching, etc
+      - Wordpress is a dynamic website but it doesn't have any functionality, users can only read
+      - <img src="screenshots/dynamic-web.png" width="600">
+    - API powered websites
+      - An app, like node.js app, gets data from the database, and then send data in json format to the browser. Then by using framework like React, Angular to build the website based on the data
+      - So backend developers only need to build APIs and let frontend developers build the website (client-side rendered)
+      - Advantage of APIs is that the data we get from APIs can be used on many different platforms like website, mobile apps, desktop apps, etc
+      - <img src="screenshots/dynamic-web-vs-api.png" width="600">
