@@ -8,6 +8,7 @@ This depository contains projects and notes from my node.js bootcamp
   - Use `npm` as project manager and install other 3rd party modules
 
 - ## Back-End Web Development - Notes
+
   - ### How the Web Works:
     - <img src="screenshots/client-server-model.png" width="400">
     - When we enter a web address to the browser, the browser send a request to the DNS (Domain Name System). This DNS server then lookup the website address to find its real IP address. This happens through ISP (Internet Service Provider)
@@ -48,3 +49,38 @@ This depository contains projects and notes from my node.js bootcamp
       - So backend developers only need to build APIs and let frontend developers build the website (client-side rendered)
       - Advantage of APIs is that the data we get from APIs can be used on many different platforms like website, mobile apps, desktop apps, etc
       - <img src="screenshots/dynamic-web-vs-api.png" width="600">
+
+- ## How Node.js works: Behind the scenes - Notes
+
+  - ### Node Architecture: Node, V8, Libuv & C++
+
+    - <img src="screenshots/node-v8-libuv-c++.png" width="800">
+    - Node runtime depends on V8 & Libuv to work. Node.js combines these 2 libraries together and let developers access to Node.js library in pure JS.
+      - Google's V8 Javascript engine helps Node understands JS code. V8 converts JS code to machine code so that machine can understand JS. V8 is written in JS and C++
+      - `libuv` focuses on asynchronous input/output. `libuv` gives node access to the underline computer operating system, file system, networking, etc. `libuv` also implements 2 important features of Node. js: Event Loop & Thread Pool. Written in C++
+        - Event Loop: handles easy tasks like executing callbacks and network IO
+        - Thread Pool: handles more heavy works like file access or compression
+    - Besides V8 and Libuv, Node.js also depends on http-parser, c-ares, OpenSSL, zlib
+
+  - ### Processes, Threads and Thread Pool
+
+    - <img src="screenshots/threadpool.png" width="800">
+    - Top level code: code that's not inside any callbacks
+    - Callbacks: for example, the callback function in http server in node-farm app
+    - Some tasks are too heavy to run in the event loop, so the event loop offload those tasks to the thread pool provided by libuv. There are usually 4 additional threads in this thread pool and they are separate/independent of the single thread that contains the event loop
+
+  - ### Event Loop
+    - <img src="screenshots/eventloop-1.png" width="800">
+    - <img src="screenshots/eventloop-2.png" width="800">
+      - There are 4 phases in a tick of an event loop, each phase has its own callback queue. When entering a phase, the event loop will process all callbacks currently in the queue and then move on to the next phase. If there are any callbacks being added in the queue of a previous phase, they will only get processed once the event loop returns to that phase.
+        - Expired timer callbacks: Processes callback functions from expired timer like the below example.
+        ```js
+          setTimeout(() => {
+            console.log('Timer expired');
+          });
+        ```
+        - I/O polling and callbacks: Polling means looking for new I/O events ready to be processed and putting them into the callback queue. In Node.js, I/O usually means networking, file accessing, etc.
+        - `setImmediate` callbakcs: special timers being used when we need to process a callback right after I/O execution phase.
+        - Close callbacks: close events are processed like web server/socket is shut down
+      - There are 2 extra queues (`process.nexttick()` queue and microservices queue - Resolved promisses) that are being processed right after each phase ends if there are any callbacks in the queues.
+    - <img src="screenshots/eventloop-3.png" width="400">
