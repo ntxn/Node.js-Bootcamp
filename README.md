@@ -70,17 +70,20 @@ This depository contains projects and notes from my node.js bootcamp
     - Some tasks are too heavy to run in the event loop, so the event loop offload those tasks to the thread pool provided by libuv. There are usually 4 additional threads in this thread pool and they are separate/independent of the single thread that contains the event loop
 
   - ### Event Loop
+
     - <img src="screenshots/eventloop-1.png" width="800">
     - <img src="screenshots/eventloop-2.png" width="800">
+
       - There are 4 phases in a tick of an event loop, each phase has its own callback queue. When entering a phase, the event loop will process all callbacks currently in the queue and then move on to the next phase. If there are any callbacks being added in the queue of a previous phase, they will only get processed once the event loop returns to that phase.
         - Expired timer callbacks: Processes callback functions from expired timer like the below example.
         ```js
-          setTimeout(() => {
-            console.log('Timer expired');
-          });
+        setTimeout(() => {
+          console.log("Timer expired");
+        });
         ```
         - I/O polling and callbacks: Polling means looking for new I/O events ready to be processed and putting them into the callback queue. In Node.js, I/O usually means networking, file accessing, etc.
         - `setImmediate` callbakcs: special timers being used when we need to process a callback right after I/O execution phase.
         - Close callbacks: close events are processed like web server/socket is shut down
       - There are 2 extra queues (`process.nexttick()` queue and microservices queue - Resolved promisses) that are being processed right after each phase ends if there are any callbacks in the queues.
-    - <img src="screenshots/eventloop-3.png" width="400">
+
+    - <img src="screenshots/eventloop-3.png" width="300">
