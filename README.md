@@ -97,3 +97,13 @@ This depository contains projects and notes from my node.js bootcamp
     - Example:
       - The `server` created from `const server = http.createServer();` acts as an event emitter because it is an instance of EventEmitter class. The `server` automatically emits a `request` event everytime a request hits the server.
       - `server.on` method is how we set up a listener for a `request` event and the attached callback function will be called. It usually sends some data back to the client/browser
+
+  - ### Streams
+
+    - Streams are instances of `EventEmitter` class
+    - Streams are used to process (read & write) data piece by piece (chunks), without completing the whole read or write operation => doesn't keep all data in memory.
+      - Perfect for handling large volumes of data
+      - More efficient data processing in terms of memory (no need to keep all data in memory) and time (don't have to wait untill all data is available)
+      - Ex: Netflix, Youtube use Streams => called streaming
+    - 4 different types of streams:
+      - <img src="screenshots/4-stream-types.png" width="800">
