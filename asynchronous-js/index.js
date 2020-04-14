@@ -58,3 +58,51 @@ fs.readFile(`${__dirname}/dog.txt`, (err, data) => {
     })
     .catch((err) => console.log(err.message));
 });
+
+/*
+  Promises
+
+  Step 2: Create a Promise for readFile function
+  - We don't change the readFile function, we create a new function which behind the scene
+  still runs the builtin readFile function but then returns a Promise so that we can use the
+  Promise instead of the callback function
+  - new Promise((resolve, reject) => { // resolve, reject are functions
+      ...
+        if (err) reject(...)  // Whatever we pass to the reject function will be the err value we see in the `catch` method
+        resolve(...);         // Whatever we pass to the resolve will be the value of a successful Promise, which we get in the `then` method
+      ...
+    }
+  
+  Now we can chain one Promise after another by returning the next Promise in the current `then` method
+  This way, we get rid of the callback hell and have a flat chain of Promises
+*/
+
+const readFilePromise = (file) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, (err, data) => {
+      if (err) reject('I could not find that file');
+      resolve(data);
+    });
+  });
+};
+
+const writeFilePromise = (file, data) => {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(file, data, (err) => {
+      if (err) reject('Could not write file');
+      resolve('Success');
+    });
+  });
+};
+
+readFilePromise(`${__dirname}/dog.txt`)
+  .then((data) => {
+    console.log(`Breed: ${data}`);
+    return superagent.get(`https://dog.ceo/api/breed/${data}/images/random`);
+  })
+  .then((res) => {
+    console.log(res.body.message);
+    return writeFilePromise(`${__dirname}/dog-img.txt`, res.body.message);
+  })
+  .then(() => console.log('Random dog image saved to file'))
+  .catch((err) => console.log(err));
