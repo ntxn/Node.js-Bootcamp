@@ -87,3 +87,13 @@ This depository contains projects and notes from my node.js bootcamp
       - There are 2 extra queues (`process.nexttick()` queue and microservices queue - Resolved promisses) that are being processed right after each phase ends if there are any callbacks in the queues.
 
     - <img src="screenshots/eventloop-3.png" width="300">
+
+  - ### Events and Event-Driven Architecture
+
+    - <img src="screenshots/event-driven-architecture.png" width="800">
+    - Most of Node.js core modules like file system, timers, http, etc. are built around event-driven architecture.
+    - In Node.js, there're certain objects called Event emitter that emits named events as soon as something important happens such as a request hitting a server, a timer expiring, a file ready to read. These events are then being picked up by Event listeners set up by developers which will fire up callback functions attached to each listener.
+    - Also called `Observer Pattern` in Javascript programming. Event listener keeps observing the object that eventually will emit an event. `Observer Pattern` is designed to react rather than to call.
+    - Example:
+      - The `server` created from `const server = http.createServer();` acts as an event emitter because it is an instance of EventEmitter class. The `server` automatically emits a `request` event everytime a request hits the server.
+      - `server.on` method is how we set up a listener for a `request` event and the attached callback function will be called. It usually sends some data back to the client/browser
