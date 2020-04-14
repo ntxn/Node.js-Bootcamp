@@ -112,9 +112,9 @@ readFilePromise(`${__dirname}/dog.txt`)
    Async/Await allows our code looks more synchronous and increases readability while it's actually
    asynchonous code. Syntactic sugar for Promises
    
-   - Step 1: mark a function with the keyword `async` which means this is an asynchronous function
-   and will return a Promise. This runs the function in the background while the rest of the code
-   running in the event loop.
+   - Step 1: mark a function with the keyword `async` which means this is an asynchronous function.
+   This runs the function in the background while the rest of the code running in the event loop.
+   The return value of an async function is a resolved promise.
    - Step 2: inside the async function, we can mark multiple line of code with keyword `await`.
    When marking a line of code await, it will wait for that code to finish before moving on to the
    next line. The returned value from an await line of code is the successful resolved Promise
@@ -137,3 +137,78 @@ const getDogPic = async () => {
 };
 
 getDogPic();
+
+/* --------------- HOW ASYNC/AWAIT works ------------------- */
+
+const getDogPic = async () => {
+  try {
+    const data = await readFilePromise(`${__dirname}/dog.txt`);
+    console.log(`Breed: ${data}`);
+
+    const res = await superagent.get(
+      `https://dog.ceo/api/breed/${data}/images/random`
+    );
+    console.log(res.body.message);
+
+    await writeFilePromise(`${__dirname}/dog-img.txt`, res.body.message);
+    console.log('Random dog image saved to file');
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+  return '2: READY'; // The return value of an async function is a resolved promise
+};
+
+/*
+  Output
+
+  1: Will get dog pics
+  Promise { <pending> }
+  3: Done getting dog pics
+  Breed: retriever
+  https://images.dog.ceo/breeds/retriever-chesapeake/n02099849_171.jpg
+  Random dog image saved to file
+*/
+console.log('1: Will get dog pics');
+const x = getDogPic();
+console.log(x);
+console.log('3: Done getting dog pics');
+
+/*
+  Output
+
+    1: Will get dog pics
+    Breed: retriever
+    https://images.dog.ceo/breeds/retriever-chesapeake/n02099849_2706.jpg
+    Random dog image saved to file
+    2: READY
+    3: Done getting dog pics
+
+  Output with wrong dogg.txt file
+  
+    1: Will get dog pics
+    I could not find that file
+    ERROR
+*/
+console.log('1: Will get dog pics');
+getDogPic()
+  .then((x) => {
+    console.log(x);
+    console.log('3: Done getting dog pics');
+  })
+  .catch((err) => console.log('ERROR'));
+
+/*
+  Solution to not using `then` and `catch` like the above example
+*/
+
+(async () => {
+  try {
+    console.log('1: Will get dog pics');
+    const x = await getDogPic();
+    console.log(x);
+    console.log('3: Done getting dog pics');
+  } catch (err) {
+    console.log('ERROR');
+  }
+})();
