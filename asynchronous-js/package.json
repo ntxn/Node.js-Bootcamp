@@ -1,0 +1,14 @@
+{
+  "name": "asynchronous",
+  "version": "1.0.0",
+  "description": "Practicing JS Promisses and Async/Await",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ngan Nguyen",
+  "license": "ISC",
+  "dependencies": {
+    "superagent": "^5.2.2"
+  }
+}
