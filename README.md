@@ -78,7 +78,7 @@ This depository contains projects and notes from my node.js bootcamp
         - Expired timer callbacks: Processes callback functions from expired timer like the below example.
         ```js
         setTimeout(() => {
-          console.log("Timer expired");
+          console.log('Timer expired');
         });
         ```
         - I/O polling and callbacks: Polling means looking for new I/O events ready to be processed and putting them into the callback queue. In Node.js, I/O usually means networking, file accessing, etc.
@@ -118,3 +118,11 @@ This depository contains projects and notes from my node.js bootcamp
       - <img src="screenshots/require-module-2.png" width="800">
       - <img src="screenshots/require-module-3.png" width="800">
       - The imported module is cached so that when we need to import it again, node.js will get it from the cach insteading importing it all over again.
+
+- ## Asynchonous JS - Small Project + Notes
+
+  - Used `superagent` 3rd party module to create http requests which returns Promises
+  - To prevent Callback Hell and increase readability, we can chain Promises with `then`, `catch` or better yet we can use `async`/`await`, `try` `catch`.
+  - For methods that don't support Promises, we can create another function that will return a Promise that run the needed function.
+
+- ## NATOURS - Project
