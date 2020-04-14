@@ -107,3 +107,14 @@ This depository contains projects and notes from my node.js bootcamp
       - Ex: Netflix, Youtube use Streams => called streaming
     - 4 different types of streams:
       - <img src="screenshots/4-stream-types.png" width="800">
+
+  - ### How Requiring Modules Works
+
+    - Each JavaScript file is treated as a spearate module
+    - Node.js uses the `CommonJS Module System`: `require()`, `exports` or `module.exports` because it works very well on the server.
+    - `CommonJS Module System` is different from the native ecma script `ES module system` used in browsers (`import`/`export`)
+    - Why in Node.js, each module has access to the `require()` function to import other modules? It's not a standard javascript function. Where does it come from? How does it work behind the scene?
+      - <img src="screenshots/require-module-1.png" width="800">
+      - <img src="screenshots/require-module-2.png" width="800">
+      - <img src="screenshots/require-module-3.png" width="800">
+      - The imported module is cached so that when we need to import it again, node.js will get it from the cach insteading importing it all over again.
