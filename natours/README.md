@@ -84,7 +84,7 @@
         });
         ```
 
-    - <a href="#">Refactoring Routes</a>
+    - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/0d76673339f0bb7b8cd63a49fe7d3580d7750ab3">Refactoring Routes</a>
 
       To make the routes/endpoints clearer, we create separate functions for the request handlers and then pass them into respective HTTP methods. Additionally, we can use `.route(...)` of express app to show which methods we use for different routes.
 
@@ -100,3 +100,6 @@
         .patch(updateTour)
         .delete(deleteTour);
       ```
+
+    - <a href="#">Middleware and the Request-Response Cycle</a>
+      - <img src="screenshots/request-response-cycle.png" width="800">
