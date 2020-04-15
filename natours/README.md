@@ -88,11 +88,8 @@
 
       To make the routes/endpoints clearer, we create separate functions for the request handlers and then pass them into respective HTTP methods. Additionally, we can use `.route(...)` of express app to show which methods we use for different routes.
 
-      ```
-      app
-        .route('/api/v1/tours')
-        .get(getAllTours)
-        .post(createTour);
+      ```js
+      app.route('/api/v1/tours').get(getAllTours).post(createTour);
 
       app
         .route('/api/v1/tours/:id')
@@ -103,3 +100,17 @@
 
     - <a href="#">Middleware and the Request-Response Cycle</a>
       - <img src="screenshots/request-response-cycle.png" width="800">
+      - To apply a middleware to express app, we use `app.use` and pass a middleware handler in.
+      - We can write our own middleware handler:
+        - This handler/function has three parameters: request, response, and next. `next` is the next middleware. At the end of each handler, we always have to call `next()`, otherwise it will get stuck at the current middleware. The middleware in `app.use` will be applied to all requests below it
+        - Example of a global middleware
+          ```js
+          app.use((req, res, next) => {
+            req.requestTime = new Date().toISOString();
+            next();
+          });
+          ```
+      - Or use a 3rd-Party middleware.
+        - Ex: `morgan` (`npm i morgan`)
+        - => `app.use(morgan('dev'));`
+        - => `GET /api/v1/tours 200 6.250 ms - 8681` - is printed in terminal
