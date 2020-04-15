@@ -1,0 +1,18 @@
+{
+  "name": "natours",
+  "version": "1.0.0",
+  "description": "Learning Server-side Web Development with Node.js, Express, MongoDB with natours web app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ngannguyen117/Node.js-Bootcamp/tree/master/natours"
+  },
+  "author": "Ngan Nguyen",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
