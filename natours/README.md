@@ -27,7 +27,7 @@
       - <img src="screenshots/restful-2.png" width="800">
       - <img src="screenshots/restful-3.png" width="800">
       - <img src="screenshots/restful-4.png" width="800">
-    - Simple <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/66c91c7012151a95f8040e6ed36264b64252c2c4">GET</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c0055573f21d10942147c1f4b4423b27d72d6c68">POST</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/d2c3a1ccc827bc1e96a987a7a2de7d91c8ad167b">PATCH</a>, <a href="#">DELETE</a> Requests at Endpoint `'/api/v1/tours`
+    - Simple <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/66c91c7012151a95f8040e6ed36264b64252c2c4">GET</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c0055573f21d10942147c1f4b4423b27d72d6c68">POST</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/d2c3a1ccc827bc1e96a987a7a2de7d91c8ad167b">PATCH</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/8caf015c45bb4644827188eb5544e3029ba492aa">DELETE</a> Requests at Endpoint `'/api/v1/tours`
 
       ```js
       app.use(express.json());
@@ -83,3 +83,20 @@
           });
         });
         ```
+
+    - <a href="#">Refactoring Routes</a>
+
+      To make the routes/endpoints clearer, we create separate functions for the request handlers and then pass them into respective HTTP methods. Additionally, we can use `.route(...)` of express app to show which methods we use for different routes.
+
+      ```
+      app
+        .route('/api/v1/tours')
+        .get(getAllTours)
+        .post(createTour);
+
+      app
+        .route('/api/v1/tours/:id')
+        .get(getTour)
+        .patch(updateTour)
+        .delete(deleteTour);
+      ```
