@@ -27,7 +27,7 @@
       - <img src="screenshots/restful-2.png" width="800">
       - <img src="screenshots/restful-3.png" width="800">
       - <img src="screenshots/restful-4.png" width="800">
-    - Simple <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/66c91c7012151a95f8040e6ed36264b64252c2c4">GET</a>, <a href="#">POST</a>, <a href="#">PATCH</a>, <a href="#">DELETE</a> Requests at Endpoint `'/api/v1/tours`
+    - Simple <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/66c91c7012151a95f8040e6ed36264b64252c2c4">GET</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c0055573f21d10942147c1f4b4423b27d72d6c68">POST</a>, <a href="#">PATCH</a>, <a href="#">DELETE</a> Requests at Endpoint `'/api/v1/tours`
 
       ```js
       app.use(express.json());
@@ -63,3 +63,23 @@
 
       - In the `POST` request `req` parameter, out of the box, `express` doesn't have access to the body of the POST request so we need to use middleware `app.use(express.json())`. Middleware is a function that can modify the incoming request data. It's called middleware because it stands between the request and response. `express.json()` is the middleware that helps express app to access the request body and that data is added to the request object.
         - <img src="screenshots/simple-post-request.png" width="450">
+      - <a href="#">Accessing to URL Parameters</a>.
+        - In the below example, we added `/:id` to the endpoint because we want to get the tour with id = 14 with this endpoint `/api/v1/tours/14`.
+        - The value of `req.params` would be something like `{ id: '14' }`.
+        - If there are more parameters, we can add more like `/:id/:x/:y` => `{ id: '14', x: '1', y: '2' }`, if we want to make one of the parameters optional, we can add `?` like `/:id/:x/:y?` => `{ id: '14', x: '1', y: undefined }`
+        ```js
+        app.get('/api/v1/tours/:id', (req, res) => {
+          const id = req.params.id * 1;
+          if (id > tours.length) {
+            return res.status(404).json({
+              status: 'fail',
+              message: 'Invalid ID',
+            });
+          }
+          const tour = tours.find((element) => element.id == id);
+          res.status(200).json({
+            status: 'success',
+            data: { tour },
+          });
+        });
+        ```
