@@ -92,15 +92,55 @@ const deleteTour = (req, res) => {
   });
 };
 
+const getAllUsers = (req, res) => {
+  rse.status(500).json({
+    status: 'err',
+    message: 'This route is not yet define.',
+  });
+};
+
+const getUser = (req, res) => {
+  rse.status(500).json({
+    status: 'err',
+    message: 'This route is not yet define.',
+  });
+};
+
+const createUser = (req, res) => {
+  rse.status(500).json({
+    status: 'err',
+    message: 'This route is not yet define.',
+  });
+};
+
+const updateUser = (req, res) => {
+  rse.status(500).json({
+    status: 'err',
+    message: 'This route is not yet define.',
+  });
+};
+
+const deleteUser = (req, res) => {
+  rse.status(500).json({
+    status: 'err',
+    message: 'This route is not yet define.',
+  });
+};
+
 // 3 - Routes
+const tourRouter = express.Router();
+const userRouter = express.Router();
 
-app.route('/api/v1/tours').get(getAllTours).post(createTour);
+tourRouter.route('/').get(getAllTours).post(createTour);
 
-app
-  .route('/api/v1/tours/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+
+userRouter.route('/').get(getAllUsers).post(createUser);
+
+userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
 
 const port = 3000;
 app.listen(port, () => {

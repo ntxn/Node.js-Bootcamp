@@ -98,7 +98,8 @@
         .delete(deleteTour);
       ```
 
-    - <a href="#">Middleware and the Request-Response Cycle</a>
+    - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3d1384845708948070c63ed0299bdfc07f823f38">Middleware and the Request-Response Cycle</a>
+
       - <img src="screenshots/request-response-cycle.png" width="800">
       - To apply a middleware to express app, we use `app.use` and pass a middleware handler in.
       - We can write our own middleware handler:
@@ -114,3 +115,22 @@
         - Ex: `morgan` (`npm i morgan`)
         - => `app.use(morgan('dev'));`
         - => `GET /api/v1/tours 200 6.250 ms - 8681` - is printed in terminal
+
+    - <a href="#">Creating and Mounting Multiple Routers</a>
+
+      - According to the RESTful architecture, each resource like tours or users should be an endpoint. So we'd want to create a route for each of the resources and put them in a separate file to make it easier to manage when the app gets bigger.
+      - To make each resource a route, we use middleware `express.Router()`. Each of the resource now becomes a mini app having its own root
+      - Once the request match the endpoint declared in `app.use(...)`, it will run the attached Router
+
+        ```js
+        const tourRouter = express.Router();
+
+        tourRouter.route('/').get(getAllTours).post(createTour);
+        tourRouter
+          .route('/:id')
+          .get(getTour)
+          .patch(updateTour)
+          .delete(deleteTour);
+
+        app.use('/api/v1/tours', tourRouter);
+        ```
