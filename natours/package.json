@@ -4,7 +4,7 @@
   "description": "Learning Server-side Web Development with Node.js, Express, MongoDB with natours web app",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",

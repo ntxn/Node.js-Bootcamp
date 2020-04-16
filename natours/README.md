@@ -116,7 +116,7 @@
         - => `app.use(morgan('dev'));`
         - => `GET /api/v1/tours 200 6.250 ms - 8681` - is printed in terminal
 
-    - <a href="#">Creating and Mounting Multiple Routers</a>
+    - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3f84f36712f362f1c98bf6f9f0eabe793c9b6f49">Creating and Mounting Multiple Routers</a>
 
       - According to the RESTful architecture, each resource like tours or users should be an endpoint. So we'd want to create a route for each of the resources and put them in a separate file to make it easier to manage when the app gets bigger.
       - To make each resource a route, we use middleware `express.Router()`. Each of the resource now becomes a mini app having its own root
@@ -134,3 +134,11 @@
 
         app.use('/api/v1/tours', tourRouter);
         ```
+
+    - <a href="#">Restructuring Files</a>
+      - `server.js`: the starting file of this web app. This is where we starts the server and will include everything related to the server
+      - `app.js`: will only include code related to express and global express middleware
+      - 2 new folders created:
+        - `routes`: to hold all the resources routers
+        - `controllers`: to hold each router's handlers
+      - We written an NPM script `"start": "nodemon server.js"` in `package.json` to start the Node.js app
