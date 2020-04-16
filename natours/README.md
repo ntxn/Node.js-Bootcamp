@@ -135,10 +135,22 @@
         app.use('/api/v1/tours', tourRouter);
         ```
 
-    - <a href="#">Restructuring Files</a>
+    - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/5ea2bd0e695bbb50b3a4eb81c81dc3205502cecc">Restructuring Files</a>
+
       - `server.js`: the starting file of this web app. This is where we starts the server and will include everything related to the server
       - `app.js`: will only include code related to express and global express middleware
       - 2 new folders created:
         - `routes`: to hold all the resources routers
         - `controllers`: to hold each router's handlers
       - We written an NPM script `"start": "nodemon server.js"` in `package.json` to start the Node.js app
+
+    - <a href="#">Param Middleware</a>
+      - `router.param(parameterName, handler)` is a middleware that will run the handler if the request url has a param that matches the provided parameterName.
+      - The signature of the handler function being passed to a param middleware:
+        ```js
+        (req, res, next, val) => {
+          console.log(`The param value is ${val}`);
+          next();
+        };
+        ```
+      - In this commit, we created a `checkID` param handler in `tourController` to validate ID before calling the final handler. This `checkID` function is then called in `tourRoutes`'s `router.param`
