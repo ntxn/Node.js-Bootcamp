@@ -184,8 +184,36 @@
         - We can also access to an image in img folder by `http://127.0.0.1:3000/img/pin.png` but we will get an error if we try to access only the `img` folder `http://127.0.0.1:3000/img/` because it's not a file so express app will try to search for a matched route
 
 - ## Setting up ESLint + Prettier in VS Code
+
   - Install these development dependency
     ```
     npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react --save-dev
     ```
   - Add rules to `.eslintrc.json`
+
+- ## MongoBD
+
+  - <img src="screenshots/mongodb-intro-1.png" width="800">
+  - <img src="screenshots/mongodb-intro-2.png" width="800">
+  - <img src="screenshots/mongodb-intro-3.png" width="800">
+  - In Terminal
+    - Use command `mongo` to start mongo database server locally and have access to mongo Shell
+    - In mongo shell, the data that we create is always document so we have to create that document inside a collection by specifying the collection before inserting a new document.
+    ```
+    > use natours-test
+    switched to db natours-test
+    > db.tours.insertOne({ name: "The Forest Hiker", price: 297, rating: 4.7 })
+    {
+      "acknowledged" : true,
+      "insertedId" : ObjectId("5e99de416d049382d16d513a")
+    }
+    > show collections
+    tours
+    > db.tours.find()
+    { "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
+    > quit()
+    ```
+    - `use natours-test` will create a new database `natours-test` if it doesn't exist in mongo server and then switch from the current db to db `natours-test`
+    - `db` refers to the current db we're in
+    - `db.tours.insertOne(...)` will create a new `tours` collection if it's not already existed, then insert the new document in.
+    - The parameter of `insertOne` can be a JavaScript Object
