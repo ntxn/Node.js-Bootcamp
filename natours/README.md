@@ -196,7 +196,7 @@
   - <img src="screenshots/mongodb-intro-1.png" width="800">
   - <img src="screenshots/mongodb-intro-2.png" width="800">
   - <img src="screenshots/mongodb-intro-3.png" width="800">
-  - In Terminal
+  - Use `Mongo Shell`
 
     - Use command `mongo` to start mongo database server locally and have access to mongo Shell
     - In mongo shell, the data that we create is always document so we have to create that document inside a collection by specifying the collection before inserting a new document.
@@ -270,13 +270,15 @@
         > db.tours.deleteMany({}) --> to delete ALL documents
         ```
 
-  - In MongoDB Compass
+  - Use MongoDB Compass
 
     - <img src="screenshots/compass-insert-doc-1.png" width="200"> <img src="screenshots/compass-insert-doc-2.png" width="200">
     - <img src="screenshots/compass-edit-delete-doc-options.png" width="400">
     - <img src="screenshots/compass-query-doc.png" width="500">
 
-  - Instead of using local database server, we will use `Atlas` MongoDB cloud Database.
+  - Use `Atlas` - Remote MongoDB Database Server
+
+    - The MongoDB database server created by `mongo` in terminal is a local server. `Atlas` is a db server on the cloud.
     - Create a free account on `Atlas` website
     - Create a new project => new cluster
     - <img src="screenshots/atlas-1.png" width="500">
@@ -292,3 +294,49 @@
       - <img src="screenshots/atlas-6.png" width="500">
       - After finishing connect MongoDB Compass with the remote DB, we want to connect Mongo Shell with the remote DB too. Go back to Atlas Natours' cluster, click Connect, and then choose to connect to MongoDB Shell. Then copy the connection string and run it in the terminal. When being asked for password, use that same password in the step above.
       - <img src="screenshots/atlas-7.png" width="500">
+
+  - Connect MongoBD to Node.js Application
+
+    - Connect with local Mongo DB server. Make sure to keep the MongoDB shell running. Use this connection string in `config.env`
+      ```
+      DATABASE_LOCAL=mongodb://localhost:27017/natours
+      ```
+    - Connect with remote DB `Atlas`
+      - Similar to the steps above, now we choose the option `Connect Your Application` to get the connection string. Remember to choose `Node.js` in the `DRIVER` box
+      - <img src="screenshots/atlas-8.png" width="500">
+      - Go to `config.env` file in Natours folder and paste the string like this
+        ```
+        DATABASE=mongodb+srv://ngan:<password>@cluster0-rjvfu.mongodb.net/test?retryWrites=true&w=majority
+        ```
+      - The `<password>` part is where we will put our real password in => change it to uppercase to make it easier to see
+      - `test` in this string is the `test` database that's being created by Mongo Atlas when we first created the Project. But we don't want to use `test`, we want to use our Natours db. So we need to replace that
+        ```
+        DATABASE=mongodb+srv://ngan:<PASSWORD>@cluster0-rjvfu.mongodb.net/natours?retryWrites=true&w=majority
+        ```
+    - Use MongoDB in the Node.js Application: We need to install a MongoDB driver for Node.js, for example `Mongoose`. It is a software that allows Node.js code to access and interact with a MongoDB db.
+
+      - Install Mongoose `npm i mongoose@5`
+      - Configure `Mongoose` in `server.js`
+
+        ```js
+        const mongoose = require('mongoose');
+        const dotenv = require('dotenv');
+
+        dotenv.config({ path: './config.env' });
+
+        const DB = process.env.DATABASE.replace(
+          '<PASSWORD>',
+          process.env.DATABASE_PASSWORD
+        );
+
+        mongoose
+          .connect(DB, {
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useFindAndModify: false,
+            useUnifiedTopology: true,
+          })
+          .then((con) => console.log('DB connection successful'));
+        ```
+
+  - ### Mongoose
