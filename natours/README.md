@@ -269,3 +269,8 @@
         { "acknowledged" : true, "deletedCount" : 1 }
         > db.tours.deleteMany({}) --> to delete ALL documents
         ```
+
+  - In MongoDB Compass
+    - <img src="screenshots/compass-insert-doc-1.png" width="200"> <img src="screenshots/compass-insert-doc-2.png" width="200">
+    - <img src="screenshots/compass-edit-delete-doc-options.png" width="400">
+    - <img src="screenshots/compass-query-doc.png" width="500">
