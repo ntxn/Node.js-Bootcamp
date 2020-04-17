@@ -271,6 +271,24 @@
         ```
 
   - In MongoDB Compass
+
     - <img src="screenshots/compass-insert-doc-1.png" width="200"> <img src="screenshots/compass-insert-doc-2.png" width="200">
     - <img src="screenshots/compass-edit-delete-doc-options.png" width="400">
     - <img src="screenshots/compass-query-doc.png" width="500">
+
+  - Instead of using local database server, we will use `Atlas` MongoDB cloud Database.
+    - Create a free account on `Atlas` website
+    - Create a new project => new cluster
+    - <img src="screenshots/atlas-1.png" width="500">
+    - Connect the remote database on `Atlas` with the Compass app and Mongo Shell on our computer
+      - In the `Cluster0`'s sandbox, click `CONNECT` button. Add your IP address to be whitelisted. Create a username and password to connect to this cloud natours db.
+      - <img src="screenshots/atlas-2a.png" width="310"> <img src="screenshots/atlas-2b.png" width="320">
+      - <img src="screenshots/atlas-3.png" width="500">
+      - In the next step, choose to connect to MongoBD Compass -> I have MongoDB Compass -> Copy the connection string
+      - <img src="screenshots/atlas-4.png" width="500">
+      - Open MongoDB Compass, on the toolbar, click connect -> connect to. The information in the above string will be automatically added to the form, add the password you created before, then click Connect.
+      - <img src="screenshots/atlas-5.png" width="500">
+      - Once it is connected to your MongoDB Compass, create a new DB
+      - <img src="screenshots/atlas-6.png" width="500">
+      - After finishing connect MongoDB Compass with the remote DB, we want to connect Mongo Shell with the remote DB too. Go back to Atlas Natours' cluster, click Connect, and then choose to connect to MongoDB Shell. Then copy the connection string and run it in the terminal. When being asked for password, use that same password in the step above.
+      - <img src="screenshots/atlas-7.png" width="500">
