@@ -145,6 +145,7 @@
       - We written an NPM script `"start": "nodemon server.js"` in `package.json` to start the Node.js app
 
     - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/ffa6a4e674bd6bf3633fee1e1a325ded0ec5c37c">Param Middleware</a>
+
       - `router.param(parameterName, handler)` is a middleware that will run the handler if the request url has a param that matches the provided parameterName.
       - The signature of the handler function being passed to a param middleware:
         ```js
@@ -154,3 +155,11 @@
         };
         ```
       - In this commit, we created a `checkID` param handler in `tourController` to validate ID before calling the final handler. This `checkID` function is then called in `tourRoutes`'s `router.param`
+
+    - <a href="#">Serving Static Files by middleware `express.static`</a>
+      - Static files are files in the file system that cannot be accessed using routes like the `overview.html` or images in the `public` folder.
+      - For example, if we try to access `http://127.0.0.1:3000/public/overview.html` we will get an error because we didn't define any routes for that link
+      - In order to access static files, we need to use middleware `app.use(express.static(`\${\_\_dirname}/public`));`
+        - We want to serve all files in the `public` folder => `public` folder becomes the root folder of the app.
+        - To access `overview.html` we have to remove public from the previous URL `http://127.0.0.1:3000/overview.html` because when express app cannot match that URL to any of the defined routes, it will go to the `public` folder to search for the file.
+        - We can also access to an image in img folder by `http://127.0.0.1:3000/img/pin.png` but we will get an error if we try to access only the `img` folder `http://127.0.0.1:3000/img/` because it's not a file so express app will try to search for a matched route
