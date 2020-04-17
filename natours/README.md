@@ -197,8 +197,10 @@
   - <img src="screenshots/mongodb-intro-2.png" width="800">
   - <img src="screenshots/mongodb-intro-3.png" width="800">
   - In Terminal
+
     - Use command `mongo` to start mongo database server locally and have access to mongo Shell
     - In mongo shell, the data that we create is always document so we have to create that document inside a collection by specifying the collection before inserting a new document.
+
     ```
     > use natours-test
     switched to db natours-test
@@ -213,7 +215,57 @@
     { "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
     > quit()
     ```
+
     - `use natours-test` will create a new database `natours-test` if it doesn't exist in mongo server and then switch from the current db to db `natours-test`
     - `db` refers to the current db we're in
     - `db.tours.insertOne(...)` will create a new `tours` collection if it's not already existed, then insert the new document in.
     - The parameter of `insertOne` can be a JavaScript Object
+
+    - CRUD:
+      - Create: `insertOne` or `insertMany`
+        ```
+        > db.tours.insertMany([{ name: "The Sea Explorer", price: 497, rating: 4.8 }, { name: "The Snow Adventurer", price: 997, rating: 4.9, difficulty: "easy" }])
+        {
+          "acknowledged" : true,
+          "insertedIds" : [
+            ObjectId("5e99ec436d049382d16d513b"),
+            ObjectId("5e99ec436d049382d16d513c")
+          ]
+        }
+        ```
+      - Read: `find()` or `find({ search criteria })`. Search criteria examples:
+        - `{ name: "The Forest Hiker" }` or `{ difficulty: "easy" }`
+        - `{ price: {$lte: 500} }`
+        - `{ price: {$lt: 500}, rating: {$gte: 4.8} }`
+        - `{ $or: [ {price: {$lt: 500}}, {rating: {$gte: 4.8}} ] }`
+        - Projection: `db.tours.find({ $or: [ {price: {$gt: 500}}, {rating: {$gte: 4.8}} ] }, {name: 1})`
+        ```
+        > db.tours.find()
+        { "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
+        { "_id" : ObjectId("5e99ec436d049382d16d513b"), "name" : "The Sea Explorer", "price" : 497, "rating" : 4.8 }
+        { "_id" : ObjectId("5e99ec436d049382d16d513c"), "name" : "The Snow Adventurer", "price" : 997, "rating" : 4.9, "difficulty" : "easy" }
+        > db.tours.find({ name: "The Forest Hiker" })
+        { "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
+        > db.tours.find({ price: {$lte: 500} })
+        { "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
+        { "_id" : ObjectId("5e99ec436d049382d16d513b"), "name" : "The Sea Explorer", "price" : 497, "rating" : 4.8 }
+        > db.tours.find({ $or: [ {price: {$gt: 500}}, {rating: {$gte: 4.8}} ] }, {name: 1})
+        { "_id" : ObjectId("5e99ec436d049382d16d513b"), "name" : "The Sea Explorer" }
+        { "_id" : ObjectId("5e99ec436d049382d16d513c"), "name" : "The Snow Adventurer" }
+        ```
+      - Update: `updateOne` or `updateMany`
+        ```
+        > db.tours.updateOne({ name: "The Snow Adventurer" }, { $set: {price: 597} })
+        { "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+        > db.tours.updateMany({ price: {$gt: 500}, rating: {$gte: 4.8} }, { $set: {premium: true} } )
+        { "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+        ```
+        - `updateOne` or `updateMany` requires 2 objects. First obj is similar to what we pass to `find()` in order to find the document that we want to make changes to. Second obj is the properties that we want to be updated to `price` or newly created `premium`.
+        - This second object has to include `$set` operator.
+        - If there are multiple documents that matches the object the `updateOne` will only make changes to the first document. So if we know there are multiple matches, we should use `updateMany` to make sure the change will be applied to all.
+      - Delete: `deleteOne`, `deleteMany`
+        ```
+        > db.tours.deleteMany({ rating: {$lt: 4.8} })
+        { "acknowledged" : true, "deletedCount" : 1 }
+        > db.tours.deleteMany({}) --> to delete ALL documents
+        ```
