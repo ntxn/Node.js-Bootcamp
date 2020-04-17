@@ -1,3 +1,21 @@
+- ## Environment Variables <a href="#">Commit Link</a>
+
+  - `Node.js` app can run in different environment such as development environment or production environment.
+  - Depending on which environment it's running on, we can have different setting like turning on/off debugging/logging, using different databases, etc. These settings are setup in the environment variables.
+  - By default, `express` sets the environment to development
+  - We can check which environment the express app is running on by `app.get('env')`. This `env` variable is set by express
+  - Node.js also set many environment variables at `process.env`. The `process` module comes from CORE modules. It's available to all module and we don't need to require it.
+  - In express, many packages depends on the environment variable called `NODE_ENV`, which defines whether we're in development or production mode, but express do not define this variable so we have to do that manually. Set environment variable using:
+    - Command line or a script in package.json: `NODE_ENV=development nodemon server.js` or
+    - Write a `config.env` file:
+      ```
+      NODE_ENV=development
+      PORT=8000
+      USER=ngan
+      PASSWORD=123456
+      ```
+      - For Node.js to access those environment variables in `config.env`, we use a 3rd party package call `dotenv` `npm i dotenv`. After running `dotenv.config({ path: './config.env' });` in `server.js`, `process.env` now will include all variables above
+
 - ## EXPRESS
 
   - <img src="screenshots/express-definition.png" width="800">
@@ -156,7 +174,7 @@
         ```
       - In this commit, we created a `checkID` param handler in `tourController` to validate ID before calling the final handler. This `checkID` function is then called in `tourRoutes`'s `router.param`
 
-    - <a href="#">Serving Static Files by middleware `express.static`</a>
+    - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/db5127b5027474ad2d19c4cf253ff59f624cab50">Serving Static Files by middleware `express.static`</a>
       - Static files are files in the file system that cannot be accessed using routes like the `overview.html` or images in the `public` folder.
       - For example, if we try to access `http://127.0.0.1:3000/public/overview.html` we will get an error because we didn't define any routes for that link
       - In order to access static files, we need to use middleware `app.use(express.static(`\${\_\_dirname}/public`));`
