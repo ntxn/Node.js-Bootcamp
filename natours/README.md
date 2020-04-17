@@ -1,4 +1,4 @@
-- ## Environment Variables <a href="#">Commit Link</a>
+- ## Environment Variables
 
   - `Node.js` app can run in different environment such as development environment or production environment.
   - Depending on which environment it's running on, we can have different setting like turning on/off debugging/logging, using different databases, etc. These settings are setup in the environment variables.
@@ -15,6 +15,7 @@
       PASSWORD=123456
       ```
       - For Node.js to access those environment variables in `config.env`, we use a 3rd party package call `dotenv` `npm i dotenv`. After running `dotenv.config({ path: './config.env' });` in `server.js`, `process.env` now will include all variables above
+  - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/920d8f075b63fecf933b8fc6d0583d18d0d7e2e0">Commit Link</a>
 
 - ## EXPRESS
 
@@ -181,3 +182,10 @@
         - We want to serve all files in the `public` folder => `public` folder becomes the root folder of the app.
         - To access `overview.html` we have to remove public from the previous URL `http://127.0.0.1:3000/overview.html` because when express app cannot match that URL to any of the defined routes, it will go to the `public` folder to search for the file.
         - We can also access to an image in img folder by `http://127.0.0.1:3000/img/pin.png` but we will get an error if we try to access only the `img` folder `http://127.0.0.1:3000/img/` because it's not a file so express app will try to search for a matched route
+
+- ## Setting up ESLint + Prettier in VS Code
+  - Install these development dependency
+    ```
+    npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react --save-dev
+    ```
+  - Add rules to `.eslintrc.json`
