@@ -371,7 +371,19 @@
           },
         });
         ```
-    - Step 2: Create a model using a defined Schema
+    - Step 2: Create a model using a defined Schema. This model will then be a `collection` in the database
       ```js
       const Tour = mongoose.model('Tour', tourSchema);
+      ```
+    - Step 3: Create Documents from our Model. This will be a document of the Model collection. Mongoose allows us to use JavaScript to create an instance of a Tour model similar to JS classes. Since the doc is an instance of a class, it has access to some methods as well. For example, `doc.save()` will save the newly created document to its Model collection in db. `doc.save()` returns a Promise.
+      ```js
+      const testTour = new Tour({
+        name: 'The Forest Hiker',
+        rating: 4.7,
+        price: 497,
+      });
+      testTour
+        .save()
+        .then((doc) => console.log(doc))
+        .catch((err) => console.log('ERROR: ', err));
       ```
