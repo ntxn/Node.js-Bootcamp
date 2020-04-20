@@ -389,7 +389,7 @@
         .catch((err) => console.log('ERROR: ', err));
       ```
       - We can also use `Tour.create({})` then pass in the data as above as parameter. This will create and save new doc to the Tour collection, then return a Promise
-    - <a href="#">Updating APIs CRUD operations with `Atlas MongoDB` using `Mongoose` driver</a>
+    - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3782886f4bac35fb055ab614d2cebb12055faacc">Updating APIs CRUD operations with `Atlas MongoDB` using `Mongoose` driver</a>
 
       - Removed several middleware like param middleware to check for ID, and middleware to check the body of a POST request because those are not nessessary anymore. By using `Mongoose` and its Model, we'll be catching for err from Model's functions.
       - Note: if the body of POST request to create new tour contains for fields than the Schema, mongoose will ignore those extra fields.
