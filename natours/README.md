@@ -340,3 +340,6 @@
         ```
 
   - ### Mongoose
+    - <img src="screenshots/mongoose-intro.png" width="400">
+    - Mongoose is a layer of abstraction over the regular MongoDB Driver.
+    - An Object Data Modeling (ODM) library is a way for us to write JavaScript code that interacts with database
