@@ -340,6 +340,7 @@
         ```
 
   - ### Mongoose
+
     - <img src="screenshots/mongoose-intro.png" width="400">
     - Mongoose is a layer of abstraction over the regular MongoDB Driver.
     - An Object Data Modeling (ODM) library is a way for us to write JavaScript code that interacts with database
@@ -387,3 +388,15 @@
         .then((doc) => console.log(doc))
         .catch((err) => console.log('ERROR: ', err));
       ```
+
+  - ### Model-View-ConTroller: MVC Back-End Architecture
+
+    - `MODEL` layer - Concerns everything related to application data and business logic
+    - `CONTROLLER` layer - Application Logic - Functions of the Controller is to handle application requests, interact with MODEL and send back responses to the clients
+    - `VIEW` layer - Presentation logic - neccessary if we have a graphical interface in our app (in other words, if we build a server-side rendering website). VIEW layer consists of the templates used to generate the view/website that will be sent back to the clients
+    - Using this architecture allows us to write a more modular application, which makes it easier to maintain in scale
+    - The goal of the `ROUTER` is to delegate the request to the right function in of the controllers
+    - <img src="screenshots/mvc-1.png" width="800">
+
+    - We want to separate application logic and business logic
+    - <img src="screenshots/mvc-2.png" width="800">
