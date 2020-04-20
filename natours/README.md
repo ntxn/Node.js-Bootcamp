@@ -388,6 +388,42 @@
         .then((doc) => console.log(doc))
         .catch((err) => console.log('ERROR: ', err));
       ```
+      - We can also use `Tour.create({})` then pass in the data as above as parameter. This will create and save new doc to the Tour collection, then return a Promise
+    - <a href="#">Updating APIs CRUD operations with `Atlas MongoDB` using `Mongoose` driver</a>
+
+      - Removed several middleware like param middleware to check for ID, and middleware to check the body of a POST request because those are not nessessary anymore. By using `Mongoose` and its Model, we'll be catching for err from Model's functions.
+      - Note: if the body of POST request to create new tour contains for fields than the Schema, mongoose will ignore those extra fields.
+
+      ```js
+      const Tour = require('./../models/tourModel');
+
+      exports.createTour = async (req, res) => {
+        try {
+          const newTour = await Tour.create(req.body);
+          res.status(201).json({
+            status: 'success',
+            data: { tour: newTour },
+          });
+        } catch (err) {
+          res.status(400).json({
+            status: 'fail',
+            message: 'Invalid data sent',
+          });
+        }
+      };
+
+      const tours = await Tour.find(); // converts the result into JS object
+      const tour = await Tour.findById(req.params.id); // ~ Tour.findOne({ _id: req.params.id })
+      const updatedTour = await Tour.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+      await Tour.findByIdAndDelete(req.params.id);
+      ```
 
   - ### Model-View-ConTroller: MVC Back-End Architecture
 
@@ -400,3 +436,4 @@
 
     - We want to separate application logic and business logic
     - <img src="screenshots/mvc-2.png" width="800">
+    - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f905bb2141a99dab65b9f4e60f240cc68d4b06c2">Commit Link</a>

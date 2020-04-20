@@ -4,7 +4,7 @@
   "description": "Learning Server-side Web Development with Node.js, Express, MongoDB with natours web app",
   "main": "app.js",
   "scripts": {
-    "start:dev": "nodemon server.js",
+    "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js"
   },
   "repository": {
@@ -29,5 +29,8 @@
     "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-react": "^7.19.0",
     "prettier": "^2.0.4"
+  },
+  "engines": {
+    "node": ">=13.12.0"
   }
 }
