@@ -343,3 +343,35 @@
     - <img src="screenshots/mongoose-intro.png" width="400">
     - Mongoose is a layer of abstraction over the regular MongoDB Driver.
     - An Object Data Modeling (ODM) library is a way for us to write JavaScript code that interacts with database
+    - Mongoose is all about model. Model is like a blueprint used to create documents (comparable to Classes in JS). Model is also used to do CRUD operations. To create a model, we need a Schema. Schema is used to describe the model, set default value, validate data, etc.
+    - Step 1: Create a schema:
+      - Basic Schema: use `mongoose.Schema` to specify a schema for the data
+        ```js
+        const tourSchema = new mongoose.Schema({
+          name: String,
+          rating: Number,
+          price: Number,
+        });
+        ```
+      - Schema with Schema Type Option. With Schema Type Option, we can define different options with validation for a field (called validator). Different Types have different options as well.
+        ```js
+        const tourSchema = new mongoose.Schema({
+          name: {
+            type: String,
+            required: [true, 'A tour must have a name'],
+            unique: true,
+          },
+          rating: {
+            type: Number,
+            default: 4.5,
+          },
+          price: {
+            type: Number,
+            required: [true, 'A tour must have a price'],
+          },
+        });
+        ```
+    - Step 2: Create a model using a defined Schema
+      ```js
+      const Tour = mongoose.model('Tour', tourSchema);
+      ```
