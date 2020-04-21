@@ -516,7 +516,7 @@
       }
       ```
 
-  - ### <a href="#">Pagination</a>
+  - ### <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c57cc9706d5f72f8db926519fa5cd6c6b2652f1d">Pagination</a>
 
     - Pagination allows users to select a certain page from the result in case we have a lot of results
     - `page=2&limit=10`: return page #2, each page contains 10 results
@@ -532,4 +532,27 @@
       }
 
       query = query.skip(skip).limit(limit);
+      ```
+
+  - ### <a href="#">Aliasing</a>
+
+    - A nice feature to add to an API is to provide an alias to a route request that might be popular and be requested all the time
+    - For example: 5 best tours `limit=5&sort=-ratingsAverage,price`
+    - In this example, this alias is part of the `tours` resource, so the endpoint will be `api/v1/tours/top-5`
+
+      ```js
+      // In tourRoutes.js, we create a new route for top-5 with a GET method
+      // Before running getAllTours, it will go through middleware aliasTopTours that will insert
+      // some queries to the req object. This makes it easy so that the users don't have to write them
+      router
+        .route('/top-5')
+        .get(tourController.aliasTopTours, tourController.getAllTours);
+
+      // In tourController.js
+      exports.aliasTopTours = (req, res, next) => {
+        req.query.limit = '5';
+        req.query.sort = '-ratingsAverage,price';
+        req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+        next();
+      };
       ```
