@@ -464,7 +464,7 @@
   - In `Express`, this query string is stored in `req.query`, which for the two example above will look like this `{ duration: '5', difficulty: 'easy' }` and `{ duration: { gte: '5' }, difficulty: 'easy', page: '2' }`. It's missing `$` for the operator `gte`.
   - Using query strings to apply filtering, sorting, limiting fields, pagination, & Aliasing
 
-  - ### <a href="#">Filtering</a>
+  - ### <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/73548f2da7911d00748ea36354ff2f9da5d07a3f">Filtering</a>
 
     - For filtering, since `req.query` is a query object already, we can easily pass it into `.find()` like in method 1 => `const tours = await Tour.find(req.query);`
     - However, if the query string contains other options such as sorting or pagination, then simply passing `req.query` into `find` won't work. To make it work, we need to remove them out from the query
@@ -486,3 +486,15 @@
 
       - The function `.find()` of a Mongoose Model returned a `Query` object. As soon as we use `await` on the returned Query Object, the query then will be executed and comes back with the documents that matches the query. So if we `await Tour.find(queryObj)`, we won't be able to chain other method to sort or limit fields. Thus, we save the Query into an object. Only when we finish chaining, we will `await` the Query and get the final result.
       - `/\b(gte|gt|lte|lt)\b/g`: a regular expression in JS. `\b` is to match the exact string specify inside `()`. `g` is to make it happen multiple time. That is if there are multiple matches of any of the terms in `()`, it will replace all of them
+
+  - ### <a href="#">Sorting</a>
+    - `sort=price`: sort by price in ascending order
+    - `sort=-price,ratingsAverage`: sort by price in descending order, if there's a tide, sort them by ratingsAverage
+    ```js
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ');
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort('-createdAt');
+    }
+    ```
