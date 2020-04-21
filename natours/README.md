@@ -487,9 +487,11 @@
       - The function `.find()` of a Mongoose Model returned a `Query` object. As soon as we use `await` on the returned Query Object, the query then will be executed and comes back with the documents that matches the query. So if we `await Tour.find(queryObj)`, we won't be able to chain other method to sort or limit fields. Thus, we save the Query into an object. Only when we finish chaining, we will `await` the Query and get the final result.
       - `/\b(gte|gt|lte|lt)\b/g`: a regular expression in JS. `\b` is to match the exact string specify inside `()`. `g` is to make it happen multiple time. That is if there are multiple matches of any of the terms in `()`, it will replace all of them
 
-  - ### <a href="#">Sorting</a>
+  - ### <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/4fa63e0f5c83f6a9a90285be58456f71418a5e2a">Sorting</a>
+
     - `sort=price`: sort by price in ascending order
     - `sort=-price,ratingsAverage`: sort by price in descending order, if there's a tide, sort them by ratingsAverage
+
     ```js
     if (req.query.sort) {
       const sortBy = req.query.sort.split(',').join(' ');
@@ -498,3 +500,17 @@
       query = query.sort('-createdAt');
     }
     ```
+
+  - ### <a href="#">Limiting Fields</a>
+    - Proving limiting fields option so that users can reduce fields that are unnecessary for them to lower data size sent back to them
+    - `fields=name,duration,difficulty,price`: query will only project fields name, duration, difficulty, & price
+    - `fields=-name,-__v`: query will exclude name and \_\_v
+    - We can also exclude fields directly from Schema by adding `select: false` in Type Option for fields we never want clients to see such as password or when a tour was created.
+      ```js
+      if (req.query.fields) {
+        const fields = req.query.fields.split(',').join(' ');
+        query = query.select(fields);
+      } else {
+        query = query.select('-__v');
+      }
+      ```
