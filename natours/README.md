@@ -438,7 +438,7 @@
       await Tour.findByIdAndDelete(req.params.id);
       ```
 
-- ## APIs - Improving APIs
+- ## API FEATURES - Improving APIs
 
   - There are 2 ways to query data in `MongoDB` db using `Mongoose`
 
@@ -534,7 +534,7 @@
       query = query.skip(skip).limit(limit);
       ```
 
-  - ### <a href="#">Aliasing</a>
+  - ### <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/ec56301a12242a80785aa0306267053d32107f62">Aliasing</a>
 
     - A nice feature to add to an API is to provide an alias to a route request that might be popular and be requested all the time
     - For example: 5 best tours `limit=5&sort=-ratingsAverage,price`
@@ -555,4 +555,16 @@
         req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
         next();
       };
+      ```
+
+  - ### <a href="#">APIFeatures module</a>
+    - Create all of the above features in a APIFeatures class so that it can be independent and reusable in other endpoints/modules
+    - To use it, we only need to chain it like this
+      ```js
+      const features = new APIFeatures(Tour.find(), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+      const tours = await features.query;
       ```
