@@ -191,6 +191,19 @@
     ```
   - Add rules to `.eslintrc.json`
 
+- ## Model-View-ConTroller: MVC Back-End Architecture
+
+  - `MODEL` layer - Concerns everything related to application data and business logic
+  - `CONTROLLER` layer - Application Logic - Functions of the Controller is to handle application requests, interact with MODEL and send back responses to the clients
+  - `VIEW` layer - Presentation logic - neccessary if we have a graphical interface in our app (in other words, if we build a server-side rendering website). VIEW layer consists of the templates used to generate the view/website that will be sent back to the clients
+  - Using this architecture allows us to write a more modular application, which makes it easier to maintain in scale
+  - The goal of the `ROUTER` is to delegate the request to the right function in of the controllers
+  - <img src="screenshots/mvc-1.png" width="800">
+
+  - We want to separate application logic and business logic
+  - <img src="screenshots/mvc-2.png" width="800">
+  - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f905bb2141a99dab65b9f4e60f240cc68d4b06c2">Commit Link</a>
+
 - ## MongoBD
 
   - <img src="screenshots/mongodb-intro-1.png" width="800">
@@ -425,15 +438,51 @@
       await Tour.findByIdAndDelete(req.params.id);
       ```
 
-  - ### Model-View-ConTroller: MVC Back-End Architecture
+- ## APIs - Improving APIs
 
-    - `MODEL` layer - Concerns everything related to application data and business logic
-    - `CONTROLLER` layer - Application Logic - Functions of the Controller is to handle application requests, interact with MODEL and send back responses to the clients
-    - `VIEW` layer - Presentation logic - neccessary if we have a graphical interface in our app (in other words, if we build a server-side rendering website). VIEW layer consists of the templates used to generate the view/website that will be sent back to the clients
-    - Using this architecture allows us to write a more modular application, which makes it easier to maintain in scale
-    - The goal of the `ROUTER` is to delegate the request to the right function in of the controllers
-    - <img src="screenshots/mvc-1.png" width="800">
+  - There are 2 ways to query data in `MongoDB` db using `Mongoose`
 
-    - We want to separate application logic and business logic
-    - <img src="screenshots/mvc-2.png" width="800">
-    - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f905bb2141a99dab65b9f4e60f240cc68d4b06c2">Commit Link</a>
+    - Method 1: Pass the query object into the `.find()` method:
+      ```js
+      const tours = await Tour.find({
+        duration: '5',
+        difficulty: 'easy',
+      });
+      ```
+    - Method 2: Chaining special `Mongoose` methods to build the query similar to what we have above
+      ```js
+      const tours = await Tour.find()
+        .where('duration')
+        .equals(5)
+        .where('difficulty')
+        .equals('easy');
+      ```
+
+  - Endpoints with query strings:
+    - /api/v1/tours?duration=5&difficulty=easy, the query part starts from `?` so the query string is duration=5&difficulty=easy => equivalent to `{ difficulty: 'easy', duration: '5' }` when querying in Mongo Shell
+    - /api/v1/tours?duration[gte]=5&difficulty=easy: `{ duration: {$gte: 5}, difficulty: "easy" }`
+  - In `Express`, this query string is stored in `req.query`, which for the two example above will look like this `{ duration: '5', difficulty: 'easy' }` and `{ duration: { gte: '5' }, difficulty: 'easy', page: '2' }`. It's missing `$` for the operator `gte`.
+  - Using query strings to apply filtering, sorting, limiting fields, pagination, & Aliasing
+
+  - ### <a href="#">Filtering</a>
+
+    - For filtering, since `req.query` is a query object already, we can easily pass it into `.find()` like in method 1 => `const tours = await Tour.find(req.query);`
+    - However, if the query string contains other options such as sorting or pagination, then simply passing `req.query` into `find` won't work. To make it work, we need to remove them out from the query
+
+      ```js
+      const queryObj = { ...req.query }; // make a copy: destruring req.query and then put them in an object
+      const excludedFields = ['page', 'sort', 'limit', 'fields'];
+      excludedFields.forEach((field) => delete queryObj[field]);
+
+      let queryStr = JSON.stringify(queryObj);
+      queryStr = queryStr.replace(
+        /\b(gte|gt|lte|lt)\b/g,
+        (matchStr) => `$${matchStr}`
+      );
+      const query = Tour.find(JSON.parse(queryStr)); // the function find() returned a Query object
+
+      const tours = await query;
+      ```
+
+      - The function `.find()` of a Mongoose Model returned a `Query` object. As soon as we use `await` on the returned Query Object, the query then will be executed and comes back with the documents that matches the query. So if we `await Tour.find(queryObj)`, we won't be able to chain other method to sort or limit fields. Thus, we save the Query into an object. Only when we finish chaining, we will `await` the Query and get the final result.
+      - `/\b(gte|gt|lte|lt)\b/g`: a regular expression in JS. `\b` is to match the exact string specify inside `()`. `g` is to make it happen multiple time. That is if there are multiple matches of any of the terms in `()`, it will replace all of them
