@@ -501,7 +501,8 @@
     }
     ```
 
-  - ### <a href="#">Limiting Fields</a>
+  - ### <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f28ba50516bb9f16ae79848cbfc53b766465ef17">Limiting Fields</a>
+
     - Proving limiting fields option so that users can reduce fields that are unnecessary for them to lower data size sent back to them
     - `fields=name,duration,difficulty,price`: query will only project fields name, duration, difficulty, & price
     - `fields=-name,-__v`: query will exclude name and \_\_v
@@ -513,4 +514,22 @@
       } else {
         query = query.select('-__v');
       }
+      ```
+
+  - ### <a href="#">Pagination</a>
+
+    - Pagination allows users to select a certain page from the result in case we have a lot of results
+    - `page=2&limit=10`: return page #2, each page contains 10 results
+
+      ```js
+      const page = req.query.page * 1 || 1;
+      const limit = req.query.limit * 1 || 100;
+      const skip = (page - 1) * limit;
+
+      if (req.query.page) {
+        const numTours = await Tour.countDocuments();
+        if (skip >= numTours) throw new Error('This page does not exist');
+      }
+
+      query = query.skip(skip).limit(limit);
       ```
