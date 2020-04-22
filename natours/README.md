@@ -384,31 +384,33 @@
 
   - ### Connect MongoBD to Node.js Application
 
-    Connect with local Mongo DB server. Make sure to keep the MongoDB shell running. Use this connection string in `config.env`
+    - LOCAL MongoDB server
+
+    Make sure to keep the MongoDB Shell running. Use this connection string in `config.env`
 
     ```
     DATABASE_LOCAL=mongodb://localhost:27017/natours
     ```
 
-  - ### Connect MongoDB to remote DB `Atlas`
+    - REMOTE DB `Atlas`
 
-    -Similar to the steps above, now we choose the option `Connect Your Application` to get the connection string. Remember to choose `Node.js` in the `DRIVER` box
+      -Similar to the steps above, now we choose the option `Connect Your Application` to get the connection string. Remember to choose `Node.js` in the `DRIVER` box
 
-    <img src="screenshots/atlas-8.png" width="500">
+      <img src="screenshots/atlas-8.png" width="500">
 
-    -Go to `config.env` file in Natours folder and paste the string like this
+      -Go to `config.env` file in Natours folder and paste the string like this
 
-    ```
-    DATABASE=mongodb+srv://ngan:<password>@cluster0-rjvfu.mongodb.net/test?retryWrites=true&w=majority
-    ```
+      ```
+      DATABASE=mongodb+srv://ngan:<password>@cluster0-rjvfu.mongodb.net/test?retryWrites=true&w=majority
+      ```
 
-    The `<password>` part is where we will put our real password in => change it to uppercase to make it easier to see
+      The `<password>` part is where we will put our real password in => change it to uppercase to make it easier to see
 
-    `test` in this string is the `test` database that's being created by Mongo Atlas when we first created the Project. But we don't want to use `test`, we want to use our Natours db. So we need to replace that
+      `test` in this string is the `test` database that's being created by Mongo Atlas when we first created the Project. But we don't want to use `test`, we want to use our Natours db. So we need to replace that
 
-    ```
-    DATABASE=mongodb+srv://ngan:<PASSWORD>@cluster0-rjvfu.mongodb.net/natours?retryWrites=true&w=majority
-    ```
+      ```
+      DATABASE=mongodb+srv://ngan:<PASSWORD>@cluster0-rjvfu.mongodb.net/natours?retryWrites=true&w=majority
+      ```
 
   - ### Use MongoDB in the Node.js Application:
 
@@ -527,7 +529,47 @@
     await Tour.findByIdAndDelete(req.params.id);
     ```
 
-  - ### <a href="#">MongoDB Aggregation Pipeline Using Mongoose</a>
+  - ### <a href="#">MongoDB AGGREGATION PIPELINE Using Mongoose</a>
+
+    -Refer to these documentations for <a href="https://docs.mongodb.com/manual/reference/operator/aggregation/">Aggregation Pipeline OPERATORS</a> and <a href="https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/">Aggregation Pipeline STAGES</a>
+
+    -MongoDB’s aggregation framework is modeled on the concept of data processing pipelines. Documents enter a multi-stage pipeline that transforms the documents into an aggregated result
+
+    <img src="screenshots/aggregation-pipeline-example.png" width="800">
+
+    -All except the `$out`, `$merge`, and `$geoNear` stages can appear multiple times in a pipeline
+
+    -Example of using Agrregation Pipeline with Mongoose
+
+    ```js
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } },
+      },
+      {
+        $group: {
+          _id: { $toUpper: '$difficulty' },
+          numTours: { $sum: 1 },
+          numRatings: { $sum: '$ratingsQuantity' },
+          avgRating: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+      {
+        $sort: { avgPrice: 1 },
+      },
+    ]);
+    ```
+
+    -`Tour.aggregate()` takes an array of stages and returns an Aggregation Object. This Aggregation Object is executed when we use `await`
+
+    -`$match` stage simply means filtering documents
+
+    -`$group` stage: `_id` refers to which field will the result be grouped by, this field will become the new id
+
+    -Stages appears after `$group` can only do more operations on the fields declared in the `$group` stage
 
 - ## API FEATURES - Improving APIs
 
