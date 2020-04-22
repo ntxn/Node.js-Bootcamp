@@ -452,7 +452,9 @@
   -Mongoose is all about model. Model is like a blueprint used to create documents (comparable to Classes in JS). Model is also used to do CRUD operations. To create a model, we need a Schema. Schema is used to describe the model, set default value, validate data, etc.
 
   - ### Step 1: Create a schema:
-    Basic Schema: use `mongoose.Schema` to specify a schema for the data
+
+    -Basic Schema: use `mongoose.Schema` to specify a schema for the data
+
     ```js
     const tourSchema = new mongoose.Schema({
       name: String,
@@ -460,24 +462,54 @@
       price: Number,
     });
     ```
-    Schema with Schema Type Option. With Schema Type Option, we can define different options with validation for a field (called validator). Different Types have different options as well.
+
+    -Schema with Schema Type Option. With Schema Type Option, we can define different options with validation for a field (called validator). Different Types have different options as well.
+
     ```js
-    const tourSchema = new mongoose.Schema({
-      name: {
-        type: String,
-        required: [true, 'A tour must have a name'],
-        unique: true,
+    const tourSchema = new mongoose.Schema(
+      {
+        name: {
+          type: String,
+          required: [true, 'A tour must have a name'],
+          unique: true,
+        },
+        rating: {
+          type: Number,
+          default: 4.5,
+        },
+        duration: {
+          type: Number,
+          required: [true, 'A tour must have a duration'],
+        },
       },
-      rating: {
-        type: Number,
-        default: 4.5,
-      },
-      price: {
-        type: Number,
-        required: [true, 'A tour must have a price'],
-      },
+      {
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+      }
+    );
+    ```
+
+    -<a href="#">VIRTUAL PROPERTIES</a>: Fields defined on Schema that are persisted (i.e. won't be saved to the db to save space). Virtual Properties are used for fields that can be derived from one another. For example, we want money in different currency, or distances in miles and km
+
+    The virtual properties will be created each time we get data out of the db, so the `get` function here is the `getter`. Inside this `get` method, we need to use a real function, not arrow function because we need to refer to `this` keyword of the current object.
+
+    We cannot use virtual properties in a query because it doesn't exist in the db.
+
+    ```js
+    tourSchema.virtual('durationWeeks').get(function () {
+      return this.duration / 7;
     });
     ```
+
+    To make virtual properties to be displayed in a response, we need to pass an option to the Schema:
+
+    ```js
+    {
+      toJSON: { virtuals: true },
+      toObject: { virtuals: true },
+    }
+    ```
+
   - ### Step 2: Create a model using a defined Schema.
     This model will then be a `collection` in the database
     ```js
@@ -529,7 +561,7 @@
     await Tour.findByIdAndDelete(req.params.id);
     ```
 
-  - ### <a href="#">MongoDB AGGREGATION PIPELINE Using Mongoose</a>
+  - ### <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/1398044a34b4225690da1a2c369b6fbb296eeee1">MongoDB AGGREGATION PIPELINE Using Mongoose</a>
 
     -Refer to these documentations for <a href="https://docs.mongodb.com/manual/reference/operator/aggregation/">Aggregation Pipeline OPERATORS</a> and <a href="https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/">Aggregation Pipeline STAGES</a>
 
