@@ -548,7 +548,7 @@
       });
       ```
 
-    - <a href="#">AGGREGATION MIDDLEWARE</a>
+    - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/a6abf69ca39ee1b8bccae37d1c133de29999da8a">AGGREGATION MIDDLEWARE</a>
 
       Allows us to run functions before/after running aggregation pipeline. `this` refers to the Aggregation object
 
@@ -558,6 +558,46 @@
         console.log(this.pipeline());
         next();
       });
+      ```
+
+    -<a href="#">DATA VALIDATION</a>: checking if the entered value is valid for each field according to the Schema and if all the required fields are included. We do data validation on the Schema because of the Fat Model Thin Controller philosophy.
+
+    - Built-in Validators: such as `required` is a built-in validator for all data types (`unique` is not a validator)
+
+      -`maxlength`, `minlength`: `String` validators to indicate a max/min length this field can have
+
+      -`max`, `min`: `Number` and `Date` validators to indicate a max/min value this field can have => `min: [1, 'Rating must be above 1.0']`
+
+      -`enum`: Available for `String` to indicate which values are allowed for this field
+
+      ```js
+      enum: {
+        values: ['easy', 'medium', 'difficult'],
+        message: 'Difficulty is either: easy, medium, difficult',
+      }
+      ```
+
+    - Custom Validators: a validator is a function that returns True or False. If it's False, there's a Validation error. `this` will only point to the current document when we create a NEW document, it won't work on an update
+
+      ```js
+      priceDiscount: {
+        type: Number,
+        validate: {
+          validator: function (inputValue) {
+            return inputValue < this.price;
+          },
+          message: 'Discount price ({VALUE}) should be below the regular price',
+        },
+      }
+      ```
+
+      We can also use 3rd party validators such as this <a href="https://github.com/validatorjs/validator.js?files=1">String validator</a>
+
+      ```js
+      const validator = require('validator');
+      // some code
+      validate: [validator.isAlpha, 'Tour name must only contain characters'];
+      // some more code
       ```
 
   - ### Step 2: Create a model using a defined Schema.
