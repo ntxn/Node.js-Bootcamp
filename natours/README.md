@@ -528,9 +528,11 @@
       });
       ```
 
-    - <a href="#">QUERY MIDDLEWARE</a>
+    - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/8cd4e3024ceaeaaf3e22e9df6065dcac614c3b40">QUERY MIDDLEWARE</a>
 
       Allows us to run some functions before and/or after a certain query is executed. For example, the below code is executed before and after this line of code `const tours = await features.query;`
+
+      `this` refers to the current Query object
 
       ```js
       tourSchema.pre(/^find/, function (next) {
@@ -542,6 +544,18 @@
       tourSchema.post(/^find/, function (docs, next) {
         console.log(`Query took ${Date.now() - this.start} milliseconds`);
         console.log(docs);
+        next();
+      });
+      ```
+
+    - <a href="#">AGGREGATION MIDDLEWARE</a>
+
+      Allows us to run functions before/after running aggregation pipeline. `this` refers to the Aggregation object
+
+      ```js
+      tourSchema.pre('aggregate', function (next) {
+        this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+        console.log(this.pipeline());
         next();
       });
       ```
