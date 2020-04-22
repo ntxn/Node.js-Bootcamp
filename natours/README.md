@@ -512,18 +512,36 @@
 
     -MIDDLEWARE in Mongoose: Similar to Express, We can use middleware in Mongoose to make something happens in between 2 events. For example, each time a document is saved to the db, we can run a function between the save command and the actual saving of a document or also after the saving event. That's why Mongoose middleware is also called Pre and Post Hooks.
 
-    - <a href="#">DOCUMENT MIDDLEWARE</a>: middleware that can act on the currently processed document. It runs on `Model.Prototype.save()` and `Model.create()` but not `.insertMany()`. We can have multiple middleware for `pre` and `post`
+    - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f486a690ac677938cde198dba5bef6387e4872bb">DOCUMENT MIDDLEWARE</a>
+
+      Middleware that can act on the currently processed document. It runs on `Model.Prototype.save()` and `Model.create()` but not `.insertMany()`. We can have multiple middleware for `pre` and `post`
+
       ```js
       tourSchema.pre('save', function (next) {
         this.slug = slugify(this.name, { lower: true });
         next();
       });
-      tourSchema.pre('save', function (next) {
-        console.log(this);
-        next();
-      });
+
       tourSchema.post('save', function (doc, next) {
         console.log(doc);
+        next();
+      });
+      ```
+
+    - <a href="#">QUERY MIDDLEWARE</a>
+
+      Allows us to run some functions before and/or after a certain query is executed. For example, the below code is executed before and after this line of code `const tours = await features.query;`
+
+      ```js
+      tourSchema.pre(/^find/, function (next) {
+        this.find({ secretTour: { $ne: true } });
+        this.start = Date.now();
+        next();
+      });
+
+      tourSchema.post(/^find/, function (docs, next) {
+        console.log(`Query took ${Date.now() - this.start} milliseconds`);
+        console.log(docs);
         next();
       });
       ```
