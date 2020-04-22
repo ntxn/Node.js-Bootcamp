@@ -489,7 +489,7 @@
     );
     ```
 
-    -<a href="#">VIRTUAL PROPERTIES</a>: Fields defined on Schema that are persisted (i.e. won't be saved to the db to save space). Virtual Properties are used for fields that can be derived from one another. For example, we want money in different currency, or distances in miles and km
+    -<a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/6bc87cfb7acac23ca0a0629eacffae949030e24b">VIRTUAL PROPERTIES</a>: Fields defined on Schema that are persisted (i.e. won't be saved to the db to save space). Virtual Properties are used for fields that can be derived from one another. For example, we want money in different currency, or distances in miles and km
 
     The virtual properties will be created each time we get data out of the db, so the `get` function here is the `getter`. Inside this `get` method, we need to use a real function, not arrow function because we need to refer to `this` keyword of the current object.
 
@@ -509,6 +509,24 @@
       toObject: { virtuals: true },
     }
     ```
+
+    -MIDDLEWARE in Mongoose: Similar to Express, We can use middleware in Mongoose to make something happens in between 2 events. For example, each time a document is saved to the db, we can run a function between the save command and the actual saving of a document or also after the saving event. That's why Mongoose middleware is also called Pre and Post Hooks.
+
+    - <a href="#">DOCUMENT MIDDLEWARE</a>: middleware that can act on the currently processed document. It runs on `Model.Prototype.save()` and `Model.create()` but not `.insertMany()`. We can have multiple middleware for `pre` and `post`
+      ```js
+      tourSchema.pre('save', function (next) {
+        this.slug = slugify(this.name, { lower: true });
+        next();
+      });
+      tourSchema.pre('save', function (next) {
+        console.log(this);
+        next();
+      });
+      tourSchema.post('save', function (doc, next) {
+        console.log(doc);
+        next();
+      });
+      ```
 
   - ### Step 2: Create a model using a defined Schema.
     This model will then be a `collection` in the database
