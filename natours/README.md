@@ -801,7 +801,7 @@ if (req.query.sort) {
   }
   ```
 
-## PAGINATION(https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c57cc9706d5f72f8db926519fa5cd6c6b2652f1d)
+## [PAGINATION](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c57cc9706d5f72f8db926519fa5cd6c6b2652f1d)
 
 - Pagination allows users to select a certain page from the result in case we have a lot of results
 - `page=2&limit=10`: return page #2, each page contains 10 results
@@ -842,7 +842,7 @@ if (req.query.sort) {
   };
   ```
 
-## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/06aed2fababf8b63bdfe0fe843ab573f43e3b6b3">APIFeatures Module</a>
+## [APIFeatures Module](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/06aed2fababf8b63bdfe0fe843ab573f43e3b6b3)
 
 -Group all of the above features in a APIFeatures class so that it can be independent and reusable in other endpoints/modules
 
