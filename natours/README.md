@@ -14,6 +14,7 @@
   - [Restructuring Files](#restructuring-files)
   - [Param Middleware](#param-middleware)
   - [Serving Static Files by middleware express.static](#serving-static-files-by-middleware-expressstatic)
+  - [Handling Unhandled Routes](#handling-unhandled-routes)
 - **[MongoDB](#mongodb)**
   - [CRUD Operations](#crud-operations)
   - [Use Mongo Shell](#use-mongo-shell)
@@ -92,7 +93,12 @@ Start debugging by this command in terminal: `npm run debug`
 
 In `ndb`, set a breakpoint by clicking on the line number, then run the app by sending a request, for example. Once the code hit the breakpoint, it will resume `ndb` at that breakpoint with the current local and global data info on the right
 
-<img src="screenshots/ndb.png" width="800">
+<img src="screenshots/ndb-1.png" width="800">
+
+If we set a breakpoint in the `server.js` like in the screenshot, we will be able to see the middleware stack of the `router` (under `app`)
+
+<img src="screenshots/ndb-2.png" width="400">
+<img src="screenshots/ndb-3.png" width="500">
 
 # Model-View-Controller: MVC Back-End Architecture
 
@@ -297,6 +303,25 @@ app.use(express.static(`${__dirname}/public`));
 - We want to serve all files in the `public` folder => `public` folder becomes the root folder of the app.
 - To access `overview.html` we have to remove public from the previous URL `http://127.0.0.1:3000/overview.html` because when express app cannot match that URL to any of the defined routes, it will go to the `public` folder to search for the file.
 - We can also access to an image in img folder by `http://127.0.0.1:3000/img/pin.png` but we will get an error if we try to access only the `img` folder `http://127.0.0.1:3000/img/` because it's not a file so express app will try to search for a matched route
+
+## [Handling Unhandled Routes](#)
+
+When the clients try to access a route that might not be defined, or they misspell the route, we want to catch all of them and send back a json response
+
+`app.all`: apply this to all HTTP methods
+`'*'`: apply to all the routes that we didn't define above this line
+
+```js
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
+
+app.all('*', (req, res, next) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `Can't find ${req.originalUrl} on this server`,
+  });
+});
+```
 
 # MongoDB
 
