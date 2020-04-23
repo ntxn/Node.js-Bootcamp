@@ -1,3 +1,23 @@
+- ## Table Of Content
+
+  - ### [Environment Variables](#environment-variables)
+  - ### [APIs and RESTful API Design](#apis-and-restful-api-design)
+  - ### [Setting up ESLint + Prettier in VS Code](#setting-up-eslint--prettier-in-vs-code)
+  - ### [Model-View-Controller: MVC Back-End Architecture](#model-view-controller-mvc-back-end-architecture)
+  - # dsffsdf
+
+# Title 1
+
+## Title 2
+
+### Title 3
+
+#### Title 4
+
+##### Title 5
+
+###### Title 6
+
 - ## Environment Variables
 
   - `Node.js` app can run in different environment such as development environment or production environment.
@@ -42,7 +62,7 @@
   npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react --save-dev
   ```
 
-- ## Model-View-ConTroller: MVC Back-End Architecture
+- ## Model-View-Controller: MVC Back-End Architecture
 
   - `MODEL` layer - Concerns everything related to application data and business logic
   - `CONTROLLER` layer - Application Logic - Functions of the Controller is to handle application requests, interact with MODEL and send back responses to the clients
@@ -560,7 +580,7 @@
       });
       ```
 
-    -<a href="#">DATA VALIDATION</a>: checking if the entered value is valid for each field according to the Schema and if all the required fields are included. We do data validation on the Schema because of the Fat Model Thin Controller philosophy.
+    -<a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/07e42ace9ac0a5839d69c40e4861ad91800b8281">DATA VALIDATION</a>: checking if the entered value is valid for each field according to the Schema and if all the required fields are included. We do data validation on the Schema because of the Fat Model Thin Controller philosophy.
 
     - Built-in Validators: such as `required` is a built-in validator for all data types (`unique` is not a validator)
 
