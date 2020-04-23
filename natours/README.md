@@ -331,7 +331,7 @@ app.all('*', (req, res, next) => {
 
 For error handling in `Express`, we focus on Operational Errors. `Express` comes with Error Handling out of the box.
 
-- ### [Global Error Handler](#)
+- ### [Global Error Handler](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/83d58acc6e3aace82c47446b62a501223d9f41c4)
 
   All we have to do is to write a global express error handling middleware which will catch errors from all over the application like from route handlers or model validator, etc. The goal is for errors to end up in one central error handling middleware so we can send a nice response back to the client letting them know what happened.
 
@@ -362,6 +362,24 @@ For error handling in `Express`, we focus on Operational Errors. `Express` comes
   );
 
   app.use(globalErrorHandler);
+  ```
+
+- ### [Catching Errors in Async Functions](#)
+
+  Instead of using `try` `catch` block to catch errors from `async/await` function, we wrap the `async` function into another function that will handle the error so that we can remove the `try` `catch` block from the async function. This way, it makes the code more readable and delicate error handling to the global error handler
+
+  ```js
+  const catchAsync = (fn) => {
+    return (req, res, next) => fn(req, res, next).catch(next);
+  };
+
+  exports.createTour = catchAsync(async (req, res, next) => {
+    const newTour = await Tour.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      data: { tour: newTour },
+    });
+  });
   ```
 
 # MongoDB
