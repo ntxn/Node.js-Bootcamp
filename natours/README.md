@@ -382,9 +382,13 @@ For error handling in `Express`, we focus on Operational Errors. `Express` comes
   });
   ```
 
-- ### [Errors During Development vs Production](#)
+- ### [Errors During Development vs Production](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c3bcd97c83d2eadaa9332dc0e61516ac8af94c4e)
 
   In development, we'd want to get detailed errors but in production, we would not want to send long message of errors to the client. Additionally, when sending errors in Production, we want to send different messages to the clients depending on if it's an operational error or not. If it's not, we want to hide the error and only respond with a generic message. Check out the commit for changes in `errorController.js`
+
+- ### [Handle MongoDB Errors](#)
+
+  Errors that come back from the database doesn't have a statusCode or marked as `isOperational`, so the response sent to the client isn't accurate. That's why when it's a database error (ex: Invalid db IDs, Duplicate Fields, Validation Errors), we need to convert it to our custom `AppError` before sending a response to the clients.
 
 # MongoDB
 
