@@ -37,6 +37,7 @@
 
 - API: Application Programming Interface - A piece of software used by another piece of software to allow applications to talk to each other. APIs aren't only used to send data and not always related to web development. `Application` can mean many other things as long as the piece of software relatively stands alone. For example: `fs`, `http` modules in Node.js are APIs <= Node APIs, Browser's DOM JS API, etc.
 - The REST Architecture: REpresentational State Transfer - a way of building web APIs in a logical way making them easy to consume
+
   <img src="screenshots/restful-1.png" width="800">
 
   <img src="screenshots/restful-2.png" width="800">
@@ -265,192 +266,193 @@ npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-confi
 
   <img src="screenshots/mongodb-intro-3.png" width="800">
 
-- ## CRUD Operation:
+## CRUD Operation:
 
-  - CREATE: `insertOne` or `insertMany`
-    ```
-    > db.tours.insertMany([{ name: "The Sea Explorer", price: 497, rating: 4.8 }, { name: "The Snow Adventurer", price: 997, rating: 4.9, difficulty: "easy" }])
-    {
-      "acknowledged" : true,
-      "insertedIds" : [
-        ObjectId("5e99ec436d049382d16d513b"),
-        ObjectId("5e99ec436d049382d16d513c")
-      ]
-    }
-    ```
-  - READ: `find()` or `find({ search criteria })`. Search criteria examples:
-
-    -`{ name: "The Forest Hiker" }` or `{ difficulty: "easy" }`
-
-    -`{ price: {$lte: 500} }`
-
-    -`{ price: {$lt: 500}, rating: {$gte: 4.8} }`
-
-    -`{ $or: [ {price: {$lt: 500}}, {rating: {$gte: 4.8}} ] }`
-
-    -Projection: `db.tours.find({ $or: [ {price: {$gt: 500}}, {rating: {$gte: 4.8}} ] }, {name: 1})`
-
-    ```
-    > db.tours.find()
-    { "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
-    { "_id" : ObjectId("5e99ec436d049382d16d513b"), "name" : "The Sea Explorer", "price" : 497, "rating" : 4.8 }
-    { "_id" : ObjectId("5e99ec436d049382d16d513c"), "name" : "The Snow Adventurer", "price" : 997, "rating" : 4.9, "difficulty" : "easy" }
-    > db.tours.find({ name: "The Forest Hiker" })
-    { "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
-    > db.tours.find({ price: {$lte: 500} })
-    { "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
-    { "_id" : ObjectId("5e99ec436d049382d16d513b"), "name" : "The Sea Explorer", "price" : 497, "rating" : 4.8 }
-    > db.tours.find({ $or: [ {price: {$gt: 500}}, {rating: {$gte: 4.8}} ] }, {name: 1})
-    { "_id" : ObjectId("5e99ec436d049382d16d513b"), "name" : "The Sea Explorer" }
-    { "_id" : ObjectId("5e99ec436d049382d16d513c"), "name" : "The Snow Adventurer" }
-    ```
-
-  - UPDATE: `updateOne` or `updateMany`
-
-    ```
-    > db.tours.updateOne({ name: "The Snow Adventurer" }, { $set: {price: 597} })
-    { "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
-    > db.tours.updateMany({ price: {$gt: 500}, rating: {$gte: 4.8} }, { $set: {premium: true} } )
-    { "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
-    ```
-
-    - `updateOne` or `updateMany` requires 2 objects. First obj is similar to what we pass to `find()` in order to find the document that we want to make changes to. Second obj is the properties that we want to be updated to `price` or newly created `premium`.
-    - This second object has to include `$set` operator.
-    - If there are multiple documents that matches the object the `updateOne` will only make changes to the first document. So if we know there are multiple matches, we should use `updateMany` to make sure the change will be applied to all.
-
-  - DELETE: `deleteOne`, `deleteMany`
-    ```
-    > db.tours.deleteMany({ rating: {$lt: 4.8} })
-    { "acknowledged" : true, "deletedCount" : 1 }
-    > db.tours.deleteMany({}) --> to delete ALL documents
-    ```
-
-- ## Use `Mongo Shell`
-
-  Use command `mongo` to start mongo database server locally and have access to mongo Shell
-
-  In mongo shell, the data that we create is always document so we have to create that document inside a collection by specifying the collection before inserting a new document.
-
+- CREATE: `insertOne` or `insertMany`
   ```
-  > use natours-test
-  switched to db natours-test
-  > db.tours.insertOne({ name: "The Forest Hiker", price: 297, rating: 4.7 })
+  > db.tours.insertMany([{ name: "The Sea Explorer", price: 497, rating: 4.8 }, { name: "The Snow Adventurer", price: 997, rating: 4.9, difficulty: "easy" }])
   {
     "acknowledged" : true,
-    "insertedId" : ObjectId("5e99de416d049382d16d513a")
+    "insertedIds" : [
+      ObjectId("5e99ec436d049382d16d513b"),
+      ObjectId("5e99ec436d049382d16d513c")
+    ]
   }
-  > show collections
-  tours
+  ```
+- READ: `find()` or `find({ search criteria })`. Search criteria examples:
+
+  -`{ name: "The Forest Hiker" }` or `{ difficulty: "easy" }`
+
+  -`{ price: {$lte: 500} }`
+
+  -`{ price: {$lt: 500}, rating: {$gte: 4.8} }`
+
+  -`{ $or: [ {price: {$lt: 500}}, {rating: {$gte: 4.8}} ] }`
+
+  -Projection: `db.tours.find({ $or: [ {price: {$gt: 500}}, {rating: {$gte: 4.8}} ] }, {name: 1})`
+
+  ```
   > db.tours.find()
   { "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
-  > quit()
+  { "_id" : ObjectId("5e99ec436d049382d16d513b"), "name" : "The Sea Explorer", "price" : 497, "rating" : 4.8 }
+  { "_id" : ObjectId("5e99ec436d049382d16d513c"), "name" : "The Snow Adventurer", "price" : 997, "rating" : 4.9, "difficulty" : "easy" }
+  > db.tours.find({ name: "The Forest Hiker" })
+  { "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
+  > db.tours.find({ price: {$lte: 500} })
+  { "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
+  { "_id" : ObjectId("5e99ec436d049382d16d513b"), "name" : "The Sea Explorer", "price" : 497, "rating" : 4.8 }
+  > db.tours.find({ $or: [ {price: {$gt: 500}}, {rating: {$gte: 4.8}} ] }, {name: 1})
+  { "_id" : ObjectId("5e99ec436d049382d16d513b"), "name" : "The Sea Explorer" }
+  { "_id" : ObjectId("5e99ec436d049382d16d513c"), "name" : "The Snow Adventurer" }
   ```
 
-  - `use natours-test` will create a new database `natours-test` if it doesn't exist in mongo server and then switch from the current db to db `natours-test`
-  - `db` refers to the current db we're in
-  - `db.tours.insertOne(...)` will create a new `tours` collection if it's not already existed, then insert the new document in.
-  - The parameter of `insertOne` can be a JavaScript Object
+- UPDATE: `updateOne` or `updateMany`
 
-- ## Use MongoDB Compass
+  ```
+  > db.tours.updateOne({ name: "The Snow Adventurer" }, { $set: {price: 597} })
+  { "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+  > db.tours.updateMany({ price: {$gt: 500}, rating: {$gte: 4.8} }, { $set: {premium: true} } )
+  { "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+  ```
 
-  <img src="screenshots/compass-insert-doc-1.png" width="200"> <img src="screenshots/compass-insert-doc-2.png" width="200">
+  - `updateOne` or `updateMany` requires 2 objects. First obj is similar to what we pass to `find()` in order to find the document that we want to make changes to. Second obj is the properties that we want to be updated to `price` or newly created `premium`.
+  - This second object has to include `$set` operator.
+  - If there are multiple documents that matches the object the `updateOne` will only make changes to the first document. So if we know there are multiple matches, we should use `updateMany` to make sure the change will be applied to all.
 
-  <img src="screenshots/compass-edit-delete-doc-options.png" width="400">
+- DELETE: `deleteOne`, `deleteMany`
 
-  <img src="screenshots/compass-query-doc.png" width="500">
+  ```
+  > db.tours.deleteMany({ rating: {$lt: 4.8} })
+  { "acknowledged" : true, "deletedCount" : 1 }
+  > db.tours.deleteMany({}) --> to delete ALL documents
+  ```
 
-- ## Use `Atlas` - Remote MongoDB Database Server
+## Use `Mongo Shell`
 
-  -The MongoDB database server created by `mongo` in terminal is a local server. `Atlas` is a db server on the cloud.
+Use command `mongo` to start mongo database server locally and have access to mongo Shell
 
-  -Create a free account on `Atlas` website
+In mongo shell, the data that we create is always document so we have to create that document inside a collection by specifying the collection before inserting a new document.
 
-  -Create a new project => new cluster
+```
+> use natours-test
+switched to db natours-test
+> db.tours.insertOne({ name: "The Forest Hiker", price: 297, rating: 4.7 })
+{
+  "acknowledged" : true,
+  "insertedId" : ObjectId("5e99de416d049382d16d513a")
+}
+> show collections
+tours
+> db.tours.find()
+{ "_id" : ObjectId("5e99de416d049382d16d513a"), "name" : "The Forest Hiker", "price" : 297, "rating" : 4.7 }
+> quit()
+```
+
+- `use natours-test` will create a new database `natours-test` if it doesn't exist in mongo server and then switch from the current db to db `natours-test`
+- `db` refers to the current db we're in
+- `db.tours.insertOne(...)` will create a new `tours` collection if it's not already existed, then insert the new document in.
+- The parameter of `insertOne` can be a JavaScript Object
+
+## Use MongoDB Compass
+
+<img src="screenshots/compass-insert-doc-1.png" width="200"> <img src="screenshots/compass-insert-doc-2.png" width="200">
+
+<img src="screenshots/compass-edit-delete-doc-options.png" width="400">
+
+<img src="screenshots/compass-query-doc.png" width="500">
+
+## Use `Atlas` - Remote MongoDB Database Server
+
+-The MongoDB database server created by `mongo` in terminal is a local server. `Atlas` is a db server on the cloud.
+
+-Create a free account on `Atlas` website
+
+-Create a new project => new cluster
 
   <img src="screenshots/atlas-1.png" width="500">
 
-  -Connect the remote database on `Atlas` with the Compass app and Mongo Shell on our computer
+-Connect the remote database on `Atlas` with the Compass app and Mongo Shell on our computer
 
-  - In the `Cluster0`'s sandbox, click `CONNECT` button. Add your IP address to be whitelisted. Create a username and password to connect to this cloud natours db.
+- In the `Cluster0`'s sandbox, click `CONNECT` button. Add your IP address to be whitelisted. Create a username and password to connect to this cloud natours db.
 
-    <img src="screenshots/atlas-2a.png" width="310"> <img src="screenshots/atlas-2b.png" width="320">
+  <img src="screenshots/atlas-2a.png" width="310"> <img src="screenshots/atlas-2b.png" width="320">
 
-    <img src="screenshots/atlas-3.png" width="500">
+  <img src="screenshots/atlas-3.png" width="500">
 
-  - In the next step, choose to connect to MongoDB Compass -> I have MongoDB Compass -> Copy the connection string
+- In the next step, choose to connect to MongoDB Compass -> I have MongoDB Compass -> Copy the connection string
 
-    <img src="screenshots/atlas-4.png" width="500">
+  <img src="screenshots/atlas-4.png" width="500">
 
-  - Open MongoDB Compass, on the toolbar, click connect -> connect to. The information in the above string will be automatically added to the form, add the password you created before, then click Connect.
+- Open MongoDB Compass, on the toolbar, click connect -> connect to. The information in the above string will be automatically added to the form, add the password you created before, then click Connect.
 
-    <img src="screenshots/atlas-5.png" width="500">
+  <img src="screenshots/atlas-5.png" width="500">
 
-  - Once it is connected to your MongoDB Compass, create a new DB
+- Once it is connected to your MongoDB Compass, create a new DB
 
-    <img src="screenshots/atlas-6.png" width="500">
+  <img src="screenshots/atlas-6.png" width="500">
 
-  - After finishing connect MongoDB Compass with the remote DB, we want to connect Mongo Shell with the remote DB too. Go back to Atlas Natours' cluster, click Connect, and then choose to connect to MongoDB Shell. Then copy the connection string and run it in the terminal. When being asked for password, use that same password in the step above.
+- After finishing connect MongoDB Compass with the remote DB, we want to connect Mongo Shell with the remote DB too. Go back to Atlas Natours' cluster, click Connect, and then choose to connect to MongoDB Shell. Then copy the connection string and run it in the terminal. When being asked for password, use that same password in the step above.
 
-    <img src="screenshots/atlas-7.png" width="500">
+  <img src="screenshots/atlas-7.png" width="500">
 
-- ## Connect MongoDB to Node.js Application
+## Connect MongoDB to Node.js Application
 
-  - LOCAL MongoDB server
+- LOCAL MongoDB server
 
-  Make sure to keep the MongoDB Shell running. Use this connection string in `config.env`
+Make sure to keep the MongoDB Shell running. Use this connection string in `config.env`
+
+```
+DATABASE_LOCAL=mongodb://localhost:27017/natours
+```
+
+- REMOTE DB `Atlas`
+
+  -Similar to the steps above, now we choose the option `Connect Your Application` to get the connection string. Remember to choose `Node.js` in the `DRIVER` box
+
+  <img src="screenshots/atlas-8.png" width="500">
+
+  -Go to `config.env` file in Natours folder and paste the string like this
 
   ```
-  DATABASE_LOCAL=mongodb://localhost:27017/natours
+  DATABASE=mongodb+srv://ngan:<password>@cluster0-rjvfu.mongodb.net/test?retryWrites=true&w=majority
   ```
 
-  - REMOTE DB `Atlas`
+  The `<password>` part is where we will put our real password in => change it to uppercase to make it easier to see
 
-    -Similar to the steps above, now we choose the option `Connect Your Application` to get the connection string. Remember to choose `Node.js` in the `DRIVER` box
+  `test` in this string is the `test` database that's being created by Mongo Atlas when we first created the Project. But we don't want to use `test`, we want to use our Natours db. So we need to replace that
 
-    <img src="screenshots/atlas-8.png" width="500">
-
-    -Go to `config.env` file in Natours folder and paste the string like this
-
-    ```
-    DATABASE=mongodb+srv://ngan:<password>@cluster0-rjvfu.mongodb.net/test?retryWrites=true&w=majority
-    ```
-
-    The `<password>` part is where we will put our real password in => change it to uppercase to make it easier to see
-
-    `test` in this string is the `test` database that's being created by Mongo Atlas when we first created the Project. But we don't want to use `test`, we want to use our Natours db. So we need to replace that
-
-    ```
-    DATABASE=mongodb+srv://ngan:<PASSWORD>@cluster0-rjvfu.mongodb.net/natours?retryWrites=true&w=majority
-    ```
-
-- ## Use MongoDB in the Node.js Application:
-
-  We need to install a MongoDB driver for Node.js, for example `Mongoose`. It is a software that allows Node.js code to access and interact with a MongoDB db.
-
-  -Install Mongoose `npm i mongoose@5`
-
-  -Configure `Mongoose` in `server.js`
-
-  ```js
-  const mongoose = require('mongoose');
-  const dotenv = require('dotenv');
-
-  dotenv.config({ path: './config.env' });
-
-  const DB = process.env.DATABASE.replace(
-    '<PASSWORD>',
-    process.env.DATABASE_PASSWORD
-  );
-
-  mongoose
-    .connect(DB, {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
-      useUnifiedTopology: true,
-    })
-    .then((con) => console.log('DB connection successful'));
   ```
+  DATABASE=mongodb+srv://ngan:<PASSWORD>@cluster0-rjvfu.mongodb.net/natours?retryWrites=true&w=majority
+  ```
+
+## Use MongoDB in the Node.js Application:
+
+We need to install a MongoDB driver for Node.js, for example `Mongoose`. It is a software that allows Node.js code to access and interact with a MongoDB db.
+
+-Install Mongoose `npm i mongoose@5`
+
+-Configure `Mongoose` in `server.js`
+
+```js
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+
+dotenv.config({ path: './config.env' });
+
+const DB = process.env.DATABASE.replace(
+  '<PASSWORD>',
+  process.env.DATABASE_PASSWORD
+);
+
+mongoose
+  .connect(DB, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+  })
+  .then((con) => console.log('DB connection successful'));
+```
 
 # Mongoose
 
@@ -462,68 +464,68 @@ npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-confi
 
 -Mongoose is all about model. Model is like a blueprint used to create documents (comparable to Classes in JS). Model is also used to do CRUD operations. To create a model, we need a Schema. Schema is used to describe the model, set default value, validate data, etc.
 
-- ## Step 1: Create a schema:
+## Step 1: Create a schema:
 
-  -Basic Schema: use `mongoose.Schema` to specify a schema for the data
+- Basic Schema: use `mongoose.Schema` to specify a schema for the data
 
-  ```js
-  const tourSchema = new mongoose.Schema({
-    name: String,
-    rating: Number,
-    price: Number,
-  });
-  ```
+```js
+const tourSchema = new mongoose.Schema({
+  name: String,
+  rating: Number,
+  price: Number,
+});
+```
 
-  -Schema with Schema Type Option. With Schema Type Option, we can define different options with validation for a field (called validator). Different Types have different options as well.
+- Schema with Schema Type Option. With Schema Type Option, we can define different options with validation for a field (called validator). Different Types have different options as well.
 
-  ```js
-  const tourSchema = new mongoose.Schema(
-    {
-      name: {
-        type: String,
-        required: [true, 'A tour must have a name'],
-        unique: true,
-      },
-      rating: {
-        type: Number,
-        default: 4.5,
-      },
-      duration: {
-        type: Number,
-        required: [true, 'A tour must have a duration'],
-      },
+```js
+const tourSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'A tour must have a name'],
+      unique: true,
     },
-    {
-      toJSON: { virtuals: true },
-      toObject: { virtuals: true },
-    }
-  );
-  ```
-
-  -<a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/6bc87cfb7acac23ca0a0629eacffae949030e24b">VIRTUAL PROPERTIES</a>: Fields defined on Schema that are persisted (i.e. won't be saved to the db to save space). Virtual Properties are used for fields that can be derived from one another. For example, we want money in different currency, or distances in miles and km
-
-  The virtual properties will be created each time we get data out of the db, so the `get` function here is the `getter`. Inside this `get` method, we need to use a real function, not arrow function because we need to refer to `this` keyword of the current object.
-
-  We cannot use virtual properties in a query because it doesn't exist in the db.
-
-  ```js
-  tourSchema.virtual('durationWeeks').get(function () {
-    return this.duration / 7;
-  });
-  ```
-
-  To make virtual properties to be displayed in a response, we need to pass an option to the Schema:
-
-  ```js
+    rating: {
+      type: Number,
+      default: 4.5,
+    },
+    duration: {
+      type: Number,
+      required: [true, 'A tour must have a duration'],
+    },
+  },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
-  ```
+);
+```
 
-  -MIDDLEWARE in Mongoose: Similar to Express, We can use middleware in Mongoose to make something happens in between 2 events. For example, each time a document is saved to the db, we can run a function between the save command and the actual saving of a document or also after the saving event. That's why Mongoose middleware is also called Pre and Post Hooks.
+- [VIRTUAL PROPERTIES](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/6bc87cfb7acac23ca0a0629eacffae949030e24b): Fields defined on Schema that are persisted (i.e. won't be saved to the db to save space). Virtual Properties are used for fields that can be derived from one another. For example, we want money in different currency, or distances in miles and km
 
-  - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f486a690ac677938cde198dba5bef6387e4872bb">DOCUMENT MIDDLEWARE</a>
+The virtual properties will be created each time we get data out of the db, so the `get` function here is the `getter`. Inside this `get` method, we need to use a real function, not arrow function because we need to refer to `this` keyword of the current object.
+
+We cannot use virtual properties in a query because it doesn't exist in the db.
+
+```js
+tourSchema.virtual('durationWeeks').get(function () {
+  return this.duration / 7;
+});
+```
+
+To make virtual properties to be displayed in a response, we need to pass an option to the Schema:
+
+```js
+{
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+}
+```
+
+- MIDDLEWARE in Mongoose: Similar to Express, We can use middleware in Mongoose to make something happens in between 2 events. For example, each time a document is saved to the db, we can run a function between the save command and the actual saving of a document or also after the saving event. That's why Mongoose middleware is also called Pre and Post Hooks.
+
+  - [DOCUMENT MIDDLEWARE](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f486a690ac677938cde198dba5bef6387e4872bb)
 
     Middleware that can act on the currently processed document. It runs on `Model.Prototype.save()` and `Model.create()` but not `.insertMany()`. We can have multiple middleware for `pre` and `post`
 
@@ -539,7 +541,7 @@ npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-confi
     });
     ```
 
-  - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/8cd4e3024ceaeaaf3e22e9df6065dcac614c3b40">QUERY MIDDLEWARE</a>
+  - [QUERY MIDDLEWARE](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/8cd4e3024ceaeaaf3e22e9df6065dcac614c3b40)
 
     Allows us to run some functions before and/or after a certain query is executed. For example, the below code is executed before and after this line of code `const tours = await features.query;`
 
@@ -559,7 +561,7 @@ npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-confi
     });
     ```
 
-  - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/a6abf69ca39ee1b8bccae37d1c133de29999da8a">AGGREGATION MIDDLEWARE</a>
+  - [AGGREGATION MIDDLEWARE](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/a6abf69ca39ee1b8bccae37d1c133de29999da8a)
 
     Allows us to run functions before/after running aggregation pipeline. `this` refers to the Aggregation object
 
@@ -571,7 +573,7 @@ npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-confi
     });
     ```
 
-  -<a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/07e42ace9ac0a5839d69c40e4861ad91800b8281">DATA VALIDATION</a>: checking if the entered value is valid for each field according to the Schema and if all the required fields are included. We do data validation on the Schema because of the Fat Model Thin Controller philosophy.
+- [DATA VALIDATION](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/07e42ace9ac0a5839d69c40e4861ad91800b8281): checking if the entered value is valid for each field according to the Schema and if all the required fields are included. We do data validation on the Schema because of the Fat Model Thin Controller philosophy.
 
   - Built-in Validators: such as `required` is a built-in validator for all data types (`unique` is not a validator)
 
@@ -611,98 +613,105 @@ npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-confi
     // some more code
     ```
 
-- ## Step 2: Create a model using a defined Schema.
-  This model will then be a `collection` in the database
-  ```js
-  const Tour = mongoose.model('Tour', tourSchema);
-  ```
-- ## Step 3: Create Documents from our Model.
-  This will be a document of the Model collection. Mongoose allows us to use JavaScript to create an instance of a Tour model similar to JS classes. Since the doc is an instance of a class, it has access to some methods as well. For example, `doc.save()` will save the newly created document to its Model collection in db. `doc.save()` returns a Promise.
-  ```js
-  const testTour = new Tour({
-    name: 'The Forest Hiker',
-    rating: 4.7,
-    price: 497,
-  });
-  testTour
-    .save()
-    .then((doc) => console.log(doc))
-    .catch((err) => console.log('ERROR: ', err));
-  ```
-  We can also use `Tour.create({})` then pass in the data as above as parameter. This will create and save new doc to the Tour collection, then return a Promise
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3782886f4bac35fb055ab614d2cebb12055faacc">Updating APIs CRUD operations with `Atlas MongoDB` using `Mongoose` driver</a>
+## Step 2: Create a model using a defined Schema.
 
-  -Removed several middleware like param middleware to check for ID, and middleware to check the body of a POST request because those are not nessessary anymore. By using `Mongoose` and its Model, we'll be catching for err from Model's functions.
-  -Note: if the body of POST request to create new tour contains for fields than the Schema, mongoose will ignore those extra fields.
+This model will then be a `collection` in the database
 
-  ```js
-  const Tour = require('./../models/tourModel');
+```js
+const Tour = mongoose.model('Tour', tourSchema);
+```
 
-  exports.createTour = async (req, res) => {
-    try {
-      const newTour = await Tour.create(req.body);
-      res.status(201).json({
-        status: 'success',
-        data: { tour: newTour },
-      });
-    } catch (err) {
-      res.status(400).json({
-        status: 'fail',
-        message: 'Invalid data sent',
-      });
-    }
-  };
+## Step 3: Create Documents from our Model.
 
-  const tours = await Tour.find(); // converts the result into JS object
-  const tour = await Tour.findById(req.params.id); // ~ Tour.findOne({ _id: req.params.id })
-  const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  await Tour.findByIdAndDelete(req.params.id);
-  ```
+This will be a document of the Model collection. Mongoose allows us to use JavaScript to create an instance of a Tour model similar to JS classes. Since the doc is an instance of a class, it has access to some methods as well. For example, `doc.save()` will save the newly created document to its Model collection in db. `doc.save()` returns a Promise.
 
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/1398044a34b4225690da1a2c369b6fbb296eeee1">MongoDB AGGREGATION PIPELINE Using Mongoose</a>
+```js
+const testTour = new Tour({
+  name: 'The Forest Hiker',
+  rating: 4.7,
+  price: 497,
+});
+testTour
+  .save()
+  .then((doc) => console.log(doc))
+  .catch((err) => console.log('ERROR: ', err));
+```
 
-  -Refer to these documentations for <a href="https://docs.mongodb.com/manual/reference/operator/aggregation/">Aggregation Pipeline OPERATORS</a> and <a href="https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/">Aggregation Pipeline STAGES</a>
+We can also use `Tour.create({})` then pass in the data as above as parameter. This will create and save new doc to the Tour collection, then return a Promise
 
-  -MongoDB’s aggregation framework is modeled on the concept of data processing pipelines. Documents enter a multi-stage pipeline that transforms the documents into an aggregated result
+## [Updating APIs CRUD operations with `Atlas MongoDB` using `Mongoose` driver](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3782886f4bac35fb055ab614d2cebb12055faacc)
+
+-Removed several middleware like param middleware to check for ID, and middleware to check the body of a POST request because those are not nessessary anymore. By using `Mongoose` and its Model, we'll be catching for err from Model's functions.
+-Note: if the body of POST request to create new tour contains for fields than the Schema, mongoose will ignore those extra fields.
+
+```js
+const Tour = require('./../models/tourModel');
+
+exports.createTour = async (req, res) => {
+  try {
+    const newTour = await Tour.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      data: { tour: newTour },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'Invalid data sent',
+    });
+  }
+};
+
+const tours = await Tour.find(); // converts the result into JS object
+const tour = await Tour.findById(req.params.id); // ~ Tour.findOne({ _id: req.params.id })
+const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+  new: true,
+  runValidators: true,
+});
+await Tour.findByIdAndDelete(req.params.id);
+```
+
+## [MongoDB AGGREGATION PIPELINE Using Mongoose](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/1398044a34b4225690da1a2c369b6fbb296eeee1)
+
+-Refer to these documentations for <a href="https://docs.mongodb.com/manual/reference/operator/aggregation/">Aggregation Pipeline OPERATORS</a> and <a href="https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/">Aggregation Pipeline STAGES</a>
+
+-MongoDB’s aggregation framework is modeled on the concept of data processing pipelines. Documents enter a multi-stage pipeline that transforms the documents into an aggregated result
 
   <img src="screenshots/aggregation-pipeline-example.png" width="800">
 
-  -All except the `$out`, `$merge`, and `$geoNear` stages can appear multiple times in a pipeline
+-All except the `$out`, `$merge`, and `$geoNear` stages can appear multiple times in a pipeline
 
-  -Example of using Agrregation Pipeline with Mongoose
+-Example of using Agrregation Pipeline with Mongoose
 
-  ```js
-  const stats = await Tour.aggregate([
-    {
-      $match: { ratingsAverage: { $gte: 4.5 } },
+```js
+const stats = await Tour.aggregate([
+  {
+    $match: { ratingsAverage: { $gte: 4.5 } },
+  },
+  {
+    $group: {
+      _id: { $toUpper: '$difficulty' },
+      numTours: { $sum: 1 },
+      numRatings: { $sum: '$ratingsQuantity' },
+      avgRating: { $avg: '$ratingsAverage' },
+      avgPrice: { $avg: '$price' },
+      minPrice: { $min: '$price' },
+      maxPrice: { $max: '$price' },
     },
-    {
-      $group: {
-        _id: { $toUpper: '$difficulty' },
-        numTours: { $sum: 1 },
-        numRatings: { $sum: '$ratingsQuantity' },
-        avgRating: { $avg: '$ratingsAverage' },
-        avgPrice: { $avg: '$price' },
-        minPrice: { $min: '$price' },
-        maxPrice: { $max: '$price' },
-      },
-    },
-    {
-      $sort: { avgPrice: 1 },
-    },
-  ]);
-  ```
+  },
+  {
+    $sort: { avgPrice: 1 },
+  },
+]);
+```
 
-  -`Tour.aggregate()` takes an array of stages and returns an Aggregation Object. This Aggregation Object is executed when we use `await`
+-`Tour.aggregate()` takes an array of stages and returns an Aggregation Object. This Aggregation Object is executed when we use `await`
 
-  -`$match` stage simply means filtering documents
+-`$match` stage simply means filtering documents
 
-  -`$group` stage: `_id` refers to which field will the result be grouped by, this field will become the new id
+-`$group` stage: `_id` refers to which field will the result be grouped by, this field will become the new id
 
-  -Stages appears after `$group` can only do more operations on the fields declared in the `$group` stage
+-Stages appears after `$group` can only do more operations on the fields declared in the `$group` stage
 
 # API FEATURES
 
