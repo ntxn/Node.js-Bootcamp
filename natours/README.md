@@ -364,7 +364,7 @@ For error handling in `Express`, we focus on Operational Errors. `Express` comes
   app.use(globalErrorHandler);
   ```
 
-- ### [Catching Errors in Async Functions](#)
+- ### [Catching Errors in Async Functions](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/237896caf98d435e2c20670b9bbebee741c3e46b)
 
   Instead of using `try` `catch` block to catch errors from `async/await` function, we wrap the `async` function into another function that will handle the error so that we can remove the `try` `catch` block from the async function. This way, it makes the code more readable and delicate error handling to the global error handler
 
@@ -381,6 +381,10 @@ For error handling in `Express`, we focus on Operational Errors. `Express` comes
     });
   });
   ```
+
+- ### [Errors During Development vs Production](#)
+
+  In development, we'd want to get detailed errors but in production, we would not want to send long message of errors to the client. Additionally, when sending errors in Production, we want to send different messages to the clients depending on if it's an operational error or not. If it's not, we want to hide the error and only respond with a generic message. Check out the commit for changes in `errorController.js`
 
 # MongoDB
 
