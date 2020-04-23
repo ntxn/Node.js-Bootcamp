@@ -121,25 +121,38 @@ If we set a breakpoint in the `server.js` like in the screenshot, we will be abl
 
 # Unhandled Rejections and Uncaught Exception
 
-- ### [Error Outside Express: Unhandled Rejections](#)
+It is recommended to handle Rejections and Exception close to where the code is at. However, we should also have a global handler in case we miss handling any.
+
+Below is a simple way to handle those. In production, the service hosts the nodejs application would then have a tool in place to restart the server.
+
+- ### [Error Outside Express: Unhandled Rejections](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/de8f715b28c3e31326fe9afaab0bfe05f2429593)
 
   So far we've handled errors coming from Express application, async functions in controllers and querying database by letting a global error handler in express handle it. However, we haven't handle errors outside of Express such as problems with database connection (this is in `server.js`) like the db is down or we cannot log in.
 
   If we change the db password and then try to connect to the db, we'll receive an `Unhandled Promise Rejection`, which means somewhere in our code, there's a promise that got rejected but that rejection is not handled anywhere.
 
-  We'd want to handle those Rejections globally.
-
   When there's a Rejection somewhere in our application, the `process` object will emit an Object called `unhandledRejection` so we can subscribe to that event
 
   ```js
+  // in server.js, gracefully shut down the server
   process.on('unhandledRejection', (err) => {
-    console.log(err.name, err.message);
     console.log('UNHANDLED REJECTION');
+    console.log(err.name, err.message);
     server.close(() => process.exit(1)); // 0 for success, 1 is for unhandled rejection);
   });
   ```
 
-  In production, the service hosts the nodejs application would then have a way to restart the server
+- ### [Uncaught Exceptions](#)
+
+  In Uncaught Exceptions, we have to shut down the server because the code right now is not clean. And then restart the server. We also need to put this handler at the beginning of `server.js` before any code runs so that if there's any problem, it can catch it.
+
+  ```js
+  process.on('uncaughtException', (err) => {
+    console.log('UNCAUGHT EXCEPTION');
+    console.log(err.name, err.message);
+    process.exit(1);
+  });
+  ```
 
 # EXPRESS
 
