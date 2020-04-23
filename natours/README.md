@@ -3,8 +3,9 @@
 - **[Environment Variables](#environment-variables)**
 - **[APIs and RESTful API Design](#apis-and-restful-api-design)**
 - **[Setting up ESLint + Prettier in VS Code](#setting-up-eslint--prettier-in-vs-code)**
-- **[Debugging Node.js with ndb](#debugging-nodejs-with-ndb)**
 - **[Model-View-Controller: MVC Back-End Architecture](#model-view-controller-mvc-back-end-architecture)**
+- **[Debugging Node.js with ndb](#debugging-nodejs-with-ndb)**
+- **[Unhandled Rejections and Uncaught Exception](#unhandled-rejections-and-uncaught-exception)**
 - **[Express](#express)**
   - [Basic Routing](#basic-routing-with-express)
   - [Simple GET, POST, PATCH, DELETE Requests at Endpoint /api/v1/tours](#simple-get-post-patch-delete-requests-at-endpoint-apiv1tours)
@@ -84,23 +85,6 @@ Install these development dependency and then add rules to `.eslintrc.json`
 npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react --save-dev
 ```
 
-# Debugging Node.js with ndb
-
-Install `ndb` globally: `npm i global ndb`
-
-Write a script in package.json: `"debug": "ndb server.js"`
-
-Start debugging by this command in terminal: `npm run debug`
-
-In `ndb`, set a breakpoint by clicking on the line number, then run the app by sending a request, for example. Once the code hit the breakpoint, it will resume `ndb` at that breakpoint with the current local and global data info on the right
-
-<img src="screenshots/ndb-1.png" width="800">
-
-If we set a breakpoint in the `server.js` like in the screenshot, we will be able to see the middleware stack of the `router` (under `app`)
-
-<img src="screenshots/ndb-2.png" width="400">
-<img src="screenshots/ndb-3.png" width="500">
-
 # Model-View-Controller: MVC Back-End Architecture
 
 - `MODEL` layer - Concerns everything related to application data and business logic
@@ -116,6 +100,46 @@ If we set a breakpoint in the `server.js` like in the screenshot, we will be abl
   <img src="screenshots/mvc-2.png" width="800">
 
 - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f905bb2141a99dab65b9f4e60f240cc68d4b06c2">Commit Link</a>
+
+# Debugging Node.js with ndb
+
+Install `ndb` globally: `npm i global ndb`
+
+Write a script in package.json: `"debug": "ndb server.js"`
+
+Start debugging by this command in terminal: `npm run debug`
+
+In `ndb`, set a breakpoint by clicking on the line number, then run the app by sending a request, for example. Once the code hit the breakpoint, it will resume `ndb` at that breakpoint with the current local and global data info on the right
+
+<img src="screenshots/ndb-1.png" width="800">
+
+If we set a breakpoint in the `server.js` like in the screenshot, we will be able to see the middleware stack of the `router` (under `app`)
+
+<img src="screenshots/ndb-2.png" width="400">
+
+<img src="screenshots/ndb-3.png" width="500">
+
+# Unhandled Rejections and Uncaught Exception
+
+- ### [Error Outside Express: Unhandled Rejections](#)
+
+  So far we've handled errors coming from Express application, async functions in controllers and querying database by letting a global error handler in express handle it. However, we haven't handle errors outside of Express such as problems with database connection (this is in `server.js`) like the db is down or we cannot log in.
+
+  If we change the db password and then try to connect to the db, we'll receive an `Unhandled Promise Rejection`, which means somewhere in our code, there's a promise that got rejected but that rejection is not handled anywhere.
+
+  We'd want to handle those Rejections globally.
+
+  When there's a Rejection somewhere in our application, the `process` object will emit an Object called `unhandledRejection` so we can subscribe to that event
+
+  ```js
+  process.on('unhandledRejection', (err) => {
+    console.log(err.name, err.message);
+    console.log('UNHANDLED REJECTION');
+    server.close(() => process.exit(1)); // 0 for success, 1 is for unhandled rejection);
+  });
+  ```
+
+  In production, the service hosts the nodejs application would then have a way to restart the server
 
 # EXPRESS
 
@@ -386,7 +410,7 @@ For error handling in `Express`, we focus on Operational Errors. `Express` comes
 
   In development, we'd want to get detailed errors but in production, we would not want to send long message of errors to the client. Additionally, when sending errors in Production, we want to send different messages to the clients depending on if it's an operational error or not. If it's not, we want to hide the error and only respond with a generic message. Check out the commit for changes in `errorController.js`
 
-- ### [Handle MongoDB Errors](#)
+- ### [Handle MongoDB Errors](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/ef29ebdc22073e36cf7d73892ae4b652a16e1618)
 
   Errors that come back from the database doesn't have a statusCode or marked as `isOperational`, so the response sent to the client isn't accurate. That's why when it's a database error (ex: Invalid db IDs, Duplicate Fields, Validation Errors), we need to convert it to our custom `AppError` before sending a response to the clients.
 
