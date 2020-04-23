@@ -72,191 +72,191 @@ npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-confi
 
 # EXPRESS
 
-<img src="screenshots/express-definition.png" width="800">
+<img src="screenshots/express-definition.png" width="900">
 
 -Install with npm: `npm i express@4`
 
 -It is a convention to have all express configuration in `app.js`
 
-- ## [Basic Routing with Express](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/59e1b0bbefa2476c59b13403f30b1b210c23055d):
+## [Basic Routing with Express](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/59e1b0bbefa2476c59b13403f30b1b210c23055d):
 
-  -`express` is a function that upon calling will add a bunch of methods to the `app` variable
+-`express` is a function that upon calling will add a bunch of methods to the `app` variable
 
-  ```js
-  const express = require('express');
-  const app = express();
-  app.listen(3000, () => {}); // To start up a server at port #3000
-  ```
+```js
+const express = require('express');
+const app = express();
+app.listen(3000, () => {}); // To start up a server at port #3000
+```
 
-  -We need to define routes. Routing means how the application responds to the client's requests (certain urls & HTTP methods used for that request)
+-We need to define routes. Routing means how the application responds to the client's requests (certain urls & HTTP methods used for that request)
 
-  -`get`: HTTP GET method, `'/'`: Endpoint/URL, the rest is the callback function (called `route handler`) with request and response object parameters. `.json` automatically sets the `Content-Type: application/json` while `.send` only sends text.
+-`get`: HTTP GET method, `'/'`: Endpoint/URL, the rest is the callback function (called `route handler`) with request and response object parameters. `.json` automatically sets the `Content-Type: application/json` while `.send` only sends text.
 
-  ```js
-  app.get('/', (req, res) => {
-    res
-      .status(200)
-      .json({ message: 'Hello from the server side', app: 'Natours' });
+```js
+app.get('/', (req, res) => {
+  res
+    .status(200)
+    .json({ message: 'Hello from the server side', app: 'Natours' });
+});
+```
+
+## Simple <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/66c91c7012151a95f8040e6ed36264b64252c2c4">GET</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c0055573f21d10942147c1f4b4423b27d72d6c68">POST</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/d2c3a1ccc827bc1e96a987a7a2de7d91c8ad167b">PATCH</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/8caf015c45bb4644827188eb5544e3029ba492aa">DELETE</a> Requests at Endpoint `'/api/v1/tours`
+
+```js
+app.use(express.json());
+
+const tours = JSON.parse(
+  fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
+);
+
+app.get('/api/v1/tours', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: { tours },
   });
-  ```
+});
 
-- ## Simple <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/66c91c7012151a95f8040e6ed36264b64252c2c4">GET</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c0055573f21d10942147c1f4b4423b27d72d6c68">POST</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/d2c3a1ccc827bc1e96a987a7a2de7d91c8ad167b">PATCH</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/8caf015c45bb4644827188eb5544e3029ba492aa">DELETE</a> Requests at Endpoint `'/api/v1/tours`
+app.post('/api/v1/tours', (req, res) => {
+  const newID = tours[tours.length - 1].id + 1;
+  const newTour = Object.assign({ id: newID }, req.body);
+  tours.push(newTour);
+  fs.writeFile(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tours),
+    (err) => {
+      res.status(201).json({
+        status: 'success',
+        data: { tour: newTour },
+      });
+    }
+  );
+});
+```
+
+- In the `POST` request `req` parameter, out of the box, `express` doesn't have access to the body of the POST request so we need to use middleware `app.use(express.json())`. Middleware is a function that can modify the incoming request data. It's called middleware because it stands between the request and response. `express.json()` is the middleware that helps express app to access the request body and that data is added to the request object.
+
+  <img src="screenshots/simple-post-request.png" width="450">
+
+- <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/7ff03a8df314a53afc5a3ee7703167790b79bd6e">Accessing to URL Parameters</a>.
+
+  - In the below example, we added `/:id` to the endpoint because we want to get the tour with id = 14 with this endpoint `/api/v1/tours/14`.
+  - The value of `req.params` would be something like `{ id: '14' }`.
+  - If there are more parameters, we can add more like `/:id/:x/:y` => `{ id: '14', x: '1', y: '2' }`, if we want to make one of the parameters optional, we can add `?` like `/:id/:x/:y?` => `{ id: '14', x: '1', y: undefined }`
 
   ```js
-  app.use(express.json());
-
-  const tours = JSON.parse(
-    fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
-  );
-
-  app.get('/api/v1/tours', (req, res) => {
+  app.get('/api/v1/tours/:id', (req, res) => {
+    const id = req.params.id * 1;
+    if (id > tours.length) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Invalid ID',
+      });
+    }
+    const tour = tours.find((element) => element.id == id);
     res.status(200).json({
       status: 'success',
-      results: tours.length,
-      data: { tours },
+      data: { tour },
     });
-  });
-
-  app.post('/api/v1/tours', (req, res) => {
-    const newID = tours[tours.length - 1].id + 1;
-    const newTour = Object.assign({ id: newID }, req.body);
-    tours.push(newTour);
-    fs.writeFile(
-      `${__dirname}/dev-data/data/tours-simple.json`,
-      JSON.stringify(tours),
-      (err) => {
-        res.status(201).json({
-          status: 'success',
-          data: { tour: newTour },
-        });
-      }
-    );
   });
   ```
 
-  - In the `POST` request `req` parameter, out of the box, `express` doesn't have access to the body of the POST request so we need to use middleware `app.use(express.json())`. Middleware is a function that can modify the incoming request data. It's called middleware because it stands between the request and response. `express.json()` is the middleware that helps express app to access the request body and that data is added to the request object.
+## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/0d76673339f0bb7b8cd63a49fe7d3580d7750ab3">Refactoring Routes</a>
 
-    <img src="screenshots/simple-post-request.png" width="450">
+To make the routes/endpoints clearer, we create separate functions for the request handlers and then pass them into respective HTTP methods. Additionally, we can use `.route(...)` of express app to show which methods we use for different routes.
 
-  - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/7ff03a8df314a53afc5a3ee7703167790b79bd6e">Accessing to URL Parameters</a>.
+```js
+app.route('/api/v1/tours').get(getAllTours).post(createTour);
 
-    - In the below example, we added `/:id` to the endpoint because we want to get the tour with id = 14 with this endpoint `/api/v1/tours/14`.
-    - The value of `req.params` would be something like `{ id: '14' }`.
-    - If there are more parameters, we can add more like `/:id/:x/:y` => `{ id: '14', x: '1', y: '2' }`, if we want to make one of the parameters optional, we can add `?` like `/:id/:x/:y?` => `{ id: '14', x: '1', y: undefined }`
+app
+  .route('/api/v1/tours/:id')
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour);
+```
 
-    ```js
-    app.get('/api/v1/tours/:id', (req, res) => {
-      const id = req.params.id * 1;
-      if (id > tours.length) {
-        return res.status(404).json({
-          status: 'fail',
-          message: 'Invalid ID',
-        });
-      }
-      const tour = tours.find((element) => element.id == id);
-      res.status(200).json({
-        status: 'success',
-        data: { tour },
-      });
-    });
-    ```
-
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/0d76673339f0bb7b8cd63a49fe7d3580d7750ab3">Refactoring Routes</a>
-
-  To make the routes/endpoints clearer, we create separate functions for the request handlers and then pass them into respective HTTP methods. Additionally, we can use `.route(...)` of express app to show which methods we use for different routes.
-
-  ```js
-  app.route('/api/v1/tours').get(getAllTours).post(createTour);
-
-  app
-    .route('/api/v1/tours/:id')
-    .get(getTour)
-    .patch(updateTour)
-    .delete(deleteTour);
-  ```
-
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3d1384845708948070c63ed0299bdfc07f823f38">Middleware and the Request-Response Cycle</a>
+## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3d1384845708948070c63ed0299bdfc07f823f38">Middleware and the Request-Response Cycle</a>
 
   <img src="screenshots/request-response-cycle.png" width="800">
 
-  - To apply a middleware to express app, we use `app.use` and pass a middleware handler in.
-  - We can write our own middleware handler:
+- To apply a middleware to express app, we use `app.use` and pass a middleware handler in.
+- We can write our own middleware handler:
 
-    This handler/function has three parameters: request, response, and next. `next` is the next middleware. At the end of each handler, we always have to call `next()`, otherwise it will get stuck at the current middleware. The middleware in `app.use` will be applied to all requests below it
+  This handler/function has three parameters: request, response, and next. `next` is the next middleware. At the end of each handler, we always have to call `next()`, otherwise it will get stuck at the current middleware. The middleware in `app.use` will be applied to all requests below it
 
-    Example of a global middleware
-
-    ```js
-    app.use((req, res, next) => {
-      req.requestTime = new Date().toISOString();
-      next();
-    });
-    ```
-
-  - Or use a 3rd-Party middleware.
-
-    Ex: `morgan` (`npm i morgan`)
-
-    => `app.use(morgan('dev'));`
-
-    => `GET /api/v1/tours 200 6.250 ms - 8681` - is printed in terminal
-
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3f84f36712f362f1c98bf6f9f0eabe793c9b6f49">Creating and Mounting Multiple Routers</a>
-
-  According to the RESTful architecture, each resource like tours or users should be an endpoint. So we'd want to create a route for each of the resources and put them in a separate file to make it easier to manage when the app gets bigger.
-
-  To make each resource a route, we use middleware `express.Router()`. Each of the resource now becomes a mini app having its own root
-
-  Once the request match the endpoint declared in `app.use(...)`, it will run the attached Router
+  Example of a global middleware
 
   ```js
-  const tourRouter = express.Router();
-
-  tourRouter.route('/').get(getAllTours).post(createTour);
-  tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
-
-  app.use('/api/v1/tours', tourRouter);
-  ```
-
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/5ea2bd0e695bbb50b3a4eb81c81dc3205502cecc">Restructuring Files</a>
-
-  - `server.js`: the starting file of this web app. This is where we starts the server and will include everything related to the server
-  - `app.js`: will only include code related to express and global express middleware
-  - 2 new folders created:
-    - `routes`: to hold all the resources routers
-    - `controllers`: to hold each router's handlers
-  - We written an NPM script `"start": "nodemon server.js"` in `package.json` to start the Node.js app
-
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/ffa6a4e674bd6bf3633fee1e1a325ded0ec5c37c">Param Middleware</a>
-
-  -`router.param(parameterName, handler)` is a middleware that will run the handler if the request url has a param that matches the provided parameterName.
-
-  -The signature of the handler function being passed to a param middleware:
-
-  ```js
-  (req, res, next, val) => {
-    console.log(`The param value is ${val}`);
+  app.use((req, res, next) => {
+    req.requestTime = new Date().toISOString();
     next();
-  };
+  });
   ```
 
-  -In this commit, we created a `checkID` param handler in `tourController` to validate ID before calling the final handler. This `checkID` function is then called in `tourRoutes`'s `router.param`
+- Or use a 3rd-Party middleware.
 
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/db5127b5027474ad2d19c4cf253ff59f624cab50">Serving Static Files by middleware `express.static`</a>
+  Ex: `morgan` (`npm i morgan`)
 
-  -Static files are files in the file system that cannot be accessed using routes like the `overview.html` or images in the `public` folder.
+  => `app.use(morgan('dev'));`
 
-  -For example, if we try to access `http://127.0.0.1:3000/public/overview.html` we will get an error because we didn't define any routes for that link
+  => `GET /api/v1/tours 200 6.250 ms - 8681` - is printed in terminal
 
-  -In order to access static files, we need to use middleware
+## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3f84f36712f362f1c98bf6f9f0eabe793c9b6f49">Creating and Mounting Multiple Routers</a>
 
-  ```
-  app.use(express.static(`${__dirname}/public`));
-  ```
+According to the RESTful architecture, each resource like tours or users should be an endpoint. So we'd want to create a route for each of the resources and put them in a separate file to make it easier to manage when the app gets bigger.
 
-  - We want to serve all files in the `public` folder => `public` folder becomes the root folder of the app.
-  - To access `overview.html` we have to remove public from the previous URL `http://127.0.0.1:3000/overview.html` because when express app cannot match that URL to any of the defined routes, it will go to the `public` folder to search for the file.
-  - We can also access to an image in img folder by `http://127.0.0.1:3000/img/pin.png` but we will get an error if we try to access only the `img` folder `http://127.0.0.1:3000/img/` because it's not a file so express app will try to search for a matched route
+To make each resource a route, we use middleware `express.Router()`. Each of the resource now becomes a mini app having its own root
+
+Once the request match the endpoint declared in `app.use(...)`, it will run the attached Router
+
+```js
+const tourRouter = express.Router();
+
+tourRouter.route('/').get(getAllTours).post(createTour);
+tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+
+app.use('/api/v1/tours', tourRouter);
+```
+
+## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/5ea2bd0e695bbb50b3a4eb81c81dc3205502cecc">Restructuring Files</a>
+
+- `server.js`: the starting file of this web app. This is where we starts the server and will include everything related to the server
+- `app.js`: will only include code related to express and global express middleware
+- 2 new folders created:
+  - `routes`: to hold all the resources routers
+  - `controllers`: to hold each router's handlers
+- We written an NPM script `"start": "nodemon server.js"` in `package.json` to start the Node.js app
+
+## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/ffa6a4e674bd6bf3633fee1e1a325ded0ec5c37c">Param Middleware</a>
+
+-`router.param(parameterName, handler)` is a middleware that will run the handler if the request url has a param that matches the provided parameterName.
+
+-The signature of the handler function being passed to a param middleware:
+
+```js
+(req, res, next, val) => {
+  console.log(`The param value is ${val}`);
+  next();
+};
+```
+
+-In this commit, we created a `checkID` param handler in `tourController` to validate ID before calling the final handler. This `checkID` function is then called in `tourRoutes`'s `router.param`
+
+## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/db5127b5027474ad2d19c4cf253ff59f624cab50">Serving Static Files by middleware `express.static`</a>
+
+-Static files are files in the file system that cannot be accessed using routes like the `overview.html` or images in the `public` folder.
+
+-For example, if we try to access `http://127.0.0.1:3000/public/overview.html` we will get an error because we didn't define any routes for that link
+
+-In order to access static files, we need to use middleware
+
+```
+app.use(express.static(`${__dirname}/public`));
+```
+
+- We want to serve all files in the `public` folder => `public` folder becomes the root folder of the app.
+- To access `overview.html` we have to remove public from the previous URL `http://127.0.0.1:3000/overview.html` because when express app cannot match that URL to any of the defined routes, it will go to the `public` folder to search for the file.
+- We can also access to an image in img folder by `http://127.0.0.1:3000/img/pin.png` but we will get an error if we try to access only the `img` folder `http://127.0.0.1:3000/img/` because it's not a file so express app will try to search for a matched route
 
 # MongoDB
 
@@ -502,28 +502,32 @@ const tourSchema = new mongoose.Schema(
 );
 ```
 
-- [VIRTUAL PROPERTIES](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/6bc87cfb7acac23ca0a0629eacffae949030e24b): Fields defined on Schema that are persisted (i.e. won't be saved to the db to save space). Virtual Properties are used for fields that can be derived from one another. For example, we want money in different currency, or distances in miles and km
+- ### [VIRTUAL PROPERTIES](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/6bc87cfb7acac23ca0a0629eacffae949030e24b)
 
-The virtual properties will be created each time we get data out of the db, so the `get` function here is the `getter`. Inside this `get` method, we need to use a real function, not arrow function because we need to refer to `this` keyword of the current object.
+  Fields defined on Schema that are persisted (i.e. won't be saved to the db to save space). Virtual Properties are used for fields that can be derived from one another. For example, we want money in different currency, or distances in miles and km
 
-We cannot use virtual properties in a query because it doesn't exist in the db.
+  The virtual properties will be created each time we get data out of the db, so the `get` function here is the `getter`. Inside this `get` method, we need to use a real function, not arrow function because we need to refer to `this` keyword of the current object.
 
-```js
-tourSchema.virtual('durationWeeks').get(function () {
-  return this.duration / 7;
-});
-```
+  We cannot use virtual properties in a query because it doesn't exist in the db.
 
-To make virtual properties to be displayed in a response, we need to pass an option to the Schema:
+  ```js
+  tourSchema.virtual('durationWeeks').get(function () {
+    return this.duration / 7;
+  });
+  ```
 
-```js
-{
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true },
-}
-```
+  To make virtual properties to be displayed in a response, we need to pass an option to the Schema:
 
-- MIDDLEWARE in Mongoose: Similar to Express, We can use middleware in Mongoose to make something happens in between 2 events. For example, each time a document is saved to the db, we can run a function between the save command and the actual saving of a document or also after the saving event. That's why Mongoose middleware is also called Pre and Post Hooks.
+  ```js
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+  ```
+
+- ### MIDDLEWARE in Mongoose
+
+  Similar to Express, We can use middleware in Mongoose to make something happens in between 2 events. For example, each time a document is saved to the db, we can run a function between the save command and the actual saving of a document or also after the saving event. That's why Mongoose middleware is also called Pre and Post Hooks.
 
   - [DOCUMENT MIDDLEWARE](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f486a690ac677938cde198dba5bef6387e4872bb)
 
@@ -573,7 +577,9 @@ To make virtual properties to be displayed in a response, we need to pass an opt
     });
     ```
 
-- [DATA VALIDATION](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/07e42ace9ac0a5839d69c40e4861ad91800b8281): checking if the entered value is valid for each field according to the Schema and if all the required fields are included. We do data validation on the Schema because of the Fat Model Thin Controller philosophy.
+- ### [DATA VALIDATION](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/07e42ace9ac0a5839d69c40e4861ad91800b8281)
+
+  Checking if the entered value is valid for each field according to the Schema and if all the required fields are included. We do data validation on the Schema because of the Fat Model Thin Controller philosophy.
 
   - Built-in Validators: such as `required` is a built-in validator for all data types (`unique` is not a validator)
 
@@ -741,100 +747,100 @@ const stats = await Tour.aggregate([
 
 -In `Express`, this query string is stored in `req.query`, which for the two example above will look like this `{ duration: '5', difficulty: 'easy' }` and `{ duration: { gte: '5' }, difficulty: 'easy', page: '2' }`. It's missing `$` for the operator `gte`.
 
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/73548f2da7911d00748ea36354ff2f9da5d07a3f">FILTERING</a>
+## [FILTERING](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/73548f2da7911d00748ea36354ff2f9da5d07a3f)
 
-  -For filtering, since `req.query` is a query object already, we can easily pass it into `.find()` like in method 1 => `const tours = await Tour.find(req.query);`
+-For filtering, since `req.query` is a query object already, we can easily pass it into `.find()` like in method 1 => `const tours = await Tour.find(req.query);`
 
-  -However, if the query string contains other options such as sorting or pagination, then simply passing `req.query` into `find` won't work. To make it work, we need to remove them out from the query
+-However, if the query string contains other options such as sorting or pagination, then simply passing `req.query` into `find` won't work. To make it work, we need to remove them out from the query
 
+```js
+const queryObj = { ...req.query }; // make a copy: destruring req.query and then put them in an object
+const excludedFields = ['page', 'sort', 'limit', 'fields'];
+excludedFields.forEach((field) => delete queryObj[field]);
+
+let queryStr = JSON.stringify(queryObj);
+queryStr = queryStr.replace(
+  /\b(gte|gt|lte|lt)\b/g,
+  (matchStr) => `$${matchStr}`
+);
+const query = Tour.find(JSON.parse(queryStr)); // the function find() returned a Query object
+
+const tours = await query;
+```
+
+-The function `.find()` of a Mongoose Model returned a `Query` object. As soon as we use `await` on the returned Query Object, the query then will be executed and comes back with the documents that matches the query. So if we `await Tour.find(queryObj)`, we won't be able to chain other method to sort or limit fields. Thus, we save the Query into an object. Only when we finish chaining, we will `await` the Query and get the final result.
+
+-`/\b(gte|gt|lte|lt)\b/g`: a regular expression in JS. `\b` is to match the exact string specify inside `()`. `g` is to make it happen multiple time. That is if there are multiple matches of any of the terms in `()`, it will replace all of them
+
+## [SORTING](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/4fa63e0f5c83f6a9a90285be58456f71418a5e2a)
+
+- `sort=price`: sort by price in ascending order
+- `sort=-price,ratingsAverage`: sort by price in descending order, if there's a tide, sort them by ratingsAverage
+
+```js
+if (req.query.sort) {
+  const sortBy = req.query.sort.split(',').join(' ');
+  query = query.sort(sortBy);
+} else {
+  query = query.sort('-createdAt');
+}
+```
+
+## [LIMITING FIELDS](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f28ba50516bb9f16ae79848cbfc53b766465ef17)
+
+- Proving limiting fields option so that users can reduce fields that are unnecessary for them to lower data size sent back to them
+- `fields=name,duration,difficulty,price`: query will only project fields name, duration, difficulty, & price
+- `fields=-name,-__v`: query will exclude name and \_\_v
+- We can also exclude fields directly from Schema by adding `select: false` in Type Option for fields we never want clients to see such as password or when a tour was created.
   ```js
-  const queryObj = { ...req.query }; // make a copy: destruring req.query and then put them in an object
-  const excludedFields = ['page', 'sort', 'limit', 'fields'];
-  excludedFields.forEach((field) => delete queryObj[field]);
-
-  let queryStr = JSON.stringify(queryObj);
-  queryStr = queryStr.replace(
-    /\b(gte|gt|lte|lt)\b/g,
-    (matchStr) => `$${matchStr}`
-  );
-  const query = Tour.find(JSON.parse(queryStr)); // the function find() returned a Query object
-
-  const tours = await query;
-  ```
-
-  -The function `.find()` of a Mongoose Model returned a `Query` object. As soon as we use `await` on the returned Query Object, the query then will be executed and comes back with the documents that matches the query. So if we `await Tour.find(queryObj)`, we won't be able to chain other method to sort or limit fields. Thus, we save the Query into an object. Only when we finish chaining, we will `await` the Query and get the final result.
-
-  -`/\b(gte|gt|lte|lt)\b/g`: a regular expression in JS. `\b` is to match the exact string specify inside `()`. `g` is to make it happen multiple time. That is if there are multiple matches of any of the terms in `()`, it will replace all of them
-
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/4fa63e0f5c83f6a9a90285be58456f71418a5e2a">SORTING</a>
-
-  - `sort=price`: sort by price in ascending order
-  - `sort=-price,ratingsAverage`: sort by price in descending order, if there's a tide, sort them by ratingsAverage
-
-  ```js
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(',').join(' ');
-    query = query.sort(sortBy);
+  if (req.query.fields) {
+    const fields = req.query.fields.split(',').join(' ');
+    query = query.select(fields);
   } else {
-    query = query.sort('-createdAt');
+    query = query.select('-__v');
   }
   ```
 
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f28ba50516bb9f16ae79848cbfc53b766465ef17">LIMITING FIELDS</a>
+## PAGINATION(https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c57cc9706d5f72f8db926519fa5cd6c6b2652f1d)
 
-  - Proving limiting fields option so that users can reduce fields that are unnecessary for them to lower data size sent back to them
-  - `fields=name,duration,difficulty,price`: query will only project fields name, duration, difficulty, & price
-  - `fields=-name,-__v`: query will exclude name and \_\_v
-  - We can also exclude fields directly from Schema by adding `select: false` in Type Option for fields we never want clients to see such as password or when a tour was created.
-    ```js
-    if (req.query.fields) {
-      const fields = req.query.fields.split(',').join(' ');
-      query = query.select(fields);
-    } else {
-      query = query.select('-__v');
-    }
-    ```
+- Pagination allows users to select a certain page from the result in case we have a lot of results
+- `page=2&limit=10`: return page #2, each page contains 10 results
 
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c57cc9706d5f72f8db926519fa5cd6c6b2652f1d">PAGINATION</a>
+  ```js
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 100;
+  const skip = (page - 1) * limit;
 
-  - Pagination allows users to select a certain page from the result in case we have a lot of results
-  - `page=2&limit=10`: return page #2, each page contains 10 results
+  if (req.query.page) {
+    const numTours = await Tour.countDocuments();
+    if (skip >= numTours) throw new Error('This page does not exist');
+  }
 
-    ```js
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 100;
-    const skip = (page - 1) * limit;
+  query = query.skip(skip).limit(limit);
+  ```
 
-    if (req.query.page) {
-      const numTours = await Tour.countDocuments();
-      if (skip >= numTours) throw new Error('This page does not exist');
-    }
+## [ALIASING](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/ec56301a12242a80785aa0306267053d32107f62)
 
-    query = query.skip(skip).limit(limit);
-    ```
+- A nice feature to add to an API is to provide an alias to a route request that might be popular and be requested all the time
+- For example: 5 best tours `limit=5&sort=-ratingsAverage,price`
+- In this example, this alias is part of the `tours` resource, so the endpoint will be `api/v1/tours/top-5`
 
-- ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/ec56301a12242a80785aa0306267053d32107f62">ALIASING</a>
+  ```js
+  // In tourRoutes.js, we create a new route for top-5 with a GET method
+  // Before running getAllTours, it will go through middleware aliasTopTours that will insert
+  // some queries to the req object. This makes it easy so that the users don't have to write them
+  router
+    .route('/top-5')
+    .get(tourController.aliasTopTours, tourController.getAllTours);
 
-  - A nice feature to add to an API is to provide an alias to a route request that might be popular and be requested all the time
-  - For example: 5 best tours `limit=5&sort=-ratingsAverage,price`
-  - In this example, this alias is part of the `tours` resource, so the endpoint will be `api/v1/tours/top-5`
-
-    ```js
-    // In tourRoutes.js, we create a new route for top-5 with a GET method
-    // Before running getAllTours, it will go through middleware aliasTopTours that will insert
-    // some queries to the req object. This makes it easy so that the users don't have to write them
-    router
-      .route('/top-5')
-      .get(tourController.aliasTopTours, tourController.getAllTours);
-
-    // In tourController.js
-    exports.aliasTopTours = (req, res, next) => {
-      req.query.limit = '5';
-      req.query.sort = '-ratingsAverage,price';
-      req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
-      next();
-    };
-    ```
+  // In tourController.js
+  exports.aliasTopTours = (req, res, next) => {
+    req.query.limit = '5';
+    req.query.sort = '-ratingsAverage,price';
+    req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+    next();
+  };
+  ```
 
 ## <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/06aed2fababf8b63bdfe0fe843ab573f43e3b6b3">APIFeatures Module</a>
 
