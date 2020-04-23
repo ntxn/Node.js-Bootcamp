@@ -1,13 +1,40 @@
 # Table Of Content
 
-- [Environment Variables](#environment-variables)
-- [APIs and RESTful API Design](#apis-and-restful-api-design)
-- [Setting up ESLint + Prettier in VS Code](#setting-up-eslint--prettier-in-vs-code)
-- [Model-View-Controller: MVC Back-End Architecture](#model-view-controller-mvc-back-end-architecture)
-- [Express](#express)
-- [MongoDB](#mongodb)
-- [Mongoose](#mongoose)
-- [API Features](#api-features)
+- **[Environment Variables](#environment-variables)**
+- **[APIs and RESTful API Design](#apis-and-restful-api-design)**
+- **[Setting up ESLint + Prettier in VS Code](#setting-up-eslint--prettier-in-vs-code)**
+- **[Model-View-Controller: MVC Back-End Architecture](#model-view-controller-mvc-back-end-architecture)**
+- **[Express](#express)**
+  - [Basic Routing](#basic-routing-with-express)
+  - [Simple GET, POST, PATCH, DELETE Requests at Endpoint /api/v1/tours](#simple-get-post-patch-delete-requests-at-endpoint-apiv1tours)
+  - [Refactoring Routes](#refactoring-routes)
+  - [Middleware and the Request-Response Cycle](#middleware-and-the-request-response-cycle)
+  - [Creating and Mounting Multiple Routers](#creating-and-mounting-multiple-routers)
+  - [Restructuring Files](#restructuring-files)
+  - [Param Middleware](#param-middleware)
+  - [Serving Static Files by middleware express.static](#serving-static-files-by-middleware-expressstatic)
+- **[MongoDB](#mongodb)**
+  - [CRUD Operations](#crud-operations)
+  - [Use Mongo Shell](#use-mongo-shell)
+  - [Use MongoDB Compass](#use-mongodb-compass)
+  - [Use Atlas - Remote MongoDB Database Server](#use-atlas---remote-mongodb-database-server)
+  - [Connect MongoDB to Node.js Application](#connect-mongodb-to-nodejs-application)
+  - [Use MongoDB in the Node.js Application](#use-mongodb-in-the-nodejs-application)
+- **[Mongoose](#mongoose)**
+  - [Schema](#step-1-create-a-schema)
+    - [Virtual Properties](#virtual-properties)
+    - [Middleware in Mongoose](#middleware-in-mongoose)
+    - [Data Validation](#data-validation)
+  - [Create Model from Schema](#step-2-create-a-model-using-a-defined-schema)
+  - [Create Documents from Model](#step-3-create-documents-from-our-model)
+  - [Update APIs CRUD Operations with MongoDB Database](#updating-apis-crud-operations-with-atlas-mongodb-using-mongoose-driver)
+  - [Aggregation Pipeline](#mongodb-aggregation-pipeline-using-mongoose)
+- **[API Features](#api-features)**
+  - [Filtering](#filtering)
+  - [Sorting](#sorting)
+  - [Limiting Fields](#limiting-fields)
+  - [Pagination](#pagination)
+  - [Aliasing](#aliasing)
 
 # Environment Variables
 
@@ -100,7 +127,7 @@ app.get('/', (req, res) => {
 });
 ```
 
-## Simple <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/66c91c7012151a95f8040e6ed36264b64252c2c4">GET</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c0055573f21d10942147c1f4b4423b27d72d6c68">POST</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/d2c3a1ccc827bc1e96a987a7a2de7d91c8ad167b">PATCH</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/8caf015c45bb4644827188eb5544e3029ba492aa">DELETE</a> Requests at Endpoint `'/api/v1/tours`
+## Simple <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/66c91c7012151a95f8040e6ed36264b64252c2c4">GET</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c0055573f21d10942147c1f4b4423b27d72d6c68">POST</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/d2c3a1ccc827bc1e96a987a7a2de7d91c8ad167b">PATCH</a>, <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/8caf015c45bb4644827188eb5544e3029ba492aa">DELETE</a> Requests at Endpoint `/api/v1/tours`
 
 ```js
 app.use(express.json());
@@ -266,7 +293,7 @@ app.use(express.static(`${__dirname}/public`));
 
   <img src="screenshots/mongodb-intro-3.png" width="800">
 
-## CRUD Operation:
+## CRUD Operations:
 
 - CREATE: `insertOne` or `insertMany`
   ```
@@ -425,7 +452,7 @@ DATABASE_LOCAL=mongodb://localhost:27017/natours
   DATABASE=mongodb+srv://ngan:<PASSWORD>@cluster0-rjvfu.mongodb.net/natours?retryWrites=true&w=majority
   ```
 
-## Use MongoDB in the Node.js Application:
+## Use MongoDB in the Node.js Application
 
 We need to install a MongoDB driver for Node.js, for example `Mongoose`. It is a software that allows Node.js code to access and interact with a MongoDB db.
 
