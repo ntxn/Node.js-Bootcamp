@@ -3,6 +3,7 @@
 - **[Environment Variables](#environment-variables)**
 - **[APIs and RESTful API Design](#apis-and-restful-api-design)**
 - **[Setting up ESLint + Prettier in VS Code](#setting-up-eslint--prettier-in-vs-code)**
+- **[Debugging Node.js with ndb](#debugging-nodejs-with-ndb)**
 - **[Model-View-Controller: MVC Back-End Architecture](#model-view-controller-mvc-back-end-architecture)**
 - **[Express](#express)**
   - [Basic Routing](#basic-routing-with-express)
@@ -80,6 +81,18 @@ Install these development dependency and then add rules to `.eslintrc.json`
 ```
 npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react --save-dev
 ```
+
+# Debugging Node.js with ndb
+
+Install `ndb` globally: `npm i global ndb`
+
+Write a script in package.json: `"debug": "ndb server.js"`
+
+Start debugging by this command in terminal: `npm run debug`
+
+In `ndb`, set a breakpoint by clicking on the line number, then run the app by sending a request, for example. Once the code hit the breakpoint, it will resume `ndb` at that breakpoint with the current local and global data info on the right
+
+<img src="screenshots/ndb.png" width="800">
 
 # Model-View-Controller: MVC Back-End Architecture
 
