@@ -15,6 +15,7 @@
   - [Param Middleware](#param-middleware)
   - [Serving Static Files by middleware express.static](#serving-static-files-by-middleware-expressstatic)
   - [Handling Unhandled Routes](#handling-unhandled-routes)
+  - [Error Handling](#error-handling)
 - **[MongoDB](#mongodb)**
   - [CRUD Operations](#crud-operations)
   - [Use Mongo Shell](#use-mongo-shell)
@@ -304,11 +305,12 @@ app.use(express.static(`${__dirname}/public`));
 - To access `overview.html` we have to remove public from the previous URL `http://127.0.0.1:3000/overview.html` because when express app cannot match that URL to any of the defined routes, it will go to the `public` folder to search for the file.
 - We can also access to an image in img folder by `http://127.0.0.1:3000/img/pin.png` but we will get an error if we try to access only the `img` folder `http://127.0.0.1:3000/img/` because it's not a file so express app will try to search for a matched route
 
-## [Handling Unhandled Routes](#)
+## [Handling Unhandled Routes](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/8bdb12e094cdb36d91bc7fe05fb70e6004144b9f)
 
 When the clients try to access a route that might not be defined, or they misspell the route, we want to catch all of them and send back a json response
 
 `app.all`: apply this to all HTTP methods
+
 `'*'`: apply to all the routes that we didn't define above this line
 
 ```js
@@ -322,6 +324,45 @@ app.all('*', (req, res, next) => {
   });
 });
 ```
+
+## ERROR HANDLING
+
+<img src="screenshots/error-handling.png" width="900">
+
+For error handling in `Express`, we focus on Operational Errors. `Express` comes with Error Handling out of the box.
+
+- ### [Global Error Handler](#)
+
+  All we have to do is to write a global express error handling middleware which will catch errors from all over the application like from route handlers or model validator, etc. The goal is for errors to end up in one central error handling middleware so we can send a nice response back to the client letting them know what happened.
+
+  Having a global error handling allows a nice separation of concerns so we don't have to worry about handling errors in business logic or controllers or anywhere.
+
+  The error handling functions have 4 parameters, that's how `Express` knows this is an error handler
+
+  ```js
+  // Global error handler
+  module.exports = (err, req, res, next) => {
+    err.statusCode = err.statusCode || 500;
+    err.status = err.status || 'error';
+
+    res.status(err.statusCode).json({
+      status: err.status,
+      message: err.message,
+    });
+  };
+  ```
+
+  Example of applying this global error handler to the response of handling unhandled routes.
+
+  When we pass an argument into the `next` function, `Express` knows that there's an error. `Express` then skips all other middleware and goes straight to the global error handler.
+
+  ```js
+  app.all('*', (req, res, next) =>
+    next(new AppError(`Can't find ${req.originalUrl} on this server`, 404))
+  );
+
+  app.use(globalErrorHandler);
+  ```
 
 # MongoDB
 
