@@ -39,6 +39,8 @@
   - [Limiting Fields](#limiting-fields)
   - [Pagination](#pagination)
   - [Aliasing](#aliasing)
+- **[Authentication, Authorization and Security](#authentication-authorization-and-security)**
+  - [Create new users and manage passwords](#create-new-users-and-manage-passwords)
 
 # Environment Variables
 
@@ -1025,3 +1027,11 @@ const features = new APIFeatures(Tour.find(), req.query)
   .paginate();
 const tours = await features.query;
 ```
+
+# Authentication, Authorization and Security
+
+## [Create new users and manage passwords](#)
+
+- Validate email and passwords matching in the Schema
+- Add a pre hook on `save` event to hash the password and delete the `passwordConfirm` field by `this.passwordConfirm = undefined;`. We only need passwordConfirm to match the password but there's no need to save it in the db. As for the password, we should never save it as is in db in case the db is hacked and the users' passwords are stolen.
+  - Use `bcryptjs` npm package to encrypt password `this.password = await bcrypt.hash(this.password, 12);`. The number `12` is to define how CPU intense the hash function will be, called `salting`. The bigger the number, the longer it takes to hash and the more secure it is. This also ensure even if 2 users have the same password, the hashed passwords won't be the same.
