@@ -1038,6 +1038,15 @@ const tours = await features.query;
   - Delete `passwordConfirm` by `this.passwordConfirm = undefined;`. We only need passwordConfirm to match the password but there's no need to save it in the db.
   - As for the password, we should never save it as is in db in case the db is hacked and the users' passwords are stolen.
   - Use `bcryptjs` npm package to encrypt password `this.password = await bcrypt.hash(this.password, 12);`. The number `12` is to define how CPU intense the hash function will be, called `salting`. The bigger the number, the longer it takes to hash and the more secure it is. This also ensure even if 2 users have the same password, the hashed passwords won't be the same.
+- If passing the same password in giving us different hashed value, how can we check if the password is the same when logging the users in? `bscript` has a function call `compare` that will compare the inputPassword with the hashed password in db. By creating a static method in userShema, all User model can have access to this.
+  ```js
+  userSchema.methods.correctPassword = async function (
+    candidatePassword,
+    userPassword
+  ) {
+    return await bcrypt.compare(candidatePassword, userPassword);
+  };
+  ```
 
 ## [How Authentication with JWT works](#)
 
@@ -1050,9 +1059,10 @@ const tours = await features.query;
 
   <img src="screenshots/jwt-3.png" width="900">
 
-- ### [Signing up Users](#)
+- ### [Signing up Users](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3875294a049e13de50a78540ed2d08dc0417527b)
 
   - The previous way of creating a new user: `const newUser = await User.create(req.body);`. The flaw of this way is that it allows any users to register themselves as an admin so it's not secure. We can fix it by specifically indicate which fields we want to input data in. So if someone try to insert a new row, we will not save it into the db. If we want to set a user as an admin, we can manually do it in Compass
+
     ```js
     const newUser = await User.create({
       name: req.body.name,
@@ -1061,3 +1071,34 @@ const tours = await features.query;
       passwordConfirm: req.body.passwordConfirm,
     });
     ```
+
+  - Before returning the newUser data, we `sign` jwt and return the token to log the new user in
+    ```js
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
+    ```
+
+- ### [Logging in Users](#)
+
+  To log a user in, we need to check for their email, password then return a token to the client
+
+  ```js
+  exports.login = catchAsync(async (req, res, next) => {
+    const { email, password } = req.body;
+
+    if (!email || !password)
+      return next(new AppError('Please provide email and password!', 400));
+
+    const user = await User.findOne({ email }).select('+password');
+
+    if (!user || !(await user.correctPassword(password, user.password)))
+      return next(new AppError('Incorrect email or password', 401));
+
+    const token = signToken(user._id);
+    res.status(200).json({
+      status: 'success',
+      token,
+    });
+  });
+  ```
