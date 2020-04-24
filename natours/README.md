@@ -1038,7 +1038,7 @@ const tours = await features.query;
   - Delete `passwordConfirm` by `this.passwordConfirm = undefined;`. We only need passwordConfirm to match the password but there's no need to save it in the db.
   - As for the password, we should never save it as is in db in case the db is hacked and the users' passwords are stolen.
   - Use `bcryptjs` npm package to encrypt password `this.password = await bcrypt.hash(this.password, 12);`. The number `12` is to define how CPU intense the hash function will be, called `salting`. The bigger the number, the longer it takes to hash and the more secure it is. This also ensure even if 2 users have the same password, the hashed passwords won't be the same.
-- If passing the same password in giving us different hashed value, how can we check if the password is the same when logging the users in? `bscript` has a function call `compare` that will compare the inputPassword with the hashed password in db. By creating a static method in userShema, all User model can have access to this.
+- If passing the same password in giving us different hashed value, how can we check if the password is the same when logging the users in? `bscript` has a function call `compare` that will compare the inputPassword with the hashed password in db. By creating a static method in userShema, all User documents can have access to this function
   ```js
   userSchema.methods.correctPassword = async function (
     candidatePassword,
@@ -1079,7 +1079,7 @@ const tours = await features.query;
     });
     ```
 
-- ### [Logging in Users](#)
+- ### [Authentication Step 1: Logging in Users](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3ab92b1c4af243ece68388b2e48f5f324ae9ded8)
 
   To log a user in, we need to check for their email, password then return a token to the client
 
@@ -1100,5 +1100,49 @@ const tours = await features.query;
       status: 'success',
       token,
     });
+  });
+  ```
+
+- ### [Authentication Step 2: Let logged-in users access protected routes](#)
+
+  To make a route a protected route, all we have to do is to insert an authenticating handler (middleware) before the main handler of that route for example: `.get(authController.protect, tourController.getAllTours)`.
+
+  This authenticating handler will verify the token included in the header. If the verification passed, we check if the user still exists or if the user has changed password after the token is issued before allowing access to the protected route.
+
+  ```js
+  exports.protect = catchAsync(async (req, res, next) => {
+    // 1 - Getting token and check if it exists
+    let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer')
+    )
+      token = req.headers.authorization.split(' ')[1];
+
+    if (!token) {
+      return next(
+        new AppError('You are not logged in. Please log in to get access', 401)
+      );
+    }
+
+    // 2 - Verify token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    // 3 - Check if user still exists
+    const currentUser = await User.findById(decoded.id);
+    if (!currentUser)
+      return next(
+        new AppError('The user belonged to this token no longer exists', 401)
+      );
+
+    // 4 - Check if user changed password after token was issued
+    if (currentUser.changedPasswordAfter(decoded.iat))
+      return next(
+        new AppError('User recently changed password. Please log in again', 401)
+      );
+
+    // 5 - Grant access to protected route
+    req.user = currentUser;
+    next();
   });
   ```
