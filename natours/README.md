@@ -1042,10 +1042,22 @@ const tours = await features.query;
 ## [How Authentication with JWT works](#)
 
 - Authentication - Authorization: The whole workflow of logging user in and allowing them to interact with certain protected resources that non-logged in users cannot access
-- The authentication we're gonna use is called JWT - Json Web Token, a stateless solution for authentication so there's no need to save any session state in the server which is perfect for RESTful APIs.
+- The authentication we're gonna use is called JWT - Json Web Token (`jsonwebtoken` npm package), a stateless solution for authentication so there's no need to save any session state in the server which is perfect for RESTful APIs.
 
   <img src="screenshots/jwt-1.png" width="900">
 
   <img src="screenshots/jwt-2.png" width="600">
 
   <img src="screenshots/jwt-3.png" width="900">
+
+- ### [Signing up Users](#)
+
+  - The previous way of creating a new user: `const newUser = await User.create(req.body);`. The flaw of this way is that it allows any users to register themselves as an admin so it's not secure. We can fix it by specifically indicate which fields we want to input data in. So if someone try to insert a new row, we will not save it into the db. If we want to set a user as an admin, we can manually do it in Compass
+    ```js
+    const newUser = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      passwordConfirm: req.body.passwordConfirm,
+    });
+    ```
