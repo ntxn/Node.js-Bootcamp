@@ -41,6 +41,7 @@
   - [Aliasing](#aliasing)
 - **[Authentication, Authorization and Security](#authentication-authorization-and-security)**
   - [Create new users and manage passwords](#create-new-users-and-manage-passwords)
+  - [How Authentication with JWT works](#how-authentication-with-jwt-works)
 
 # Environment Variables
 
@@ -1030,8 +1031,21 @@ const tours = await features.query;
 
 # Authentication, Authorization and Security
 
-## [Create new users and manage passwords](#)
+## [Create new users and manage passwords](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/b56a24ff59d48c8bdc9369894c514bf3f00f7720)
 
 - Validate email and passwords matching in the Schema
-- Add a pre hook on `save` event to hash the password and delete the `passwordConfirm` field by `this.passwordConfirm = undefined;`. We only need passwordConfirm to match the password but there's no need to save it in the db. As for the password, we should never save it as is in db in case the db is hacked and the users' passwords are stolen.
+- Add a pre hook on `save` event to hash the password and delete the `passwordConfirm` field
+  - Delete `passwordConfirm` by `this.passwordConfirm = undefined;`. We only need passwordConfirm to match the password but there's no need to save it in the db.
+  - As for the password, we should never save it as is in db in case the db is hacked and the users' passwords are stolen.
   - Use `bcryptjs` npm package to encrypt password `this.password = await bcrypt.hash(this.password, 12);`. The number `12` is to define how CPU intense the hash function will be, called `salting`. The bigger the number, the longer it takes to hash and the more secure it is. This also ensure even if 2 users have the same password, the hashed passwords won't be the same.
+
+## [How Authentication with JWT works](#)
+
+- Authentication - Authorization: The whole workflow of logging user in and allowing them to interact with certain protected resources that non-logged in users cannot access
+- The authentication we're gonna use is called JWT - Json Web Token, a stateless solution for authentication so there's no need to save any session state in the server which is perfect for RESTful APIs.
+
+  <img src="screenshots/jwt-1.png" width="900">
+
+  <img src="screenshots/jwt-2.png" width="600">
+
+  <img src="screenshots/jwt-3.png" width="900">
