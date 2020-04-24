@@ -142,7 +142,7 @@ Below is a simple way to handle those. In production, the service hosts the node
   });
   ```
 
-- ### [Uncaught Exceptions](#)
+- ### [Uncaught Exceptions](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f911b3cc15d2ece3a2879afa0c55eebf3f7d77bc)
 
   In Uncaught Exceptions, we have to shut down the server because the code right now is not clean. And then restart the server. We also need to put this handler at the beginning of `server.js` before any code runs so that if there's any problem, it can catch it.
 
