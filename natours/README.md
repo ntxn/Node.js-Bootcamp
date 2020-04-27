@@ -1103,7 +1103,7 @@ const tours = await features.query;
   });
   ```
 
-- ### [Authentication Step 2: Let logged-in users access protected routes](#)
+- ### [Authentication Step 2: Let logged-in users access protected routes](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/55933fbc00c3f81425d2cc0b08ecb1c510662ed3)
 
   To make a route a protected route, all we have to do is to insert an authenticating handler (middleware) before the main handler of that route for example: `.get(authController.protect, tourController.getAllTours)`.
 
@@ -1145,4 +1145,31 @@ const tours = await features.query;
     req.user = currentUser;
     next();
   });
+  ```
+
+- ### [Authorization: User Roles and Permissions](#)
+
+  Authorization: allows certain users to have the right to access certain resources. For example, only admin should be able to delete/add a tour.
+
+  ```js
+  // tourRoutes.js, delete Method is restricted to admin and lead-guides
+  router
+    .route('/:id')
+    .delete(
+      authController.protect,
+      authController.restrictTo('admin', 'lead-guide'),
+      tourController.deleteTour
+    );
+
+  // authController.js
+  exports.restrictTo = (...roles) => {
+    return (req, res, next) => {
+      // roles is an array: ['admin', 'lead-guide']
+      if (!roles.includes(req.user.role))
+        return next(
+          new AppError('You do not have permission to perform this action', 403)
+        );
+      next();
+    };
+  };
   ```
