@@ -1266,3 +1266,24 @@ const tours = await features.query;
     When a user requests to delete their account, we don't actually delete their document from the db, we only set it to inactive so that if they decide to open an account again, we still have all of their information.
 
     Because of this new `active` field, we need to have a pre query middleware on `find` so when we query for users, we don't show users that's inactive
+
+## [Sending JWT via Cookie](#)
+
+- **Cookie**: A cookie is a small piece of text that a server can send to a client. When a client receives a cookie, it will automatically store it and send it back along with all future requests to the same server.
+- In `createSendToken` in `authController.js`, we will create and send a http-only cookie before sending a response to the client.
+- `'jwt'`: cookie name, `token`: data in the cookie
+- `expires`: in milliseconds, for browser to delete cookie when it's expired. We need a new `JWT_COOKIE_EXPIRES_IN` as an environment because the `JWT_EXPIRES_IN` is in a format for JWT package but in JS, it's meaningless
+- `secure: true`: the cookie will only be sent on a encrypted connection `https`
+- `httpOnly: true`: the cookie cannot be accessed or modified in any ways by the browers to prevent XSS attacks. The browser receives the cookie, store it and then send it automatically along with every request
+
+  ```js
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  res.cookie('jwt', token, cookieOptions);
+  ```
