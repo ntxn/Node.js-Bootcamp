@@ -1176,7 +1176,7 @@ const tours = await features.query;
 
 - ### Password Reset Functionality
 
-  - #### [Reset Token & Reset password link](#)
+  - #### [Reset Token & Reset password link](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/843fd4ae11d79e4d7c09e5432a4553360048bf23)
 
     User send a POST request to change password through `users` resource at endpoint `/forgotPassword`.
     We generate a token that acts as a temporary password and then send an email to the user with a link to reset the password.
@@ -1221,3 +1221,11 @@ const tours = await features.query;
       Generate a resetURL which includes the token created in the previous step. Then use `nodemailer` package to send user an email with resetURL.
 
       During development, we use `mailtrap` to trap the outgoing emails so that we don't accidentally send wrong emails to users.
+
+  - #### [Setting New Password](#)
+
+    User send a PATCH request with token as a param to update new password
+
+    We add a new pre hook to User Model on `save` event to insert/update `passwordChangedAt` since the user is changing their password.
+
+    In `resetPassword` handler from `authController.js`, we encrypted the token param and search for the user with that token in db. Then we update with the new password and return a new authentication token.
