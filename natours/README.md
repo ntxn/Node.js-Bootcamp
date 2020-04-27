@@ -1267,7 +1267,7 @@ const tours = await features.query;
 
     Because of this new `active` field, we need to have a pre query middleware on `find` so when we query for users, we don't show users that's inactive
 
-## [Sending JWT via Cookie](#)
+## [Sending JWT via Cookie](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/75ef700678e66b7952d37fe1860e8fe0a7ffccbe)
 
 - **Cookie**: A cookie is a small piece of text that a server can send to a client. When a client receives a cookie, it will automatically store it and send it back along with all future requests to the same server.
 - In `createSendToken` in `authController.js`, we will create and send a http-only cookie before sending a response to the client.
@@ -1287,3 +1287,17 @@ const tours = await features.query;
 
   res.cookie('jwt', token, cookieOptions);
   ```
+
+## [Rate Limiting](#)
+
+- Rate Limiter prevents the same IP address making too many requests to the APIs to help us from denial of service or brute force attacks
+- We will implement rate limiter as a global middleware in `app.js` using `express-rate-limit` package. The rate limiter will count the number of requests coming from the same IP address so when there are too many requests, we block them
+
+```js
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP. Please try again in an hour',
+});
+app.use('/api', limiter);
+```
