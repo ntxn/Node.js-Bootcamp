@@ -1147,7 +1147,7 @@ const tours = await features.query;
   });
   ```
 
-- ### [Authorization: User Roles and Permissions](#)
+- ### [Authorization: User Roles and Permissions](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/a4f666c0927deb176af9949d1e5c6e0d2d9e28ac)
 
   Authorization: allows certain users to have the right to access certain resources. For example, only admin should be able to delete/add a tour.
 
@@ -1173,3 +1173,51 @@ const tours = await features.query;
     };
   };
   ```
+
+- ### Password Reset Functionality
+
+  - #### [Reset Token & Reset password link](#)
+
+    User send a POST request to change password through `users` resource at endpoint `/forgotPassword`.
+    We generate a token that acts as a temporary password and then send an email to the user with a link to reset the password.
+
+    - **Create a reset token**
+
+      Since the token acts as a password, we cannot save it to db as is. We'd need to encrypt it just like a real password so that if a hacker gets access to the token, he cannot change your password.
+
+      So we save the encrypted reset token in db, send the original to the user. When the user click on the link (which includes the original token), we will compare the token with the encrypted one, if it matches, we will allow the user to change password.
+
+      `await user.save({ validateBeforeSave: false });`: we need to save to db all the changes we made (inserting reset token). Since everytime we do user.save(), it will validate if it includes all the required fields like `passwordConfirm`, we need to ignore validation to make this save work.
+
+      ```js
+      // userModel.js, create an instant method to create a reset token
+      userSchema.methods.createPasswordResetToken = function () {
+        const resetToken = crypto.randomBytes(32).toString('hex');
+
+        this.passwordResetToken = crypto
+          .createHash('sha256')
+          .update(resetToken)
+          .digest('hex');
+
+        this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+        return resetToken;
+      };
+
+      // authController.js, forgotPassword handler
+      const user = await User.findOne({ email: req.body.email });
+      if (!user)
+        return next(
+          new AppError('There is no user with that email address', 404)
+        );
+      const resetToken = user.createPasswordResetToken();
+      await user.save({ validateBeforeSave: false });
+      ```
+
+    - **Send user an email with a reset password link**
+
+      Changes are made in `forgotPassword` handler in `authController.js` and util `email.js`
+
+      Generate a resetURL which includes the token created in the previous step. Then use `nodemailer` package to send user an email with resetURL.
+
+      During development, we use `mailtrap` to trap the outgoing emails so that we don't accidentally send wrong emails to users.
