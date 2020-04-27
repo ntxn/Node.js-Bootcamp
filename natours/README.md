@@ -1031,6 +1031,15 @@ const tours = await features.query;
 
 # Authentication, Authorization and Security
 
+## Security Best Practices
+
+  <img src="screenshots/security-best-practices.png" width="800">
+
+- **Brute Force attacks**: hackers try to log in using all different combinations of passwords until they find the right one
+- **Cross-site Scripting attacks**: hackers inject scripts into our page to run their malicious code. This is especially dangerous for the clients because it allows the attackers to read local storage. This is why we should never store JWT in local storage. JWT should only be stored in an HTTP-only cookie so that the browser can only receive and send cookies but cannot access or modify it in anyway.
+- **Denial-of-service attack**: hackers send many requests to a server to break down the server and the application becomes unavailable
+- **NOSQL query injection**: An query injection happens when an attacker, instead of inputting valid data, injects some queries in order to create query expresstions that'll translate to true. For example, to be logged in without providing a valid username or password
+
 ## [Create new users and manage passwords](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/b56a24ff59d48c8bdc9369894c514bf3f00f7720)
 
 - Validate email and passwords matching in the Schema
@@ -1250,7 +1259,7 @@ const tours = await features.query;
 
     Handler: `updateMe` in `userController.js`. In here, we want to make sure to only update the allowed fields in case user adding a `role` field. We also don't want to use `.save()` because it will cause an error in `passwordConfirm` field. For what we're updating, using `User.findByIdAndUpdate` would suffice.
 
-  - #### [Delete Account](#)
+  - #### [Delete Account](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/d41a56bb937e7641d191e6b06550dd997f6c65e9)
 
     Route and handler called `deleteMe`
 
