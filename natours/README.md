@@ -1230,11 +1230,11 @@ const tours = await features.query;
 
     In `resetPassword` handler from `authController.js`, we encrypted the token param and search for the user with that token in db. Then we update with the new password and return a new authentication token.
 
-- ### Update current user data:
+- ### Current user updates their account:
 
-  - #### [Password](#)
+  - #### [Password](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/6a56cdbee7c403fae9dc3de760643abc36a59c66)
 
-    Route: PATCH `users/updateMyPassword`
+    Route: PATCH `/updateMyPassword`
 
     This route is different from resetPassword because users only have access to this option once they're logged in. Additionally, before allowing the password to be updated, we ask users for the current password to ensure that's not a hacker.
 
@@ -1243,3 +1243,9 @@ const tours = await features.query;
     - Get user from db based on user ID in the request. We have access to `user` variable in request because we call middleware `authController.protect` to authenticate user before calling this handler
     - Compare the password in db with passwordCurrent in request body.
     - If it's the same, we update the password and return a new JWT
+
+  - #### [Other Data](#)
+
+    Route: PATCH `/updateMe`. This route allows user to update their own account so we also need to run it through `authController.protect`.
+
+    Handler: `updateMe` in `userController.js`. In here, we want to make sure to only update the allowed fields in case user adding a `role` field. We also don't want to use `.save()` because it will cause an error in `passwordConfirm` field. For what we're updating, using `User.findByIdAndUpdate` would suffice.
