@@ -1244,8 +1244,16 @@ const tours = await features.query;
     - Compare the password in db with passwordCurrent in request body.
     - If it's the same, we update the password and return a new JWT
 
-  - #### [Other Data](#)
+  - #### [Other Data](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/31b1477daf34c09715c6613a28da14eee29ce1c3)
 
     Route: PATCH `/updateMe`. This route allows user to update their own account so we also need to run it through `authController.protect`.
 
     Handler: `updateMe` in `userController.js`. In here, we want to make sure to only update the allowed fields in case user adding a `role` field. We also don't want to use `.save()` because it will cause an error in `passwordConfirm` field. For what we're updating, using `User.findByIdAndUpdate` would suffice.
+
+  - #### [Delete Account](#)
+
+    Route and handler called `deleteMe`
+
+    When a user requests to delete their account, we don't actually delete their document from the db, we only set it to inactive so that if they decide to open an account again, we still have all of their information.
+
+    Because of this new `active` field, we need to have a pre query middleware on `find` so when we query for users, we don't show users that's inactive
