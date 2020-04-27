@@ -1288,7 +1288,7 @@ const tours = await features.query;
   res.cookie('jwt', token, cookieOptions);
   ```
 
-## [Rate Limiting](#)
+## [Rate Limiting](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/4a6beb1303a0687e1219c5b1c8c32ad080170294)
 
 - Rate Limiter prevents the same IP address making too many requests to the APIs to help us from denial of service or brute force attacks
 - We will implement rate limiter as a global middleware in `app.js` using `express-rate-limit` package. The rate limiter will count the number of requests coming from the same IP address so when there are too many requests, we block them
@@ -1301,3 +1301,8 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 ```
+
+## [Security HTTP Headers](#)
+
+- Use `helmet` package to implement security HTTP Headers because Express doesn't have those builtin
+- We should always use `helmet` at the begining of the middleware stack to make sure the APIs are called secured
