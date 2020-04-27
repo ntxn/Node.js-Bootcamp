@@ -1222,10 +1222,24 @@ const tours = await features.query;
 
       During development, we use `mailtrap` to trap the outgoing emails so that we don't accidentally send wrong emails to users.
 
-  - #### [Setting New Password](#)
+  - #### [Setting New Password](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/2e8a9818c3716987b31d31b1ef5133fd99265210)
 
     User send a PATCH request with token as a param to update new password
 
     We add a new pre hook to User Model on `save` event to insert/update `passwordChangedAt` since the user is changing their password.
 
     In `resetPassword` handler from `authController.js`, we encrypted the token param and search for the user with that token in db. Then we update with the new password and return a new authentication token.
+
+- ### Update current user data:
+
+  - #### [Password](#)
+
+    Route: PATCH `users/updateMyPassword`
+
+    This route is different from resetPassword because users only have access to this option once they're logged in. Additionally, before allowing the password to be updated, we ask users for the current password to ensure that's not a hacker.
+
+    Handler: `updatePassword` in `authController.js`. Steps:
+
+    - Get user from db based on user ID in the request. We have access to `user` variable in request because we call middleware `authController.protect` to authenticate user before calling this handler
+    - Compare the password in db with passwordCurrent in request body.
+    - If it's the same, we update the password and return a new JWT
