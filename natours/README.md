@@ -1307,7 +1307,7 @@ app.use('/api', limiter);
 - Use `helmet` package to set security HTTP Headers as a middleware because Express doesn't have those builtin
 - We should always use `helmet` at the begining of the middleware stack to make sure the APIs are called secured
 
-## [Data Sanitization](#)
+## [Data Sanitization](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/bb97beeb87a1ba38f75c34804b523fe28c21f3c7)
 
 - Data sanitization means to clean data coming to the application from malicious code.
 - **NoSQL Query Injection Attack**
@@ -1331,3 +1331,19 @@ app.use('/api', limiter);
 
   - `app.use(xss());`, from `xss-clean` package, will clean any user input from malicious HTML, JS code
   - Example: if we sign up with `"name": "<div id='bad-code'>Name</div>"`, xss-clean will convert special characters into something like this `"name": "&lt;div id='bad-code'>Name&lt;/div>"`
+
+## [Preventing Parameter Pollution](#)
+
+- Example: if we were to send a request with sort by duration and sort by price `api/v1/tours?sort=duration&sort=price`, in the parameters, we'd get an array `['duration', 'price']` for `this.queryString.sort`. In the next line of code, we were supposed to split a string but `this.queryString.sort` is an array, thus, Nodejs throws an error.
+
+- Use `hpp` package (http parameter pollution) to remove duplicate. We should use it at the end of the stack to make sure it will clean the query string
+
+- However, query something like this should work `duration=5&duration=9` because we can get any tours with duration = 5 AND 9, but just using `app.use(hpp());` will remove the duplicate so we need to whitelist some parameters
+
+  ```js
+  app.use(
+    hpp({
+      whitelist: ['duration'],
+    })
+  );
+  ```
