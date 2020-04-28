@@ -1038,7 +1038,7 @@ const stats = await Tour.aggregate([
 
     If we want to select all fields, we can simply do `this.populate('guides')`
 
-- ### [Modelling REVIEWS](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/0bae082019b7a34bd8036ab810752813b5ed1956)
+- ### [Modelling REVIEWS](#)
 
   We create a new resource/route `/reviews`, build a Review model and controller with 2 handlers: create a review and get all reviews. Because a review has a parent reference to User, we also have to use `.populate` on Review query middleware. We don't populate Tour id because when we query for a tour, the query will populate review and then review again populate tour which is not performant.
 
@@ -1056,7 +1056,6 @@ const stats = await Tour.aggregate([
   const tour = await Tour.findById(req.params.id).populate('reviews');
   ```
 
-  [Nested Routes](#)
   From the endpoint `/reviews`, we can let the users input userID and tourID for a review. However, in reality, we usually go to a tour and then write a review on that tour. In this context, the endpoint would look like `/tours/:tourID/reviews`. The endpoint we're looking at belongs to the `tours` resource and we have access to tourID as a param. Because the user is logged in, we also have access to their user ID from `req.user.id`.
 
   Since the functionality of `reviewController` works the same for both endpoints, we only need to redirect route `/tours/:tourID/reviews` to `/reviews` (reviewRoute)
@@ -1067,6 +1066,9 @@ const stats = await Tour.aggregate([
 
   // In reviewRoute.js, use mergeParams to have access to param tourId
   const router = express.Router({ mergeParams: true });
+
+  // getAllReview in reviewController.js, check if we process requests based on tourID
+  if (req.params.tourId) filter = { tour: req.params.tourId };
   ```
 
   So whenever requests coming from `/reviews`, express mounts reviewRoute to process them.
