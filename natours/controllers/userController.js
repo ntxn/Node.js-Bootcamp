@@ -73,7 +73,7 @@ exports.updateUser = (req, res) => {
 };
 
 exports.deleteUser = (req, res) => {
-  rse.status(500).json({
+  res.status(500).json({
     status: 'err',
     message: 'This route is not yet define.',
   });
