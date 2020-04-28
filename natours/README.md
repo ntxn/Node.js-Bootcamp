@@ -40,8 +40,14 @@
   - [Pagination](#pagination)
   - [Aliasing](#aliasing)
 - **[Authentication, Authorization and Security](#authentication-authorization-and-security)**
+  - [Security Best Practices](#security-best-practices)
   - [Create new users and manage passwords](#create-new-users-and-manage-passwords)
   - [How Authentication with JWT works](#how-authentication-with-jwt-works)
+  - [Sending JWT via Cookie](#sending-jwt-via-cookie)
+  - [Rate Limiting](#rate-limiting)
+  - [Security HTTP Headers](#security-http-headers)
+  - [Data Sanitization](#data-sanitization)
+  - [Preventing Parameter Pollution](#preventing-parameter-pollution)
 
 # Environment Variables
 
@@ -1332,7 +1338,7 @@ app.use('/api', limiter);
   - `app.use(xss());`, from `xss-clean` package, will clean any user input from malicious HTML, JS code
   - Example: if we sign up with `"name": "<div id='bad-code'>Name</div>"`, xss-clean will convert special characters into something like this `"name": "&lt;div id='bad-code'>Name&lt;/div>"`
 
-## [Preventing Parameter Pollution](#)
+## [Preventing Parameter Pollution](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/fbe55c31309d1429e54e77c6f12a8b6183f4d837)
 
 - Example: if we were to send a request with sort by duration and sort by price `api/v1/tours?sort=duration&sort=price`, in the parameters, we'd get an array `['duration', 'price']` for `this.queryString.sort`. In the next line of code, we were supposed to split a string but `this.queryString.sort` is an array, thus, Nodejs throws an error.
 
