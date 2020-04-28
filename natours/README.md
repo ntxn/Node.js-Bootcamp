@@ -1302,7 +1302,32 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 ```
 
-## [Security HTTP Headers](#)
+## [Security HTTP Headers](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/75ef700678e66b7952d37fe1860e8fe0a7ffccbe)
 
-- Use `helmet` package to implement security HTTP Headers because Express doesn't have those builtin
+- Use `helmet` package to set security HTTP Headers as a middleware because Express doesn't have those builtin
 - We should always use `helmet` at the begining of the middleware stack to make sure the APIs are called secured
+
+## [Data Sanitization](#)
+
+- Data sanitization means to clean data coming to the application from malicious code.
+- **NoSQL Query Injection Attack**
+
+  - Example: We can log in with this even though we didn't provide any valid email (password is correct)
+
+    ```js
+    {
+      "email": { "$gt": "" },
+      "password": "pass1234"
+    }
+    ```
+
+  - Use `express-mongo-santitize` package to prevent this kind of attack
+
+    ```js
+    app.use(mongoSanitize());
+    ```
+
+- **XSS**
+
+  - `app.use(xss());`, from `xss-clean` package, will clean any user input from malicious HTML, JS code
+  - Example: if we sign up with `"name": "<div id='bad-code'>Name</div>"`, xss-clean will convert special characters into something like this `"name": "&lt;div id='bad-code'>Name&lt;/div>"`
