@@ -1038,7 +1038,7 @@ const stats = await Tour.aggregate([
 
     If we want to select all fields, we can simply do `this.populate('guides')`
 
-- ### [Modelling REVIEWS](#)
+- ### [Modelling REVIEWS](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/314a696fe8e7f73c38aec4383d87d43ab0a25cf3)
 
   We create a new resource/route `/reviews`, build a Review model and controller with 2 handlers: create a review and get all reviews. Because a review has a parent reference to User, we also have to use `.populate` on Review query middleware. We don't populate Tour id because when we query for a tour, the query will populate review and then review again populate tour which is not performant.
 
