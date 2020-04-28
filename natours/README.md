@@ -955,7 +955,7 @@ const stats = await Tour.aggregate([
 
 - ### Modelling Tour Guides
 
-  - #### [Embedding](#)
+  - #### [Embedding](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/dbef51ffc1247020dc48bea6a8519527ea44ad75)
 
     Embed User documents into Tour documents when creating a new tour. Example of request body for creating new tour with Guide IDs. We have an array of userID for guides
 
@@ -1004,6 +1004,39 @@ const stats = await Tour.aggregate([
     We then also need to add another middleware to update this Tour doc if the guides' info changes.
 
     So we won't be doing it embedding way
+
+  - #### [Child Referencing](#)
+
+    We want Tours and Users remain to be separate entities. We only save userIDs for guides. When we query the tour, we want to automatically get access to the tour guides' info without saving it on the tour doc
+
+    In tourSchema, we define guides as an array of ObjectId referencing User collection. Then when we create new tour with tour guides' IDs, it will save to the db as ObjectId
+
+    ```
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      }
+    ]
+    ```
+
+    **Populate tour guides' data when querying for tours**
+
+    ```js
+    tourSchema.pre(/^find/, function (next) {
+      this.populate({
+        // this is a Query Object
+        path: 'guides',
+        select: '-__v -passwordChangedAt',
+      });
+
+      next();
+    });
+    ```
+
+    By adding `.populate('guides')`, the user document is being added to the query as if it's embedded.
+
+    If we want to select all fields, we can simply do `this.populate('guides')`
 
 # API FEATURES
 
