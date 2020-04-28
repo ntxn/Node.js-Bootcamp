@@ -1038,9 +1038,9 @@ const stats = await Tour.aggregate([
 
     If we want to select all fields, we can simply do `this.populate('guides')`
 
-- ### [Modelling REVIEWS](#)
+- ### [Modelling REVIEWS](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/0bae082019b7a34bd8036ab810752813b5ed1956)
 
-  We create a new resource/route `reviews`, build a Review model and controller with 2 handlers: create a review and get all reviews. Because a review has a parent reference to User, we also have to use `.populate` on Review query middleware. We don't populate Tour id because when we query for a tour, the query will populate review and then review again populate tour which is not performant.
+  We create a new resource/route `/reviews`, build a Review model and controller with 2 handlers: create a review and get all reviews. Because a review has a parent reference to User, we also have to use `.populate` on Review query middleware. We don't populate Tour id because when we query for a tour, the query will populate review and then review again populate tour which is not performant.
 
   Only reviews have reference to Tour and User so a tour would not know anything about its reviews. Sometimes we need to have all reviews for a tour. We don't want to do child referencing because we want to avoid an infinite array of review IDs which will make the document too big for mongoDB (max size of a doc in MongoDB is 16 GB). However, we can do `Virtual Populate` with reviews field which will store all review IDs of that tour. It's similar to the `virtual` method we used for `durationWeek`. Using `virtual` add review IDs to the query but review IDs won't be saved in db so it will not cause problem with the storage size. Then we can use `populate` `reviews` when querying for a tour.
 
@@ -1055,6 +1055,23 @@ const stats = await Tour.aggregate([
   // getTour of tourControllers add .populate('reviews)
   const tour = await Tour.findById(req.params.id).populate('reviews');
   ```
+
+  [Nested Routes](#)
+  From the endpoint `/reviews`, we can let the users input userID and tourID for a review. However, in reality, we usually go to a tour and then write a review on that tour. In this context, the endpoint would look like `/tours/:tourID/reviews`. The endpoint we're looking at belongs to the `tours` resource and we have access to tourID as a param. Because the user is logged in, we also have access to their user ID from `req.user.id`.
+
+  Since the functionality of `reviewController` works the same for both endpoints, we only need to redirect route `/tours/:tourID/reviews` to `/reviews` (reviewRoute)
+
+  ```js
+  // In tourRoute.js, redirect to /reviews
+  router.use('/:tourId/reviews', reviewRouter);
+
+  // In reviewRoute.js, use mergeParams to have access to param tourId
+  const router = express.Router({ mergeParams: true });
+  ```
+
+  So whenever requests coming from `/reviews`, express mounts reviewRoute to process them.
+
+  When requests comming from `/tours/:tourID/reviews`, express runs tourRoute, then tourRoute refers to reviewRoute to process those requests.
 
 # API FEATURES
 
