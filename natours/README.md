@@ -934,6 +934,25 @@ const stats = await Tour.aggregate([
 
 <img src="screenshots/design-natours-data-model.png" width="800">
 
+- ### [Modelling Location (Geospartial Data)](#)
+
+  **Geospartial Data** describes places on earth using longitude and latitude coordinates. MongoDB support Geospartial data out of the box. MongoBD uses a special data format called `GeoJSON` to specify geospartial data.
+
+  Ex: `startLocation: { GeoJSON }` (tourSchema). The object {} we specify here actually not Schema Type Option. It is an `embedded object` (type GeoJSON representing geospartial data) containing at least 2 fields: type and coordinates. Only inside this object we define the Type Option for each field.
+
+  ```js
+  // Part of tourModel.js schema
+  startLocation: {
+    type: {
+      type: String,
+      default: 'Point',
+      enum: ['Point']
+    },
+    coordinates: [Number], // [Lat, Long]
+    address: String,
+  },
+  ```
+
 # API FEATURES
 
 -There are 2 ways to query data in `MongoDB` db using `Mongoose`
