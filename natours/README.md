@@ -934,7 +934,7 @@ const stats = await Tour.aggregate([
 
 <img src="screenshots/design-natours-data-model.png" width="800">
 
-- ### [Modelling Location (Geospartial Data)](#)
+- ### [Modelling Location (Geospartial Data)](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/902cdc51f0d8f974a0e9631205941dae8e14a363)
 
   **Geospartial Data** describes places on earth using longitude and latitude coordinates. MongoDB support Geospartial data out of the box. MongoBD uses a special data format called `GeoJSON` to specify geospartial data.
 
@@ -952,6 +952,58 @@ const stats = await Tour.aggregate([
     address: String,
   },
   ```
+
+- ### Modelling Tour Guides
+
+  - #### [Embedding](#)
+
+    Embed User documents into Tour documents when creating a new tour. Example of request body for creating new tour with Guide IDs. We have an array of userID for guides
+
+    ```
+    {
+      "name": "New Test Tour with guides",
+      ...
+      "guides": ["5ea75c23ed3954a1424baff2", "5ea6f8c267393d02eb2b7e1e"]
+    }
+    ```
+
+    Then we add a document middleware to run everytime we add a new tour to embed each user doc with matching ID into this Tour doc
+
+    ```js
+    tourSchema.pre('save', async function (next) {
+      const guidesPromises = this.guides.map(
+        async (userID) => await User.findById(userID)
+      );
+      this.guides = await Promise.all(guidesPromises);
+      next();
+    });
+    ```
+
+    Example of the embedded Tour document:
+
+    ```
+    "guides": [
+      {
+        "role": "guide",
+        "_id": "5ea75c23ed3954a1424baff2",
+        "name": "Test User 2",
+        "email": "test2@g.io",
+        "__v": 0
+      },
+      {
+        "role": "admin",
+        "_id": "5ea6f8c267393d02eb2b7e1e",
+        "name": "admin",
+        "email": "admin@g.io",
+        "__v": 0,
+        "passwordChangedAt": "2020-04-27T20:42:19.526Z"
+      }
+    ],
+    ```
+
+    We then also need to add another middleware to update this Tour doc if the guides' info changes.
+
+    So we won't be doing it embedding way
 
 # API FEATURES
 
