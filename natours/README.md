@@ -934,7 +934,7 @@ const stats = await Tour.aggregate([
 
 <img src="screenshots/design-natours-data-model.png" width="800">
 
-- ### [Modelling Location (Geospartial Data)](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/902cdc51f0d8f974a0e9631205941dae8e14a363)
+- ### [Modelling LOCATION (Geospartial Data)](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/902cdc51f0d8f974a0e9631205941dae8e14a363)
 
   **Geospartial Data** describes places on earth using longitude and latitude coordinates. MongoDB support Geospartial data out of the box. MongoBD uses a special data format called `GeoJSON` to specify geospartial data.
 
@@ -953,7 +953,7 @@ const stats = await Tour.aggregate([
   },
   ```
 
-- ### Modelling Tour Guides
+- ### Modelling TOUR GUIDES
 
   - #### [Embedding](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/dbef51ffc1247020dc48bea6a8519527ea44ad75)
 
@@ -1005,7 +1005,7 @@ const stats = await Tour.aggregate([
 
     So we won't be doing it embedding way
 
-  - #### [Child Referencing](#)
+  - #### [Child Referencing](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/5611c7201fadbfaa570dbbe76e8c26998b2be4c4)
 
     We want Tours and Users remain to be separate entities. We only save userIDs for guides. When we query the tour, we want to automatically get access to the tour guides' info without saving it on the tour doc
 
@@ -1037,6 +1037,24 @@ const stats = await Tour.aggregate([
     By adding `.populate('guides')`, the user document is being added to the query as if it's embedded.
 
     If we want to select all fields, we can simply do `this.populate('guides')`
+
+- ### [Modelling REVIEWS](#)
+
+  We create a new resource/route `reviews`, build a Review model and controller with 2 handlers: create a review and get all reviews. Because a review has a parent reference to User, we also have to use `.populate` on Review query middleware. We don't populate Tour id because when we query for a tour, the query will populate review and then review again populate tour which is not performant.
+
+  Only reviews have reference to Tour and User so a tour would not know anything about its reviews. Sometimes we need to have all reviews for a tour. We don't want to do child referencing because we want to avoid an infinite array of review IDs which will make the document too big for mongoDB (max size of a doc in MongoDB is 16 GB). However, we can do `Virtual Populate` with reviews field which will store all review IDs of that tour. It's similar to the `virtual` method we used for `durationWeek`. Using `virtual` add review IDs to the query but review IDs won't be saved in db so it will not cause problem with the storage size. Then we can use `populate` `reviews` when querying for a tour.
+
+  ```js
+  // tourModel.js
+  tourSchema.virtual('reviews', {
+    ref: 'Review',
+    foreignField: 'tour',
+    localField: '_id',
+  });
+
+  // getTour of tourControllers add .populate('reviews)
+  const tour = await Tour.findById(req.params.id).populate('reviews');
+  ```
 
 # API FEATURES
 
