@@ -1090,6 +1090,12 @@ tourSchema.index({ price: 1, ratingsAverage: -1 }); // Compound index
 
 How do we choose which field to set an index on? We need to study the pattern of the application to see which fields are queried the most to set indexes for these fields. We don't want to set indexes on all the fields because indexes take up space in the db and each index also needs to be updated each time the underline data has changed. If there's a collection that has very high Write ratio then we shouldn't create indexes on any fields in this collection because the overhead for updating indexes will also high when the benefits of indexes are for searching.
 
+We can also use index to set a unique combination of different fields in a collection. For example, we only want 1 user to be able to give only 1 review on a particular tour
+
+```js
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+```
+
 ## Calculate Average Rating on Tours
 
 It is common and useful to have fields like `ratingsAverage` and `ratingsQuantity` stored on each tour so that we can display those stats on the overview page of all the tours because for an overview, we don't need to see all the reviews/rating of an individual tour. It's also more efficient to have them on each tour ready to be used instead of processing them from the `reviews` resource everytime we query for all tours.
