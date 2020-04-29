@@ -1090,6 +1090,51 @@ tourSchema.index({ price: 1, ratingsAverage: -1 }); // Compound index
 
 How do we choose which field to set an index on? We need to study the pattern of the application to see which fields are queried the most to set indexes for these fields. We don't want to set indexes on all the fields because indexes take up space in the db and each index also needs to be updated each time the underline data has changed. If there's a collection that has very high Write ratio then we shouldn't create indexes on any fields in this collection because the overhead for updating indexes will also high when the benefits of indexes are for searching.
 
+## Calculate Average Rating on Tours
+
+It is common and useful to have fields like `ratingsAverage` and `ratingsQuantity` stored on each tour so that we can display those stats on the overview page of all the tours because for an overview, we don't need to see all the reviews/rating of an individual tour. It's also more efficient to have them on each tour ready to be used instead of processing them from the `reviews` resource everytime we query for all tours.
+
+To calculate `ratingsAverage`, `ratingsQuantity` and to make sure the numbers are accurate, we need to update them everytime a new review is added or an existing review is deleted. We'll do this in `reviewModel`
+
+```js
+// Static method can be used on the Model, not the doc. the this keyword points to the current model
+reviewSchema.statics.calcAverageRatings = async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+
+  await Tour.findByIdAndUpdate(tourId, {
+    ratingsQuantity: stats.length > 0 ? stats[0].nRating : 0,
+    ratingsAverage: stats.length > 0 ? stats[0].avgRating : 4.5,
+  });
+};
+
+reviewSchema.post('save', function () {
+  // this keyword points to current document, this.constructor points to the Model created the document
+  this.constructor.calcAverageRatings(this.tour);
+});
+
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  // this keyword is current Query
+  this.review = await this.findOne();
+  next();
+});
+
+reviewSchema.post(/^findOneAnd/, async function () {
+  // await this.findOne(); does not work here b/c query already executed
+  await this.review.constructor.calcAverageRatings(this.review.tour);
+});
+```
+
 # API FEATURES
 
 -There are 2 ways to query data in `MongoDB` db using `Mongoose`
