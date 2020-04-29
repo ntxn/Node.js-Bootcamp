@@ -1141,45 +1141,84 @@ reviewSchema.post(/^findOneAnd/, async function () {
 });
 ```
 
-## GEOSPATIAL QUERIES
+## GEOSPATIAL
 
-In MongoDB, there're geospartial operators that we can use to make query related to geospartial data. View [documentation](https://docs.mongodb.com/manual/reference/operator/query-geospatial/). To do geospartial queries, we also need to set up geospartial indexes [doc](https://docs.mongodb.com/manual/geospatial-queries/)
+- ### Querries
 
-We want to query for tours within a distance based on a start location
+  In MongoDB, there're geospartial operators that we can use to make query related to geospartial data. View [documentation](https://docs.mongodb.com/manual/reference/operator/query-geospatial/). To do geospartial queries, we also need to set up geospartial indexes [doc](https://docs.mongodb.com/manual/geospatial-queries/)
 
-```js
-// tourRoutes.js
-router
-  .route('/tours-within/:distance/center/:latlng/unit/:unit')
-  .get(tourController.getToursWithin);
+  We want to query for tours within a distance based on a start location
 
-// tourModel.js, set up a geospatial index
-tourSchema.index({ startLocation: '2dsphere' });
+  ```js
+  // tourRoutes.js
+  router
+    .route('/tours-within/:distance/center/:latlng/unit/:unit')
+    .get(tourController.getToursWithin);
 
-// tourController.js,
-exports.getToursWithin = catchAsync(async (req, res, next) => {
-  const { distance, latlng, unit } = req.params;
-  const [lat, lng] = latlng.split(',');
-  const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1; // radian unit
-  if (!lat || !lng)
-    return next(
-      new AppError(
-        'Please provide latitude and longitude in the format lat,lng.',
-        400
-      )
-    );
+  // tourModel.js, set up a geospatial index
+  tourSchema.index({ startLocation: '2dsphere' });
 
-  const tours = await Tour.find({
-    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  // tourController.js,
+  exports.getToursWithin = catchAsync(async (req, res, next) => {
+    const { distance, latlng, unit } = req.params;
+    const [lat, lng] = latlng.split(',');
+    const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1; // radian unit
+    if (!lat || !lng)
+      return next(
+        new AppError(
+          'Please provide latitude and longitude in the format lat,lng.',
+          400
+        )
+      );
+
+    const tours = await Tour.find({
+      startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+    });
+
+    res.status(200).json({
+      status: 'success',
+      results: tours.length,
+      data: tours,
+    });
   });
+  ```
 
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    data: tours,
-  });
-});
-```
+  We can also check/test the geospartial queries in `Compass` => `tours` => `Schema` => `Analyze`
+
+    <img src="screenshots/geospartial-compass-1.png" width="800">
+
+    <img src="screenshots/geospartial-compass-2.png" width="800">
+
+- ### Aggregation
+
+  In here, we want to calculate distances to all tours from a point
+
+  ```js
+  // in tourRoutes.js
+  router
+    .route('/distances/:latlng/unit/:unit')
+    .get(tourController.getDistances);
+
+  // part of getDistances in tourControllers.js
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [lng, lat],
+        },
+        distanceField: 'distance',
+        distanceMultiplier: unit === 'mi' ? 0.000621371 : 0.001,
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+  ```
 
 # API FEATURES
 
