@@ -34,6 +34,11 @@
   - [Update APIs CRUD Operations with MongoDB Database](#updating-apis-crud-operations-with-atlas-mongodb-using-mongoose-driver)
   - [Aggregation Pipeline](#mongodb-aggregation-pipeline-using-mongoose)
 - **[Advanced Mongoose](#advanced-mongoose)**
+  - [Data Modelling](#data-modelling)
+  - [Design Natours Data Model](#design-natours-data-model)
+  - [Indexes](#indexes)
+  - [Calculate Average Rating on Tours](#calculate-average-rating-on-tours)
+  - [Geospatial](#geospatial)
 - **[API Features](#api-features)**
   - [Filtering](#filtering)
   - [Sorting](#sorting)
@@ -49,6 +54,7 @@
   - [Security HTTP Headers](#security-http-headers)
   - [Data Sanitization](#data-sanitization)
   - [Preventing Parameter Pollution](#preventing-parameter-pollution)
+- **[Server-Side Rendering with Pug Templates](#server-side-rendering-with-pug-templates)**
 
 # Environment Variables
 
@@ -1676,3 +1682,64 @@ app.use('/api', limiter);
     })
   );
   ```
+
+# SERVER-SIDE RENDERING with Pug Templates
+
+Up to this point, we've been building APIs for the application. Starting in this section, we will build the website on the server. We'll build the html files b/c that's where the data will be stored. We'll be using templates and inject data whenever neccessary.
+
+Ex: When there's a request, ex: homepage, we get the neccessary data from the db, inject it into the template, which will output an html, then send that html along with css, js, and images to the browser.
+
+<img src="screenshots/server-side-render-start.png" width="900">
+
+## Pug: Template Engine to Render Website
+
+- ### Setup Pug
+
+  `Pug` is a template engine npm package very popular to use with Express. To use it, we need set the express app `view engine` to `pug` and tell Express where we save the views at. There's no need to require `pug` to use it.
+
+  ```js
+  app.set('view engine', 'pug');
+  app.set('views', path.join(__dirname, 'views'));
+  ```
+
+  **How do we access the template?** We need to add a new route to access templates. Here, in the `res`, instead of return a json response, we render the file `base`. Since we told Express to render views from the `views` folder, Express then go into view folders and look for the file match that name.
+
+  ```js
+  app.get('/', (req, res) => {
+    res.status(200).render('base'); // base.pug in views folder
+  });
+  ```
+
+  To pass data into the template, we include an object with the name of the template. The data passed in here will be available in the `pug` files as local variables with the names we define here
+
+  ```js
+  app.get('/', (req, res) => {
+    res.status(200).render('base', {
+      tour: 'The Forest Hiker',
+      user: 'Ngan',
+    });
+  });
+  ```
+
+- ### Intro to Pug
+
+  `pug` is a simple white space sensitive syntax for writing HTML. To write HTML elements is to write their names and indentations in our code.
+
+  ```js
+  doctype html
+  html
+    head
+      title Natours
+      link(rel='stylesheet' href='css/style.css')
+
+    body
+      h1= tour // buffered code, will be rendered, we can also use js here
+      h2= user.toUpperCase()
+      - const x = 9 // unbuffered code which will not be rendered
+      h2= 2 * x
+      p This is just some text for #{tour} // #{} template string for pug
+  ```
+
+  By using middleware `express.static` in `app.use(express.static(path.join(__dirname, 'public')));`: we defines all the static assets will always be served from the folder `public`. So the route for `css/style.css` which ends in `.css` requests a static file. That's why Express knows to go to folder `public` to look for it.
+
+  There are 2 types of comments in pug. `// The Park Camper` will result as a HTML comment `<!-- h1 The Park Camper-->` and it is visible when you view the file as html document. If you want it to just be a `pug` comment, use an extra dash `//- The Park Camper`
