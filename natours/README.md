@@ -1743,3 +1743,9 @@ Ex: When there's a request, ex: homepage, we get the neccessary data from the db
   By using middleware `express.static` in `app.use(express.static(path.join(__dirname, 'public')));`: we defines all the static assets will always be served from the folder `public`. So the route for `css/style.css` which ends in `.css` requests a static file. That's why Express knows to go to folder `public` to look for it.
 
   There are 2 types of comments in pug. `// The Park Camper` will result as a HTML comment `<!-- h1 The Park Camper-->` and it is visible when you view the file as html document. If you want it to just be a `pug` comment, use an extra dash `//- The Park Camper`
+
+- ### Include Files into Pug Templates.
+
+  Since we will be using the same header, and footer in mulitple templates, we can save them in their own template as `_header.pug` and then include them in another template by `include _header` in `base.pug`
+
+  We also can use VSCode extension `Pug beautify` to edit indentations
