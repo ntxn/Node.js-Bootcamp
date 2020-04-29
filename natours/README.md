@@ -1749,3 +1749,23 @@ Ex: When there's a request, ex: homepage, we get the neccessary data from the db
   Since we will be using the same header, and footer in mulitple templates, we can save them in their own template as `_header.pug` and then include them in another template by `include _header` in `base.pug`
 
   We also can use VSCode extension `Pug beautify` to edit indentations
+
+- ### Extend Base Template with Blocks
+
+  Using extend to use the same base layout for all the page we render. Each file can only extend one other file but we can have multiple blocks
+
+  In `base.pug` body, we put a block to save that space for the actual content.
+
+  ```
+  block content
+    h1 This is a placeholder heading
+  ```
+
+  In the template that extends `base` like overview or tour. Whatever inside the block content will be included in the final page
+
+  ```
+  extends base
+
+  block content
+    h1 This is the tour overview
+  ```
