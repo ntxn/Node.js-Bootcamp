@@ -1075,6 +1075,21 @@ const stats = await Tour.aggregate([
 
   When requests comming from `/tours/:tourID/reviews`, express runs tourRoute, then tourRoute refers to reviewRoute to process those requests.
 
+## INDEXES
+
+MongoDB automatically create an index on `_id` field and any field declared `unique` by default.
+
+The id index is an order list of all the ids. It's stored somewhere outside of the collection. When we query by id, MongoDB will search for the id in this ordered id index instead of searching through the whole collection and look at each document one by one. So it's much faster
+
+We can set an index on the field that we query frequently. `1`: Ascending, `-1`: Descending
+
+```js
+tourSchema.index({ price: 1 });
+tourSchema.index({ price: 1, ratingsAverage: -1 }); // Compound index
+```
+
+How do we choose which field to set an index on? We need to study the pattern of the application to see which fields are queried the most to set indexes for these fields. We don't want to set indexes on all the fields because indexes take up space in the db and each index also needs to be updated each time the underline data has changed. If there's a collection that has very high Write ratio then we shouldn't create indexes on any fields in this collection because the overhead for updating indexes will also high when the benefits of indexes are for searching.
+
 # API FEATURES
 
 -There are 2 ways to query data in `MongoDB` db using `Mongoose`
