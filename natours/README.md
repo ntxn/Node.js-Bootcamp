@@ -1141,6 +1141,46 @@ reviewSchema.post(/^findOneAnd/, async function () {
 });
 ```
 
+## GEOSPATIAL QUERIES
+
+In MongoDB, there're geospartial operators that we can use to make query related to geospartial data. View [documentation](https://docs.mongodb.com/manual/reference/operator/query-geospatial/). To do geospartial queries, we also need to set up geospartial indexes [doc](https://docs.mongodb.com/manual/geospatial-queries/)
+
+We want to query for tours within a distance based on a start location
+
+```js
+// tourRoutes.js
+router
+  .route('/tours-within/:distance/center/:latlng/unit/:unit')
+  .get(tourController.getToursWithin);
+
+// tourModel.js, set up a geospatial index
+tourSchema.index({ startLocation: '2dsphere' });
+
+// tourController.js,
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+  const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1; // radian unit
+  if (!lat || !lng)
+    return next(
+      new AppError(
+        'Please provide latitude and longitude in the format lat,lng.',
+        400
+      )
+    );
+
+  const tours = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: tours,
+  });
+});
+```
+
 # API FEATURES
 
 -There are 2 ways to query data in `MongoDB` db using `Mongoose`
