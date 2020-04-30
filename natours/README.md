@@ -1774,88 +1774,88 @@ Ex: When there's a request, ex: homepage, we get the neccessary data from the db
     h1 This is the tour overview
   ```
 
-- ### [Include a map in Tour Detail Page with Mapbox](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/639d69c63dbd2b9313855e0f1a8f547b1908997b)
+## [Include a map in Tour Detail Page with Mapbox](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/639d69c63dbd2b9313855e0f1a8f547b1908997b)
 
-  Since service from `mapbox.com` runs in frontend, we'll be writing code in JS and this will belong to the `public` folder
-  then it will be integrated into a template file.
+Since service from `mapbox.com` runs in frontend, we'll be writing code in JS and this will belong to the `public` folder
+then it will be integrated into a template file.
 
-  We include this script at the end of `base.pug` for it to load the mapbox.js file into HTML file
+We include this script at the end of `base.pug` for it to load the mapbox.js file into HTML file
 
-  ```
-  script(src='/js/mapbox.js')
-  ```
+```
+script(src='/js/mapbox.js')
+```
 
-  In our view page for tour, we need a div with an ID `map` (by default) with `mapbox` so that the map from mapbox will be loaded into that div.
+In our view page for tour, we need a div with an ID `map` (by default) with `mapbox` so that the map from mapbox will be loaded into that div.
 
-  Then we create a map based on mapbox documentation which can be found at [link](https://docs.mapbox.com/mapbox-gl-js/api/)
+Then we create a map based on mapbox documentation which can be found at [link](https://docs.mapbox.com/mapbox-gl-js/api/)
 
-- ### [Log in Users with API](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/d340cf5bcd457ee2fef80def8bb2a340450bf074)
+## [Log in Users with API](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/d340cf5bcd457ee2fef80def8bb2a340450bf074)
 
-  - **`Frontend`**: Create a `login.js` file. Use `axios` to make a POST request to `/api/v1/users/login` when user click the button `LOG IN` in the log in page. Use JS to extract email, password values from the HTML form to use for logging in.
+- **`Frontend`**: Create a `login.js` file. Use `axios` to make a POST request to `/api/v1/users/login` when user click the button `LOG IN` in the log in page. Use JS to extract email, password values from the HTML form to use for logging in.
 
-    We only want to reload/redirect the page if we successfully logged in
-
-    ```js
-    if (res.data.status === 'success')
-      window.setTimeout(() => {
-        location.assign('/');
-      }, 1500);
-    ```
-
-    We now use `parcel` bundler as a dev dependency to bundle our JS files so that we only include 1 main js file to our html. In package.json, write a watch script `"watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"`
-
-  - **`Backend`**: Conditionally render `log in` and `sign up` btn when user is not logged in, otherwise display user menu and log out option. This will be done in pug template.
-
-    User a new middleware in `viewRoutes.js` to check if the user is logged in or not. `router.use(authController.isLoggedIn);`
-
-    ```js
-    exports.isLoggedIn = catchAsync(async (req, res, next) => {
-      if (req.cookies.jwt) {
-        // 1 - Verify token
-        const decoded = await promisify(jwt.verify)(
-          req.cookies.jwt,
-          process.env.JWT_SECRET
-        );
-
-        // 2 - Check if user still exists
-        const currentUser = await User.findById(decoded.id);
-        if (!currentUser) return next();
-
-        // 3 - Check if user changed password after token was issued
-        if (currentUser.changedPasswordAfter(decoded.iat)) return next();
-
-        // There is a logged in user
-        res.locals.user = currentUser;
-      }
-      next();
-    });
-    ```
-
-    The pug template have access to `res.locals` so whatever we put into locals in the handler, we can then get them in pug template. Here's in `_header.pug`, it has access to variable user we added to locals above
-
-    ```js
-    if user
-      a.nav__el.nav__el--logout Log out
-      a.nav__el(href="#")
-        img.nav__user-img(src=`/img/users/${user.photo}` alt=`${user.name} photo`)
-        span= user.name.split(' ')[0]
-    else
-      a.nav__el(href='/login') Log in
-      a.nav__el.nav__el--cta(href='#') Sign up
-    ```
-
-- ### [Logging out users](#)
-
-  When we were working with logging users in, to log out, we have to manually delete cookies from the browser. Since we cannot manipulate this http-only cookie, we have to create another route to log user out. In the response of this route, we send back a new cookie with the exact same name but without the token to overide the existing token in the browser
+  We only want to reload/redirect the page if we successfully logged in
 
   ```js
-  exports.logout = (req, res) => {
-    res.cookie('jwt', 'loggedOut', {
-      expires: new Date(Date.now() + 10 * 1000),
-      httpOnly: true,
-    });
-    res.status(200).json({ status: 'success' });
-  };
+  if (res.data.status === 'success')
+    window.setTimeout(() => {
+      location.assign('/');
+    }, 1500);
   ```
 
-  Similar to how we coded login, when user click logout, we send a GET request to `/users/logout` and the browser will receive a new token.
+  We now use `parcel` bundler as a dev dependency to bundle our JS files so that we only include 1 main js file to our html. In package.json, write a watch script `"watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"`
+
+- **`Backend`**: Conditionally render `log in` and `sign up` btn when user is not logged in, otherwise display user menu and log out option. This will be done in pug template.
+
+  User a new middleware in `viewRoutes.js` to check if the user is logged in or not. `router.use(authController.isLoggedIn);`
+
+  ```js
+  exports.isLoggedIn = catchAsync(async (req, res, next) => {
+    if (req.cookies.jwt) {
+      // 1 - Verify token
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET
+      );
+
+      // 2 - Check if user still exists
+      const currentUser = await User.findById(decoded.id);
+      if (!currentUser) return next();
+
+      // 3 - Check if user changed password after token was issued
+      if (currentUser.changedPasswordAfter(decoded.iat)) return next();
+
+      // There is a logged in user
+      res.locals.user = currentUser;
+    }
+    next();
+  });
+  ```
+
+  The pug template have access to `res.locals` so whatever we put into locals in the handler, we can then get them in pug template. Here's in `_header.pug`, it has access to variable user we added to locals above
+
+  ```js
+  if user
+    a.nav__el.nav__el--logout Log out
+    a.nav__el(href="#")
+      img.nav__user-img(src=`/img/users/${user.photo}` alt=`${user.name} photo`)
+      span= user.name.split(' ')[0]
+  else
+    a.nav__el(href='/login') Log in
+    a.nav__el.nav__el--cta(href='#') Sign up
+  ```
+
+## [Logging out users](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/5c6e2e9446e13bdfce9127f6651259ddd285aedb)
+
+When we were working with logging users in, to log out, we have to manually delete cookies from the browser. Since we cannot manipulate this http-only cookie, we have to create another route to log user out. In the response of this route, we send back a new cookie with the exact same name but without the token to overide the existing token in the browser
+
+```js
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'loggedOut', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: 'success' });
+};
+```
+
+Similar to how we coded login, when user click logout, we send a GET request to `/users/logout` and the browser will receive a new token.
