@@ -1859,3 +1859,13 @@ exports.logout = (req, res) => {
 ```
 
 Similar to how we coded login, when user click logout, we send a GET request to `/users/logout` and the browser will receive a new token.
+
+## [Update User Data directly from HTML form](#)
+
+Use traditional method to send POST request by indicating `action` in HTML form. This way is not recommended because it forces the page to reload and we have to create another route for it. So we're just doing it to know how to send a post request with HTML form
+
+In HTML form, we need to add `action='/submit-user-data' method='POST'` to the `form` element and then add name attribute to any input we want to send data over to the request `name='email'`
+
+For request to have that data in its body, in express, we need to add a middleware `app.use(express.urlencoded({ extended: true, limit: '10kb' }));`
+
+In viewRoutes.js, we have to create a new route matching the action attribute `/submit-user-data`. And a handler in view controller to handle the request.
