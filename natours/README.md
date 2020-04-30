@@ -54,7 +54,13 @@
   - [Security HTTP Headers](#security-http-headers)
   - [Data Sanitization](#data-sanitization)
   - [Preventing Parameter Pollution](#preventing-parameter-pollution)
-- **[Server-Side Rendering with Pug Templates](#server-side-rendering-with-pug-templates)**
+- **[Server-Side Rendering](#server-side-rendering-with-pug-templates)**
+  - [Pug: Template Engine to Render Website](#pug-template-engine-to-render-website)
+  - [Include a map in Tour Detail Page with Mapbox](#include-a-map-in-tour-detail-page-with-mapbox)
+  - [Log in Users with API](#log-in-users-with-api)
+  - [Logging out users](#logging-out-users)
+  - [Update User Data directly from HTML form](#update-user-data-directly-from-html-form)
+- **[Advanced Features: Payments, Email, File Uploads](#advanced-features-payments-email-file-uploads)**
 
 # Environment Variables
 
@@ -1869,3 +1875,50 @@ In HTML form, we need to add `action='/submit-user-data' method='POST'` to the `
 For request to have that data in its body, in express, we need to add a middleware `app.use(express.urlencoded({ extended: true, limit: '10kb' }));`
 
 In viewRoutes.js, we have to create a new route matching the action attribute `/submit-user-data`. And a handler in view controller to handle the request.
+
+# ADVANCED FEATURES: Payments, Email, File Uploads
+
+## [FILE UPLOADS with Multer](#)
+
+`Multer` is a very popular middleware (npm package) to handle multipart form data, which is a form-encoding used to upload files from a form.
+
+In the following code, we work with image but the configuration can be applied to any files.
+
+```js
+// userController.js
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // cb is a callback function
+    cb(null, 'public/img/users');
+  },
+  filename: (req, file, cb) => {
+    // user-userId-timestamp.jpeg
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+  },
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) cb(null, true);
+  else cb(new AppError('Not an image! Please upload only images', 400), false);
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+exports.uploadUserPhoto = upload.single('photo'); // upload just 1 single file
+
+// userRoutes.js: we want to run this multer middleware for it to process and save the photo to our file system
+router.patch(
+  '/updateMe',
+  userController.uploadUserPhoto,
+  userController.updateMe
+);
+
+// updateMe handler of userController
+// After uploadUserPhoto handler run, the req now has an object called file that has info of the newly uploaded file. We just need to add the new filename into the body before sending it to the db
+const filteredBody = filterObj(req.body, 'name', 'email');
+if (req.file) filteredBody.photo = req.file.filename;
+```
