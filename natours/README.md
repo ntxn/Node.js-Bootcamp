@@ -1789,7 +1789,7 @@ Ex: When there's a request, ex: homepage, we get the neccessary data from the db
 
   Then we create a map based on mapbox documentation which can be found at [link](https://docs.mapbox.com/mapbox-gl-js/api/)
 
-- ### [Log in Users with API](#)
+- ### [Log in Users with API](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/d340cf5bcd457ee2fef80def8bb2a340450bf074)
 
   - **`Frontend`**: Create a `login.js` file. Use `axios` to make a POST request to `/api/v1/users/login` when user click the button `LOG IN` in the log in page. Use JS to extract email, password values from the HTML form to use for logging in.
 
@@ -1843,3 +1843,19 @@ Ex: When there's a request, ex: homepage, we get the neccessary data from the db
       a.nav__el(href='/login') Log in
       a.nav__el.nav__el--cta(href='#') Sign up
     ```
+
+- ### [Logging out users](#)
+
+  When we were working with logging users in, to log out, we have to manually delete cookies from the browser. Since we cannot manipulate this http-only cookie, we have to create another route to log user out. In the response of this route, we send back a new cookie with the exact same name but without the token to overide the existing token in the browser
+
+  ```js
+  exports.logout = (req, res) => {
+    res.cookie('jwt', 'loggedOut', {
+      expires: new Date(Date.now() + 10 * 1000),
+      httpOnly: true,
+    });
+    res.status(200).json({ status: 'success' });
+  };
+  ```
+
+  Similar to how we coded login, when user click logout, we send a GET request to `/users/logout` and the browser will receive a new token.
