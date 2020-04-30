@@ -1770,7 +1770,7 @@ Ex: When there's a request, ex: homepage, we get the neccessary data from the db
     h1 This is the tour overview
   ```
 
-- ### [Include a map in Tour Detail Page with Mapbox](#)
+- ### [Include a map in Tour Detail Page with Mapbox](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/639d69c63dbd2b9313855e0f1a8f547b1908997b)
 
   Since service from `mapbox.com` runs in frontend, we'll be writing code in JS and this will belong to the `public` folder
   then it will be integrated into a template file.
