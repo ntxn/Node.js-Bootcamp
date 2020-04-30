@@ -1761,7 +1761,7 @@ Ex: When there's a request, ex: homepage, we get the neccessary data from the db
     h1 This is a placeholder heading
   ```
 
-  In the template that extends `base` like overview or tour. Whatever inside the block content will be included in the final page
+  In the template that extends `base` like overview or tour. Whatever inside the block content of overview/tour will override the content in base. However, if we write `block append content`/`block prepend content` then the content in tour will append at the end/start of whatever already in base
 
   ```
   extends base
@@ -1769,3 +1769,18 @@ Ex: When there's a request, ex: homepage, we get the neccessary data from the db
   block content
     h1 This is the tour overview
   ```
+
+- ### [Include a map in Tour Detail Page with Mapbox](#)
+
+  Since service from `mapbox.com` runs in frontend, we'll be writing code in JS and this will belong to the `public` folder
+  then it will be integrated into a template file.
+
+  We include this script at the end of `base.pug` for it to load the mapbox.js file into HTML file
+
+  ```
+  script(src='/js/mapbox.js')
+  ```
+
+  In our view page for tour, we need a div with an ID `map` (by default) with `mapbox` so that the map from mapbox will be loaded into that div.
+
+  Then we create a map based on mapbox documentation which can be found at [link](https://docs.mapbox.com/mapbox-gl-js/api/)
