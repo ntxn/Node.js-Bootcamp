@@ -1860,7 +1860,7 @@ exports.logout = (req, res) => {
 
 Similar to how we coded login, when user click logout, we send a GET request to `/users/logout` and the browser will receive a new token.
 
-## [Update User Data directly from HTML form](#)
+## [Update User Data directly from HTML form](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c521a4973046a291371678748aa88511cc9fa6d5)
 
 Use traditional method to send POST request by indicating `action` in HTML form. This way is not recommended because it forces the page to reload and we have to create another route for it. So we're just doing it to know how to send a post request with HTML form
 
