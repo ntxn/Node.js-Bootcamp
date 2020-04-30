@@ -1878,7 +1878,7 @@ In viewRoutes.js, we have to create a new route matching the action attribute `/
 
 # ADVANCED FEATURES: Payments, Email, File Uploads
 
-## [FILE UPLOADS with Multer](#)
+## [File Uploads with Multer](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c10fe3f823ae10f33aed0d56f82078fb96f28753)
 
 `Multer` is a very popular middleware (npm package) to handle multipart form data, which is a form-encoding used to upload files from a form.
 
@@ -1886,6 +1886,7 @@ In the following code, we work with image but the configuration can be applied t
 
 ```js
 // userController.js
+// diskStorage: save to the disk (not memory), in this case our file system
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     // cb is a callback function
@@ -1921,4 +1922,37 @@ router.patch(
 // After uploadUserPhoto handler run, the req now has an object called file that has info of the newly uploaded file. We just need to add the new filename into the body before sending it to the db
 const filteredBody = filterObj(req.body, 'name', 'email');
 if (req.file) filteredBody.photo = req.file.filename;
+```
+
+## [Resizing Images with sharp](#)
+
+`sharp` is an image processing library in node.js (npm package).
+
+To use sharp, we'll make some changes to multerStorage. Before, we save file to the disk. Now that we need the file to process the image, it'll not be efficient to take a trip to the disk to get the file to process. So we will save the uploaded file to memory (buffer). In this way, the file will be available at `req.file.buffer` and there is no `req.file.filename`
+
+```js
+// userRoutes.js
+router.patch(
+  '/updateMe',
+  userController.uploadUserPhoto,
+  userController.resizeUserPhoto, // we add this middleware to process the uploaded img
+  userController.updateMe
+);
+
+// userController
+const multerStorage = multer.memoryStorage();
+
+exports.resizeUserPhoto = (req, res, next) => {
+  if (!req.file) return next();
+
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+  sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`); // done processing, save to disk
+
+  next();
+};
 ```
