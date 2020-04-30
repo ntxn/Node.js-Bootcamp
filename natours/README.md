@@ -1730,7 +1730,7 @@ Ex: When there's a request, ex: homepage, we get the neccessary data from the db
   html
     head
       title Natours
-      link(rel='stylesheet' href='css/style.css')
+      link(rel='stylesheet' href='/css/style.css')
 
     body
       h1= tour // buffered code, will be rendered, we can also use js here
