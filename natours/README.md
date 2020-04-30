@@ -1623,6 +1623,10 @@ const tours = await features.query;
   res.cookie('jwt', token, cookieOptions);
   ```
 
+- Everytime a browser send a request to a server, it will always send all the cookies it has on that website along with the request. That means we will have the `jwt` in the cookie for authentication.
+- To access the cookies sent by browsers, we need to use `cookie-parser` npm package in the express app. Include it and then use it with the body parser: `app.use(cookieParser());` for cookies to be added to req
+- For the server to authorize users based on JWT token, we need to add this `else if (req.cookies.jwt) token = req.cookies.jwt;` to the `protect` method of `authController.js`
+
 ## [Rate Limiting](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/4a6beb1303a0687e1219c5b1c8c32ad080170294)
 
 - Rate Limiter prevents the same IP address making too many requests to the APIs to help us from denial of service or brute force attacks
@@ -1784,3 +1788,58 @@ Ex: When there's a request, ex: homepage, we get the neccessary data from the db
   In our view page for tour, we need a div with an ID `map` (by default) with `mapbox` so that the map from mapbox will be loaded into that div.
 
   Then we create a map based on mapbox documentation which can be found at [link](https://docs.mapbox.com/mapbox-gl-js/api/)
+
+- ### [Log in Users with API](#)
+
+  - **`Frontend`**: Create a `login.js` file. Use `axios` to make a POST request to `/api/v1/users/login` when user click the button `LOG IN` in the log in page. Use JS to extract email, password values from the HTML form to use for logging in.
+
+    We only want to reload/redirect the page if we successfully logged in
+
+    ```js
+    if (res.data.status === 'success')
+      window.setTimeout(() => {
+        location.assign('/');
+      }, 1500);
+    ```
+
+    We now use `parcel` bundler as a dev dependency to bundle our JS files so that we only include 1 main js file to our html. In package.json, write a watch script `"watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"`
+
+  - **`Backend`**: Conditionally render `log in` and `sign up` btn when user is not logged in, otherwise display user menu and log out option. This will be done in pug template.
+
+    User a new middleware in `viewRoutes.js` to check if the user is logged in or not. `router.use(authController.isLoggedIn);`
+
+    ```js
+    exports.isLoggedIn = catchAsync(async (req, res, next) => {
+      if (req.cookies.jwt) {
+        // 1 - Verify token
+        const decoded = await promisify(jwt.verify)(
+          req.cookies.jwt,
+          process.env.JWT_SECRET
+        );
+
+        // 2 - Check if user still exists
+        const currentUser = await User.findById(decoded.id);
+        if (!currentUser) return next();
+
+        // 3 - Check if user changed password after token was issued
+        if (currentUser.changedPasswordAfter(decoded.iat)) return next();
+
+        // There is a logged in user
+        res.locals.user = currentUser;
+      }
+      next();
+    });
+    ```
+
+    The pug template have access to `res.locals` so whatever we put into locals in the handler, we can then get them in pug template. Here's in `_header.pug`, it has access to variable user we added to locals above
+
+    ```js
+    if user
+      a.nav__el.nav__el--logout Log out
+      a.nav__el(href="#")
+        img.nav__user-img(src=`/img/users/${user.photo}` alt=`${user.name} photo`)
+        span= user.name.split(' ')[0]
+    else
+      a.nav__el(href='/login') Log in
+      a.nav__el.nav__el--cta(href='#') Sign up
+    ```
