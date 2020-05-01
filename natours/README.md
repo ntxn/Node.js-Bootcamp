@@ -1878,9 +1878,9 @@ In viewRoutes.js, we have to create a new route matching the action attribute `/
 
 # ADVANCED FEATURES: Payments, Email, File Uploads
 
-## [File Uploads with Multer](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c10fe3f823ae10f33aed0d56f82078fb96f28753)
+## [File Uploads with Multer - Backend](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/c10fe3f823ae10f33aed0d56f82078fb96f28753)
 
-`Multer` is a very popular middleware (npm package) to handle multipart form data, which is a form-encoding used to upload files from a form.
+`Multer` is a very popular middleware ([npm package](https://github.com/expressjs/multer)) to handle `multipart/form-data`, which is a form-encoding used to upload files from a form.
 
 In the following code, we work with image but the configuration can be applied to any files.
 
@@ -1924,9 +1924,9 @@ const filteredBody = filterObj(req.body, 'name', 'email');
 if (req.file) filteredBody.photo = req.file.filename;
 ```
 
-## [Resizing Images with sharp](#)
+## [Resizing Images with sharp](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/55e631bbe60726d87c495c29d261e7f6c5d4dc6d)
 
-`sharp` is an image processing library in node.js (npm package).
+`sharp` is an image processing library in node.js ([npm package](https://sharp.pixelplumbing.com/api-resize)).
 
 To use sharp, we'll make some changes to multerStorage. Before, we save file to the disk. Now that we need the file to process the image, it'll not be efficient to take a trip to the disk to get the file to process. So we will save the uploaded file to memory (buffer). In this way, the file will be available at `req.file.buffer` and there is no `req.file.filename`
 
@@ -1955,4 +1955,32 @@ exports.resizeUserPhoto = (req, res, next) => {
 
   next();
 };
+```
+
+## [File Uploads - Frontend: Adding Image Uploads to Form](#)
+
+In the `account.pug`, the option to change user's photo is part of the form to update user's data. If we were to do it traditionally, we would need to add one additional attribute `enctype='multipart/form-data'` besides `action` and `method` to make the req to get the image file.
+
+In our API, we use `multer` to upload files and data from form. Since we're using API to process request to upload images and update data, we need to convert our data into `multipart/form-data`. We still use the same route `/updateMe`
+
+```js
+// account.pug: replace <a> with <input type='file'>
+// We need name='photo' b/c multer expects that
+input.form__upload(type='file', accept='image/*', id='photo', name='photo')
+label(for='photo') Choose new photo
+
+// index.js
+if (userDataForm)
+  userDataForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+    console.log(form);
+
+    await updateSettings(form, 'data');
+    location.reload(true);
+  });
 ```

@@ -29,11 +29,17 @@ if (loginForm) {
 if (logoutBtn) logoutBtn.addEventListener('click', logout);
 
 if (userDataForm)
-  userDataForm.addEventListener('submit', (event) => {
+  userDataForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const email = document.getElementById('email').value;
-    const name = document.getElementById('name').value;
-    updateSettings({ name, email }, 'data');
+
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+    console.log(form);
+
+    await updateSettings(form, 'data');
+    location.reload(true);
   });
 
 if (userPasswordForm)
