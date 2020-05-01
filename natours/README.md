@@ -2010,7 +2010,7 @@ To send HTML in email, we need to use inline styling.
 
 [Stripe documentation for checkout](https://stripe.com/docs/payments/checkout/one-time)
 
-- ### [Stripe Workflow](#)
+- ### [Stripe Workflow](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/ec891e3511357ebbcff9df882eb691cdc49ad0d5)
 
   <img src="screenshots/stripe.png" width="600">
 
@@ -2025,3 +2025,11 @@ To send HTML in email, we need to use inline styling.
   - Using that payment info, `Session` and the `public key`, Stripe charges the credit card. The credit card details never reaches our server which makes it easier for developers because we don't have to worry about secure credit card info.
 
   - Once the credit card has successfully being charged, we can use `Stripe Webhook` on the backend to create new booking. This part only works for deployed website
+
+- ### [Integrating Stripe into the Backend](#)
+
+  To use `Stripe` in the backend, we need to install its npm package and include it in `bookingController`.
+
+  We create a new subroot: `bookings` and an endpoint to create a checkout session at `/checkout-session/:tourId`.
+
+  The handler `getCheckoutSession` call `Stripe`'s API `stripe.checkout.sessions.create` and pass in required data to create a checkout session and send it back in the response
