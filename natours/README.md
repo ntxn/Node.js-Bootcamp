@@ -2036,10 +2036,30 @@ To send HTML in email, we need to use inline styling.
 
   At this point in Stripe, after sending the request, we wil see incomplete payments in Stripe dashboard
 
-- ### [Process Payments on the Frontend](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/7b74f2b0cf7e1c3a07f57e5d9b1af5b19163fd19)
+- ### [Process Payments on the Frontend](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/b87fcd8fe92f74afd21d03e6ae814d31ff195397)
 
-  The `stripe` npm package we installed to use in the backend won't work in the frontend. We need to include a script in the `tour.pug`'s head to include `stripe` for the frontend `script(src='https://js.stripe.com/v3/')`. We also need to pass the tourId `data-tour-id=`\${tour.id}`` when clicking the book tour btn.
+  The `stripe` npm package we installed to use in the backend won't work in the frontend. We need to include a script in the `base.pug` bottom to use `stripe` on the frontend `script(src='https://js.stripe.com/v3/')`. In `tour.pug`, we also need to pass the tourId `data-tour-id=`\${tour.id}`` when clicking the book tour btn.
 
   In `stripe.js`, we import and use stripe by `const stripe = Stripe('public key');`. Create a `bookTour` function that receive the tourId then pass it to the API to create a checkout session. Use this session to redirect to Stripe checkout to charge the customer.
 
   Finally, in `index.js`, we add a listener to the book tour btn that'll call `bookTour` function when being clicked
+
+- ### [Save the new booking to DB](#)
+
+  TEMPORARY solution before deploying the website b/c it's not secure
+
+  When creating the session, we declared a url for Stripe to redirect to when it's a successful payment. Right now, we pass query params into that url to get data about the user, tour, & price to create a booking in the db.
+
+  When we reach the redirected URL, we run handler `createBookingCheckout` to create the booking in the db, and then display the page
+
+  ```js
+  exports.createBookingCheckout = catchAsync(async (req, res, next) => {
+    // This is only TEMPORARY because it's UNSECURE, everyone can make bookings without paying
+    const { tour, user, price } = req.query;
+    if (!tour || !user || !price) return next();
+
+    await Booking.create({ tour, user, price });
+
+    res.redirect(req.originalUrl.split('?')[0]);
+  });
+  ```
