@@ -1991,3 +1991,17 @@ if (userDataForm)
     location.reload(true);
   });
 ```
+
+## [Sending Emails: Welcome Email, Reset Password Email](#)
+
+`mailtrap`: Email delivery platform used during development process. It traps the outgoing mails as if the emails are delivered to the actual email.
+
+`sendgrid`: Email delivery platform used for production. It will actually send emails to real email addresses.
+
+`mailsac`: A service to create disposable emails to receive emails instantly without signing up. It's great to use to test with `sendgrid`
+
+`nodemailer`: To send emails out using either `mailtrap` or `sendgrid`
+
+`html-to-text`: Convert HMTL to text to send with the actual HTML template in case users prefers to view email as simple text.
+
+To send HTML in email, we need to use inline styling.
