@@ -1992,7 +1992,7 @@ if (userDataForm)
   });
 ```
 
-## [Sending Emails: Welcome Email, Reset Password Email](#)
+## [Sending Emails: Welcome Email, Reset Password Email](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/fd6839c5c59bddbc29af8cd1d58e493532cc0d82)
 
 `mailtrap`: Email delivery platform used during development process. It traps the outgoing mails as if the emails are delivered to the actual email.
 
@@ -2005,3 +2005,23 @@ if (userDataForm)
 `html-to-text`: Convert HMTL to text to send with the actual HTML template in case users prefers to view email as simple text.
 
 To send HTML in email, we need to use inline styling.
+
+## Credit Card Payments with Stripe
+
+[Stripe documentation for checkout](https://stripe.com/docs/payments/checkout/one-time)
+
+- ### [Stripe Workflow](#)
+
+  <img src="screenshots/stripe.png" width="600">
+
+  - In the backend, we create a route for Stripe checkout session with the `secret key`. This session contains data about the object that can be purchase (i.e. `tour`) => session will contains tour price, tour name, image and some other data like client's email
+
+  - In the frontend, we create a function to request the checkout session from the server once the user click the buy btn.
+
+  - Once we hit the endpoint in the backend, a `Session` will be created and sent back to the client.
+
+  - Based on that `Session`, Stripe will create a checkout page where the user can input payment info
+
+  - Using that payment info, `Session` and the `public key`, Stripe charges the credit card. The credit card details never reaches our server which makes it easier for developers because we don't have to worry about secure credit card info.
+
+  - Once the credit card has successfully being charged, we can use `Stripe Webhook` on the backend to create new booking. This part only works for deployed website
