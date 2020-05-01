@@ -61,6 +61,12 @@
   - [Logging out users](#logging-out-users)
   - [Update User Data directly from HTML form](#update-user-data-directly-from-html-form)
 - **[Advanced Features: Payments, Email, File Uploads](#advanced-features-payments-email-file-uploads)**
+  - [File Uploads with Multer - Backend](#file-uploads-with-multer---backend)
+  - [Resizing Images with Sharp](#resizing-images-with-sharp)
+  - [File Uploads - Frontend: Adding Image Uploads to Form](#file-uploads---frontend-adding-image-uploads-to-form)
+  - [Sending Emails: Welcome Email, Reset Password Email](#sending-emails-welcome-email-reset-password-email)
+  - [Credit Card Payments with Stripe](#credit-card-payments-with-stripe)
+- **[Prepare For Deployment](#prepare-for-deployment)**
 
 # Environment Variables
 
@@ -2044,7 +2050,7 @@ To send HTML in email, we need to use inline styling.
 
   Finally, in `index.js`, we add a listener to the book tour btn that'll call `bookTour` function when being clicked
 
-- ### [Save the new booking to DB](#)
+- ### [Save the new booking to DB](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/ead2686b0b81723afa51c5e2b5df0f42b096f3ec)
 
   TEMPORARY solution before deploying the website b/c it's not secure
 
@@ -2063,3 +2069,12 @@ To send HTML in email, we need to use inline styling.
     res.redirect(req.originalUrl.split('?')[0]);
   });
   ```
+
+# [Prepare For Deployment](#)
+
+Checklist
+
+- [ ] Use middleware compression `app.use(compression());` as the last middleware to compress all text files
+- [ ] Remove all unneccessary `console.log()` unless it's for logging
+- [ ] `npm run build:js` for parcel to bundle all js files for production
+- Upload the folder `natours` to github and ignore `node_modules`, `*.env`, `.cache`
