@@ -2026,10 +2026,20 @@ To send HTML in email, we need to use inline styling.
 
   - Once the credit card has successfully being charged, we can use `Stripe Webhook` on the backend to create new booking. This part only works for deployed website
 
-- ### [Integrating Stripe into the Backend](#)
+- ### [Integrating Stripe into the Backend](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/7b74f2b0cf7e1c3a07f57e5d9b1af5b19163fd19)
 
   To use `Stripe` in the backend, we need to install its npm package and include it in `bookingController`.
 
   We create a new subroot: `bookings` and an endpoint to create a checkout session at `/checkout-session/:tourId`.
 
   The handler `getCheckoutSession` call `Stripe`'s API `stripe.checkout.sessions.create` and pass in required data to create a checkout session and send it back in the response
+
+  At this point in Stripe, after sending the request, we wil see incomplete payments in Stripe dashboard
+
+- ### [Process Payments on the Frontend](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/7b74f2b0cf7e1c3a07f57e5d9b1af5b19163fd19)
+
+  The `stripe` npm package we installed to use in the backend won't work in the frontend. We need to include a script in the `tour.pug`'s head to include `stripe` for the frontend `script(src='https://js.stripe.com/v3/')`. We also need to pass the tourId `data-tour-id=`\${tour.id}`` when clicking the book tour btn.
+
+  In `stripe.js`, we import and use stripe by `const stripe = Stripe('public key');`. Create a `bookTour` function that receive the tourId then pass it to the API to create a checkout session. Use this session to redirect to Stripe checkout to charge the customer.
+
+  Finally, in `index.js`, we add a listener to the book tour btn that'll call `bookTour` function when being clicked
