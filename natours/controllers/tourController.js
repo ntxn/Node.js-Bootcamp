@@ -1,7 +1,39 @@
 const Tour = require('../models/tourModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const { multerUpload, resizeImage } = require('../utils/imageProcessing');
 const factory = require('./handlerFactory');
+
+exports.uploadTourImages = multerUpload.fields([
+  { name: 'imageCover', maxCount: 1 },
+  { name: 'images', maxCount: 3 },
+]);
+
+exports.resizeTourImages = catchAsync(async (req, res, next) => {
+  if (!req.files.imageCover || !req.files.images) return next();
+
+  // 1 - Cover image
+  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+  await resizeImage(
+    req.files.imageCover[0].buffer,
+    2000,
+    1333,
+    'tours',
+    req.body.imageCover
+  );
+
+  // 2 - images
+  req.body.images = [];
+  await Promise.all(
+    req.files.images.map(async (file, i) => {
+      const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+      await resizeImage(file.buffer, 2000, 1333, 'tours', filename);
+      req.body.images.push(filename);
+    })
+  );
+
+  next();
+});
 
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';

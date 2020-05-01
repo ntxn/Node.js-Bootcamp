@@ -1911,6 +1911,13 @@ const upload = multer({
 
 exports.uploadUserPhoto = upload.single('photo'); // upload just 1 single file
 
+// to upload multiple images => req.files
+upload.array('images', 5); // images: name of the field in db, 5: maxCount
+upload.fields([
+  { name: 'imageCover', maxCount: 1 },
+  { name: 'images', maxCount: 3 },
+]);
+
 // userRoutes.js: we want to run this multer middleware for it to process and save the photo to our file system
 router.patch(
   '/updateMe',
@@ -1942,22 +1949,22 @@ router.patch(
 // userController
 const multerStorage = multer.memoryStorage();
 
-exports.resizeUserPhoto = (req, res, next) => {
+exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
   req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
 
-  sharp(req.file.buffer)
+  await sharp(req.file.buffer)
     .resize(500, 500)
     .toFormat('jpeg')
     .jpeg({ quality: 90 })
-    .toFile(`public/img/users/${req.file.filename}`); // done processing, save to disk
+    .toFile(`public/img/users/${req.file.filename}`);
 
   next();
-};
+});
 ```
 
-## [File Uploads - Frontend: Adding Image Uploads to Form](#)
+## [File Uploads - Frontend: Adding Image Uploads to Form](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/3eb52a29fce0ea896ff4cac32bee8cd4ed9cd361)
 
 In the `account.pug`, the option to change user's photo is part of the form to update user's data. If we were to do it traditionally, we would need to add one additional attribute `enctype='multipart/form-data'` besides `action` and `method` to make the req to get the image file.
 
