@@ -2128,3 +2128,23 @@ From this point, the code won't be updated here, it will be moved to this github
 
   app.enable('trust proxy');
   ```
+
+- ### Respond to a SIGTERM Signal
+
+  In Heroku, our application runs in a container called `Dyno`. This `Dyno` restarts every 24 hours in order to keep our app in a healthy state. In order to restart the app, Heroku sends a signal `SIGTERM` to the app and the app will shut down immediately. The shut down can be very abrubt which leaves requests currently being processed hanging in the air. So we need to wait for the signal and shut the app down gracefully. By doing `server.close()`, the server will finish processing all the current requests. In the callback function of server.close, we don't have to do `process.exit(1)` because the `SIGTERM` signal will already do that.
+
+  ```js
+  // server.js
+  process.on('SIGTERM', () => {
+    console.log('SIGNTERM RECEIVED. Shutting down gracefully');
+    server.close(() => {
+      console.log('Process terminated');
+    });
+  });
+  ```
+
+  `heroku ps`: show info about the current dyno the app is running in
+
+  `heroku ps:restart`: to manually restart the application
+
+  `heroku logs --tail`: to view logs, check if the app actually shut down gracefully
