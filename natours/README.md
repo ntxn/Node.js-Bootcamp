@@ -2102,3 +2102,29 @@ From this point, the code won't be updated here, it will be moved to this github
 - When that's done, `heroku open` to open the page
 - `heroku logs --tail`: to see log errors
 - To test if the page is compressed, go to this website `https://www.giftofspeed.com/gzip-test/` and paste the natours url on heroku `https://natours15.herokuapp.com/`
+
+## Update part of the code to make it work on Heroku
+
+- ### Test for Secure HTTPS Connection
+
+  ```js
+  // authController.js
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  ```
+
+  In here we say if the current environment is production then set the secure option of the cookie to true. Problem: just because we're in production doesn't mean it's secure because not all deployed application is set to https.
+
+  In express, we have a `secure` property in the request. When the connection is secure, this property `req.secure` is set to `true`. However, in Heroku, this doesn't work because Heroku proxy redirect/modify all incoming requests before they actually reach the app. To make it work in Heroku, we also need to test this: `req.headers('x-forwarded-proto') === 'https'`.
+
+  ```js
+  secure: req.secure || req.headers('x-forwarded-proto') === 'https';
+  ```
+
+  However, this still won't work. We need to make our application to trust proxy then the req.headers part will be set correctly and we can read it.
+
+  ```js
+  // in app.js
+  const app = express();
+
+  app.enable('trust proxy');
+  ```
