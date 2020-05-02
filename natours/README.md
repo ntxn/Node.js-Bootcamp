@@ -66,7 +66,7 @@
   - [File Uploads - Frontend: Adding Image Uploads to Form](#file-uploads---frontend-adding-image-uploads-to-form)
   - [Sending Emails: Welcome Email, Reset Password Email](#sending-emails-welcome-email-reset-password-email)
   - [Credit Card Payments with Stripe](#credit-card-payments-with-stripe)
-- **[Prepare For Deployment](#prepare-for-deployment)**
+- **[Deployment](#deployment)**
 
 # Environment Variables
 
@@ -2070,7 +2070,9 @@ To send HTML in email, we need to use inline styling.
   });
   ```
 
-# [Prepare For Deployment](#)
+# Deployment
+
+## [Prepare for Deployment](https://github.com/ngannguyen117/Node.js-Bootcamp/commit/ba08e77d9405a784b3ce457d8fc14f67f82b43ab)
 
 Checklist
 
@@ -2078,3 +2080,25 @@ Checklist
 - [ ] Remove all unneccessary `console.log()` unless it's for logging
 - [ ] `npm run build:js` for parcel to bundle all js files for production
 - Upload the folder `natours` to github and ignore `node_modules`, `*.env`, `.cache`
+
+## Deploying App to Heroku
+
+[Heroku guide to deploy Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs)
+
+From this point, the code won't be updated here, it will be moved to this github repo [link](https://github.com/ngannguyen117/Natour-Node.js)
+
+- `brew install heroku/brew/heroku` globally, to get heroku command line
+- In natours folder (command line), `heroku login` to login into heroku account
+- In package.json, we need to make sure the script for `start` has to be `"start": "node server.js"` because heroku will run that script to start the server. Additionally, we also need to include the version of the node engine
+  ```js
+  "engines": {
+    "node": ">=13.12.0"
+  }
+  ```
+- In server.js, it is mandatory to have `const port = process.env.PORT || 3000;` otherwise it won't work. Heroku will assign a random variable to process.env.PORT
+- In terminal, in natours folder, `heroku create` for heroku to create a new app. This will create a new remote branch called heroku. So we need to push the code into this branch `git push heroku master` => it will upload and install all dependencies to heroku
+- As of this point, the app won't work because we didn't include the config.env with the uploaded code. Heroku and other host platforms don't use .env file to save config variables like we did in development. We have to define them in a different way but everything else in our code works exactly the same. Set environment variables in Heroku: `heroku config:set NODE_ENV=production`: by default, heroku set it to production but we should still do it to make sure. So we have to do this for all the variables in `config.env` except PORT and the ones for mailtrap. We can also do this in heroku dashboard
+- To change the heroku app name, we should do it in terminal at the natours folder `heroku apps:rename natours15`
+- When that's done, `heroku open` to open the page
+- `heroku logs --tail`: to see log errors
+- To test if the page is compressed, go to this website `https://www.giftofspeed.com/gzip-test/` and paste the natours url on heroku `https://natours15.herokuapp.com/`
