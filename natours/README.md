@@ -2092,7 +2092,7 @@ From this point, the code won't be updated here, it will be moved to this github
 - In package.json, we need to make sure the script for `start` has to be `"start": "node server.js"` because heroku will run that script to start the server. Additionally, we also need to include the version of the node engine
   ```js
   "engines": {
-    "node": ">=13.12.0"
+    "node": "^13"
   }
   ```
 - In server.js, it is mandatory to have `const port = process.env.PORT || 3000;` otherwise it won't work. Heroku will assign a random variable to process.env.PORT
@@ -2148,3 +2148,22 @@ From this point, the code won't be updated here, it will be moved to this github
   `heroku ps:restart`: to manually restart the application
 
   `heroku logs --tail`: to view logs, check if the app actually shut down gracefully
+
+- ### Implementing CORS
+
+  `CORS`: Cross Origin Resource Sharing, a fundamental feature in any APIs.
+
+  By default, for requests made in browsers (using `fetch` API or `axios` to make a request - frontend), we can only send requests from the same domain. Requests sent from a subdomain, different domain, different protocol, or a different port are considered a cross origin requests => will fail. For example, our APIs' url is `https://natours15.herokuapp.com/api/v1/` so we can only send requests made from `https://natours15.herokuapp.com`. If another website like `example.com` tries to send a request to natours, it'll fail.
+
+  To make it possible for cross origin requests to be successful, we need to implement CORS
+
+  We'll use middleware `cors` npm package to set headers to allow CORS
+
+  `app.use(cors());` set Access-Control-Allow-Origin in the headers to \*: allow requests from everywhere. This will work for simple requests: GET & POST.
+
+  Non-simple requests: PUT, PATCH, DELETE & requests sent cookies or use non-standard headers. Whenever there's a non-simple request, the browser issues a preflight phase. Before the real request actually happens, the browser first does an options request in order to figure out if the actual request is safe to send. What that means for developers is that on our server we need to actually respond to that option request - just another HTTP method - by sending back the same Access-Control-Allow-Origin header. This way the browser knows that the actual request is safe to request and then will execute the request itself.
+
+  ```js
+  app.use(cors());
+  app.options('*', cors());
+  ```
