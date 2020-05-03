@@ -2114,10 +2114,10 @@ From this point, the code won't be updated here, it will be moved to this github
 
   In here we say if the current environment is production then set the secure option of the cookie to true. Problem: just because we're in production doesn't mean it's secure because not all deployed application is set to https.
 
-  In express, we have a `secure` property in the request. When the connection is secure, this property `req.secure` is set to `true`. However, in Heroku, this doesn't work because Heroku proxy redirect/modify all incoming requests before they actually reach the app. To make it work in Heroku, we also need to test this: `req.headers('x-forwarded-proto') === 'https'`.
+  In express, we have a `secure` property in the request. When the connection is secure, this property `req.secure` is set to `true`. However, in Heroku, this doesn't work because Heroku proxy redirect/modify all incoming requests before they actually reach the app. To make it work in Heroku, we also need to test this: `req.headers['x-forwarded-proto'] === 'https'`.
 
   ```js
-  secure: req.secure || req.headers('x-forwarded-proto') === 'https';
+  secure: req.secure || req.headers['x-forwarded-proto'] === 'https';
   ```
 
   However, this still won't work. We need to make our application to trust proxy then the req.headers part will be set correctly and we can read it.
@@ -2170,4 +2170,75 @@ From this point, the code won't be updated here, it will be moved to this github
 
 - ### Finish Payments with Stripe Webhooks
 
-  `CORS`: Cross Origin Resou
+  Up to now, after customers sucessfully completes their payment for a tour, we simply send a GET request to our root '/' endpoint and use the queries to create a booking in the db. This is not at all secured. If someone knows, they can simply send a request and will get a free booking without paying. That's why we use Webhooks.
+
+  `Webhooks`: To set up Webhooks in Stripe, we need specify an Endpoint in our website. In this case, we choose a new route `https://natours15.herokuapp.com/webhook-checkout` and event `checkout.session.completed`. Stripe will automatically send a POST request to this url whenever a checkout session has successfully completed. With that POST request, stripe will send back the original session data that we created in the backend before.
+
+  This new route will be created in `app.js` before any middleware body parsers instead of `bookingRoutes.js` because in the handler function `webhookCheckout`, when we receive body from Stripe, the Stripe function used to read the request body needs this body in a raw form (as a string, not as JSON)
+
+  We need to remove query string options from the sucess_url in the creating session step
+
+  ```js
+  // app.js
+  app.post(
+    '/webhook-checkout',
+    express.raw({ type: 'application/json' }),
+    bookingController.webhookCheckout
+  );
+
+  // bookingController.js
+  success_url: `${req.protocol}://${req.get('host')}/my-tours`;
+
+  const createBookingCheckout = async (session) => {
+    await Booking.create({
+      tour: session.client_reference_id,
+      user: (await User.findOne({ email: session.customer_email }))._id,
+      price: session.display_items[0].amount / 100,
+    });
+  };
+
+  exports.webhookCheckout = catchAsync(async (req, res, next) => {
+    let event;
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        req.headers['stripe-signature'],
+        process.env.STRIPE_WEBHOOK_SECRET
+      );
+    } catch (err) {
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    if (event.type === 'checkout.session.completed')
+      await createBookingCheckout(event.data.object);
+
+    res.status(200).json({ received: true });
+  });
+  ```
+
+  **Display a Message after the my-tours page is reloaded**
+
+  We have to attach a data attribute `alert` to the body of `base.pug` so that if there's an alert, then display it.
+
+  In `bookingController.js`, the `success_url` for Stripe now has a query `alert=booking`. So after a successful booking, we'll be redirected to `${baseUrl}/my-tours?alert=booking`, the `viewRouter` then run a middleware `alerts` to check if there's an alert. If there is, it'll add it to `req.locals`. In `index.js`, we check if the `body` element has an alert data, it'll display it
+
+  ```js
+  // base.pug
+  body((data - alert = `${alert ? alert : ''}`));
+
+  // viewRoutes.js
+  router.use(viewController.alerts);
+
+  // viewController.js
+  exports.alerts = (req, res, next) => {
+    const { alert } = req.query;
+    if (alert === 'booking')
+      res.locals.alert =
+        "Your booking was successful. Please check your email for a confirmation. If your booking doesn't show up here immediately, please come back later.";
+    next();
+  };
+
+  // index.js
+  const alertMessage = document.querySelector('body').dataset.alert;
+  if (alertMessage) showAlert('success', alertMessage, 10);
+  ```
