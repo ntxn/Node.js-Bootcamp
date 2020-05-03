@@ -2167,3 +2167,7 @@ From this point, the code won't be updated here, it will be moved to this github
   app.use(cors());
   app.options('*', cors());
   ```
+
+- ### Finish Payments with Stripe Webhooks
+
+  `CORS`: Cross Origin Resou
