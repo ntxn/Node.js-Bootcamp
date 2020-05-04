@@ -1,0 +1,20 @@
+{
+  "name": "note-taker",
+  "version": "1.0.0",
+  "description": "A note taker app",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ngannguyen117/Node.js-Bootcamp/tree/master/note-taker"
+  },
+  "author": "Ngan Nguyen",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "validator": "^13.0.0",
+    "yargs": "^15.3.1"
+  }
+}
