@@ -172,6 +172,8 @@ Node runtime depends on V8 & Libuv to work. Node.js combines these 2 libraries t
 
 The final Github project is at [link](https://github.com/ngannguyen117/Natour-Node.js) and the deployed website can be viewed at [https://natours15.herokuapp.com/](https://natours15.herokuapp.com/)
 
+To view the detail note and commits during development, refer to the folder [`natours`](https://github.com/ngannguyen117/Node.js-Bootcamp/tree/master/natours)
+
 - APIs, RESTful API Design and advanced API Features
 - Setting up ESLint + Prettier in VS Code
 - Model-View-Controller: MVC Back-End Architecture
