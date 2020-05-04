@@ -4,7 +4,7 @@
 - **[APIs and RESTful API Design](#apis-and-restful-api-design)**
 - **[Setting up ESLint + Prettier in VS Code](#setting-up-eslint--prettier-in-vs-code)**
 - **[Model-View-Controller: MVC Back-End Architecture](#model-view-controller-mvc-back-end-architecture)**
-- **[Debugging Node.js with ndb](#debugging-nodejs-with-ndb)**
+- **[Debugging Node.js](#debugging-nodejs)**
 - **[Unhandled Rejections and Uncaught Exception](#unhandled-rejections-and-uncaught-exception)**
 - **[Express](#express)**
   - [Basic Routing](#basic-routing-with-express)
@@ -129,9 +129,11 @@ npm i eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-confi
 
 - <a href="https://github.com/ngannguyen117/Node.js-Bootcamp/commit/f905bb2141a99dab65b9f4e60f240cc68d4b06c2">Commit Link</a>
 
-# Debugging Node.js with ndb
+# Debugging Node.js
 
-Install `ndb` globally: `npm i global ndb`
+## Using `ndb`
+
+Install `ndb` globally: `npm i ndb -g`
 
 Write a script in package.json: `"debug": "ndb server.js"`
 
@@ -146,6 +148,12 @@ If we set a breakpoint in the `server.js` like in the screenshot, we will be abl
 <img src="screenshots/ndb-2.png" width="400">
 
 <img src="screenshots/ndb-3.png" width="500">
+
+## Use inline `debugger`
+
+Before the part that we want to debug, make a new line and type `debugger`. In terminal of the current project, type command `node inspect app.js` follow by command arguments if any. For example: `node inspect app.js --title="Courses"` to tell node that we're running the code in debugging mode.
+
+Open `Chrome` browser, go to: `chrome://inspect` => At Target, click `inspect`. Another window will pop up showing the developer tool.
 
 # Unhandled Rejections and Uncaught Exception
 
