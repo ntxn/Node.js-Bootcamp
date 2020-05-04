@@ -169,3 +169,17 @@ Node runtime depends on V8 & Libuv to work. Node.js combines these 2 libraries t
 - For methods that don't support Promises, we can create another function that will return a Promise that run the needed function.
 
 # NATOURS - Project
+
+The final Github project is at [link](https://github.com/ngannguyen117/Natour-Node.js) and the deployed website can be viewed at [https://natours15.herokuapp.com/](https://natours15.herokuapp.com/)
+
+- APIs, RESTful API Design and advanced API Features
+- Setting up ESLint + Prettier in VS Code
+- Model-View-Controller: MVC Back-End Architecture
+- Debugging Node.js with ndb
+- Unhandled Rejections and Uncaught Exception
+- Express
+- MongoDB
+- Mongoose
+- Authentication, Authorization and Security
+- Server-Side Rendering with Pug template
+- Advanced Features: Payments, Email, File Uploads
