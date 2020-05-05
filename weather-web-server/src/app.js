@@ -1,7 +1,12 @@
 const path = require('path');
 const express = require('express');
 const hbs = require('hbs');
+const dotenv = require('dotenv');
 
+const geocode = require('./utils/geocode');
+const forecast = require('./utils/forecast');
+
+dotenv.config({ path: './config.env' });
 const app = express();
 
 // Setup handlebars and views location
@@ -36,7 +41,21 @@ app.get('/help', (req, res) => {
 });
 
 app.get('/weather', (req, res) => {
-  res.send({ location: 'Los Angeles', forecast: 'bla' });
+  if (!req.query.address)
+    return res.status(400).json({ error: 'You must provide an address' });
+
+  geocode(req.query.address, (error, { lat, lng, location } = {}) => {
+    if (error) return res.status(400).json({ error });
+
+    forecast(lat, lng, (error, forecastData) => {
+      if (error) return res.status(400).json({ error });
+      res.status(200).json({
+        location,
+        forecast: forecastData,
+        address: req.query.address,
+      });
+    });
+  });
 });
 
 app.get('/help/*', (req, res) => {
