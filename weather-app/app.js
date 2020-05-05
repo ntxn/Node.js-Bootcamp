@@ -1,15 +1,19 @@
 const dotenv = require('dotenv');
+const geocode = require('./utils/geocode');
+const forecast = require('./utils/forecast');
+
 dotenv.config({ path: './config.env' });
 
-console.log('Starting');
+if (process.argv.length !== 3)
+  return console.log(
+    'Please provide an address. Use double quote for multiple words'
+  );
 
-setTimeout(() => {
-  console.log('2 second timer');
-}, 2000);
+geocode(process.argv[2], (error, { lat, lng, location } = {}) => {
+  if (error) return console.log(error);
 
-setTimeout(() => {
-  console.log('0 second timer');
-}, 0);
-
-console.log('Stopping');
-console.log(process.env.WEATHERSTACK_API_KEY);
+  forecast(lat, lng, (error, forecastData) => {
+    if (error) return console.log(error);
+    console.log(`Weather report for ${location}\n${forecastData}`);
+  });
+});
