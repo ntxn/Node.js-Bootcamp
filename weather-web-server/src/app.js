@@ -8,6 +8,7 @@ const forecast = require('./utils/forecast');
 
 dotenv.config({ path: './config.env' });
 const app = express();
+const port = process.env.PORT || 3000;
 
 // Setup handlebars and views location
 app.set('view engine', 'hbs'); // at this step, the default view folder is called views at the root dir
@@ -74,6 +75,6 @@ app.get('*', (req, res) => {
   });
 });
 
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log('Server is up on port 3000');
 });
