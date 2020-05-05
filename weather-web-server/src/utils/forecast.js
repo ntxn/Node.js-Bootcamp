@@ -10,10 +10,11 @@ module.exports = (lat, lng, callback, unit = 'f') => {
       weather_descriptions: descriptions,
       temperature: temp,
       feelslike,
+      humidity,
     } = body.current;
     callback(
       undefined,
-      `${descriptions[0]}. It is currently ${temp} degrees out. It feels like ${feelslike} degrees out`
+      `${descriptions[0]}. It is currently ${temp} degrees out. It feels like ${feelslike} degrees out. The humidity is ${humidity}%.`
     );
   });
 };
