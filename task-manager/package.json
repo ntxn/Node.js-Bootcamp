@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "author": "Ngan Nguyen",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
-    "mongodb": "^3.5.7"
+    "express": "^4.17.1",
+    "mongoose": "^5.9.12",
+    "validator": "^13.0.0"
   },
   "engines": {
     "node": "^13"
