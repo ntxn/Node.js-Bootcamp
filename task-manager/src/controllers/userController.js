@@ -1,13 +1,6 @@
 const User = require('../models/user');
 
-const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find();
-    res.send(users);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-};
+const getProfile = (req, res) => res.send(req.user);
 
 const createUser = async (req, res) => {
   const user = new User(req.body);
@@ -81,7 +74,7 @@ const login = async (req, res) => {
 };
 
 module.exports = {
-  getAllUsers,
+  getProfile,
   createUser,
   getUser,
   updateUser,
