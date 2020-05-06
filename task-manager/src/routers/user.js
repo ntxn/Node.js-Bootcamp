@@ -6,13 +6,11 @@ const router = new express.Router();
 
 router.route('/').post(userController.createUser);
 
-router.route('/me').get(auth, userController.getProfile);
-
 router
-  .route('/:id')
-  .get(userController.getUser)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser);
+  .route('/me')
+  .get(auth, userController.getProfile)
+  .patch(auth, userController.updateUser)
+  .delete(auth, userController.deleteUser);
 
 router.post('/login', userController.login);
 router.post('/logout', auth, userController.logout);

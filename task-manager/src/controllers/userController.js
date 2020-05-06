@@ -13,17 +13,6 @@ const createUser = async (req, res) => {
   }
 };
 
-const getUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-
-    if (!user) return res.status(404).send();
-    res.send(user);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-};
-
 const updateUser = async (req, res) => {
   const updateFields = Object.keys(req.body);
   const allowedFields = ['name', 'email', 'password', 'age'];
@@ -34,15 +23,20 @@ const updateUser = async (req, res) => {
     return res.status(400).send({ error: 'Invalid update fields' });
 
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).send();
-
     updateFields.forEach((field) => {
-      user[field] = req.body[field];
+      req.user[field] = req.body[field];
     });
 
-    await user.save();
-    res.status(200).send(user);
+    await req.user.save();
+
+    const data = { user: req.user };
+
+    if (updateFields.includes('password')) {
+      req.user.tokens = [];
+      data.token = await req.user.generateAuthToken();
+    }
+
+    res.status(200).send(data);
   } catch (err) {
     res.status(400).send(err);
   }
@@ -50,10 +44,8 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-
-    if (!user) return res.status(404).send();
-    res.send(user);
+    await req.user.remove();
+    res.send(req.user);
   } catch (err) {
     res.status(500).send(err);
   }
@@ -98,7 +90,6 @@ const logoutAll = async (req, res) => {
 module.exports = {
   getProfile,
   createUser,
-  getUser,
   updateUser,
   deleteUser,
   login,
