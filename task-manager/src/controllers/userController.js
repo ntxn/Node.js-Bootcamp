@@ -73,6 +73,28 @@ const login = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter(
+      (token) => token.token !== req.token
+    );
+    await req.user.save();
+    res.send();
+  } catch (err) {
+    res.status(500).send();
+  }
+};
+
+const logoutAll = async (req, res) => {
+  try {
+    req.user.tokens = [];
+    await req.user.save();
+    res.send();
+  } catch (err) {
+    res.status(500).send();
+  }
+};
+
 module.exports = {
   getProfile,
   createUser,
@@ -80,4 +102,6 @@ module.exports = {
   updateUser,
   deleteUser,
   login,
+  logout,
+  logoutAll,
 };
