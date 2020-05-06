@@ -1,9 +1,7 @@
 const express = require('express');
-const dotenv = require('dotenv');
 const userRouter = require('./routers/user');
 const taskRouter = require('./routers/task');
-
-dotenv.config({ path: './config.env' });
+require('dotenv').config({ path: './config.env' });
 require('./db/mongoose'); // CONNECT TO DATABASE
 
 // SETUP EXPRESS APP

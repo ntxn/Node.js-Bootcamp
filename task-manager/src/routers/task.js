@@ -1,6 +1,5 @@
 const express = require('express');
 const Task = require('../models/task');
-const validateFields = require('../utils/validateFields');
 
 const router = new express.Router();
 
@@ -37,21 +36,24 @@ router
     }
   })
   .patch(async (req, res) => {
-    if (!validateFields(req.body, ['description', 'completed']))
+    const updateFields = Object.keys(req.body);
+    const allowedFields = ['description', 'completed'];
+    const areValidFields = updateFields.every((update) =>
+      allowedFields.includes(update)
+    );
+    if (!areValidFields)
       return res.status(400).send({ error: 'Invalid update fields' });
 
     try {
-      const updatedTask = await Task.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
+      const task = await Task.findById(req.params.id);
+      if (!task) return res.status(404).send();
 
-      if (!updatedTask) return res.status(404).send();
-      res.status(200).send(updatedTask);
+      updateFields.forEach((field) => {
+        task[field] = req.body[field];
+      });
+
+      await task.save();
+      res.status(200).send(task);
     } catch (err) {
       res.status(400).send(err);
     }
