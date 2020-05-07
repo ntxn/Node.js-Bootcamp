@@ -1,3 +1,4 @@
+const sharp = require('sharp');
 const User = require('../models/user');
 
 const getProfile = (req, res) => res.send(req.user);
@@ -87,6 +88,43 @@ const logoutAll = async (req, res) => {
   }
 };
 
+const getAvatar = async (req, res) => {
+  try {
+    if (!req.user.avatar) throw new Error('No avatar found');
+    res.set('Content-Type', 'png');
+    res.send(req.user.avatar);
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+};
+
+const getUserAvatar = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || !user.avatar) throw new Error('No avatar found');
+    res.set('Content-Type', 'png');
+    res.send(user.avatar);
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+};
+
+const uploadAvatar = async (req, res) => {
+  const buffer = await sharp(req.file.buffer)
+    .resize({ width: 250, height: 250 })
+    .png()
+    .toBuffer();
+  req.user.avatar = buffer;
+  await req.user.save();
+  res.send();
+};
+
+const deleteAvatar = async (req, res) => {
+  req.user.avatar = undefined;
+  await req.user.save();
+  res.send(req.user);
+};
+
 module.exports = {
   getProfile,
   createUser,
@@ -95,4 +133,8 @@ module.exports = {
   login,
   logout,
   logoutAll,
+  getAvatar,
+  getUserAvatar,
+  uploadAvatar,
+  deleteAvatar,
 };
