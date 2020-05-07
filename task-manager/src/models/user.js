@@ -4,49 +4,54 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Task = require('./task');
 
-const userSchema = mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    unique: true,
-    required: [true, 'Please provide an email'],
-    trim: true,
-    lowercase: true,
-    validate: [validator.isEmail, 'Email is invalid'],
-  },
-  password: {
-    type: String,
-    required: [true, 'Please provide a password'],
-    trim: true,
-    minlength: [6, 'Password has to have at least 6 characters'],
-    validate(value) {
-      if (value.toLowerCase().includes('password')) {
-        throw new Error(`Your password can't contain 'password'`);
-      }
+const userSchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
     },
-  },
-  age: {
-    type: Number,
-    default: 0,
-    validate(value) {
-      if (value < 0) {
-        throw new Error('Age must be a positive number');
-      }
+    email: {
+      type: String,
+      unique: true,
+      required: [true, 'Please provide an email'],
+      trim: true,
+      lowercase: true,
+      validate: [validator.isEmail, 'Email is invalid'],
     },
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
+    password: {
+      type: String,
+      required: [true, 'Please provide a password'],
+      trim: true,
+      minlength: [6, 'Password has to have at least 6 characters'],
+      validate(value) {
+        if (value.toLowerCase().includes('password')) {
+          throw new Error(`Your password can't contain 'password'`);
+        }
       },
     },
-  ],
-});
+    age: {
+      type: Number,
+      default: 0,
+      validate(value) {
+        if (value < 0) {
+          throw new Error('Age must be a positive number');
+        }
+      },
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 userSchema.virtual('tasks', {
   ref: 'Task',
