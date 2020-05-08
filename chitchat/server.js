@@ -3,6 +3,10 @@ const socketio = require('socket.io');
 const Filter = require('bad-words');
 
 const app = require('./src/app');
+const {
+  generateMessage,
+  generateLocationMessage,
+} = require('./src/utils/messages');
 
 const port = process.env.PORT;
 
@@ -12,24 +16,27 @@ const io = socketio(server);
 io.on('connection', (socket) => {
   console.log('New WebSocket connection');
 
-  socket.emit('message', 'Welcome to our chatroom');
-  socket.broadcast.emit('message', 'A new user has join');
+  socket.emit('message', generateMessage('Welcome!'));
+  socket.broadcast.emit('message', generateMessage('A new user has join'));
 
   socket.on('sendMessage', (msg, callback) => {
     const filter = new Filter();
     if (filter.isProfane(msg)) return callback('Profanity is not allowed');
 
-    io.emit('message', msg);
+    io.emit('message', generateMessage(msg));
     callback();
   });
 
   socket.on('sendLocation', ({ lat, lng }, callback) => {
-    io.emit('locationMessage', `https://www.google.com/maps?q=${lat},${lng}`);
+    io.emit(
+      'locationMessage',
+      generateLocationMessage(`https://www.google.com/maps?q=${lat},${lng}`)
+    );
     callback();
   });
 
   socket.on('disconnect', () => {
-    io.emit('message', 'A new has left');
+    io.emit('message', generateMessage('A new has left'));
   });
 });
 
