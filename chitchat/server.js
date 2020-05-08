@@ -17,6 +17,10 @@ io.on('connection', (socket) => {
     io.emit('message', msg);
   });
 
+  socket.on('sendLocation', ({ lat, lng }) =>
+    io.emit('message', `https://www.google.com/maps?q=${lat},${lng}`)
+  );
+
   socket.on('disconnect', () => {
     io.emit('message', 'A new has left');
   });
