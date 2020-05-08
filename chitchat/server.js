@@ -34,6 +34,11 @@ io.on('connection', (socket) => {
       .to(user.room)
       .emit('message', generateMessage('Admin', `${user.username} has join`));
 
+    io.to(user.room).emit('roomData', {
+      room: user.room,
+      users: getUsersInRoom(user.room),
+    });
+
     callback();
   });
 
@@ -64,11 +69,17 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     const user = removeUser(socket.id);
-    if (user)
+    if (user) {
       io.to(user.room).emit(
         'message',
         generateMessage('Admin', `${user.username} has left.`)
       );
+
+      io.to(user.room).emit('roomData', {
+        room: user.room,
+        users: getUsersInRoom(user.room),
+      });
+    }
   });
 });
 
