@@ -9,7 +9,10 @@ const form = document.getElementById('message-form');
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   const message = event.target.elements.message.value;
-  socket.emit('sendMessage', message);
+  socket.emit('sendMessage', message, (error) => {
+    if (error) return console.log(error);
+    console.log('The message was delivered');
+  });
 });
 
 document.getElementById('send-location').addEventListener('click', () => {
@@ -17,9 +20,13 @@ document.getElementById('send-location').addEventListener('click', () => {
     return alert('Geolocation is not supported by your browser');
 
   navigator.geolocation.getCurrentPosition((position) => {
-    socket.emit('sendLocation', {
-      lat: position.coords.latitude,
-      lng: position.coords.longitude,
-    });
+    socket.emit(
+      'sendLocation',
+      {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      },
+      () => console.log('Location shared')
+    );
   });
 });
