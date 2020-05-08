@@ -16,7 +16,6 @@ const locationMessageTemplate = document.getElementById(
 ).innerHTML;
 
 socket.on('message', ({ message, createdAt }) => {
-  console.log(message);
   const html = Mustache.render(messageTemplate, {
     message,
     createdAt: moment(createdAt).format('h:mm a'),
@@ -25,7 +24,6 @@ socket.on('message', ({ message, createdAt }) => {
 });
 
 socket.on('locationMessage', ({ url, createdAt }) => {
-  console.log(url);
   const html = Mustache.render(locationMessageTemplate, {
     url,
     createdAt: moment(createdAt).format('h:mm a'),
