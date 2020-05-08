@@ -15,6 +15,11 @@ const locationMessageTemplate = document.getElementById(
   'location-message-template'
 ).innerHTML;
 
+// Options
+const { username, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true,
+});
+
 socket.on('message', ({ message, createdAt }) => {
   const html = Mustache.render(messageTemplate, {
     message,
@@ -67,4 +72,11 @@ $sendLocationButton.addEventListener('click', () => {
       }
     );
   });
+});
+
+socket.emit('join', { username, room }, (error) => {
+  if (error) {
+    alert(error);
+    location.href = '/';
+  }
 });
